@@ -3,576 +3,162 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>/tags/ad/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/categories/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/azure/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/css/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/azure-ad-connect/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/html/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/categories/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/markdown/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/crackmapexec/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/2019/03/markdown-syntax/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/series/hackthebox/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/posts/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/series/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/categories/hackthebox-writeups/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/categories/syntax/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/ldap/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/powershell/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/themes/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/series/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/categories/themes/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/series/themes-guide/</loc>
+    <lastmod>2019-03-11T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/writeups/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/privacy/</loc>
+    <lastmod>2019-03-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/dll-injection/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/2019/03/rich-content/</loc>
+    <lastmod>2019-03-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/dns/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/shortcodes/</loc>
+    <lastmod>2019-03-10T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/dnsadmins/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/2019/03/placeholder-text/</loc>
+    <lastmod>2019-03-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/evil-winrm/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/text/</loc>
+    <lastmod>2019-03-09T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/2019/03/math-typesetting/</loc>
+    <lastmod>2019-03-08T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/hydra/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/emoji/</loc>
+    <lastmod>2019-03-05T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/ldapsearch/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/2019/03/emoji-support/</loc>
+    <lastmod>2019-03-05T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/rpcclient/</loc>
-    <lastmod>2020-05-29T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/about/</loc>
+    <lastmod>2019-02-28T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/brainfuck/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/</loc>
+    <lastmod>2019-02-28T00:00:00+00:00</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
   <url>
-    <loc>/tags/cve-2019-14287/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/ftp/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/privesc/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/pt_chown/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/stego/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/sudo/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/series/tryhackme/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/tryhackme-writeups/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/command-injection/</loc>
-    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/docker/</loc>
-    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/gtfobins/</loc>
-    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/php/</loc>
-    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/rce/</loc>
-    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/</loc>
-    <lastmod>2020-05-16T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/cron/</loc>
-    <lastmod>2020-05-12T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/lfi/</loc>
-    <lastmod>2020-05-12T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/</loc>
-    <lastmod>2020-05-12T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/adminer/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/fuzzing/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/series/hackthebox-challenges/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/linux/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/mysql/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/python/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/python-path-hijack/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/web/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/</loc>
-    <lastmod>2020-05-03T08:24:19+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/john/</loc>
-    <lastmod>2020-05-03T08:24:19+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</loc>
-    <lastmod>2020-05-02T08:24:19+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/hackthebox-writeups/</loc>
-    <lastmod>2020-05-02T08:15:51+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/tryhackme-writeups/tryhackme-blue-writeup/</loc>
-    <lastmod>2020-03-26T02:12:46+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/tryhackme-writeups/tryhackme-basic-pentesting-writeup/</loc>
-    <lastmod>2020-03-26T02:06:43+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/tryhackme-writeups/</loc>
-    <lastmod>2020-03-26T02:04:11+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/kvm/</loc>
-    <lastmod>2020-03-02T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/passthrough/</loc>
-    <lastmod>2020-03-02T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/posts/</loc>
-    <lastmod>2020-03-02T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/qemu/</loc>
-    <lastmod>2020-03-02T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/2020/03/gpu_passthrough/</loc>
-    <lastmod>2020-03-02T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/virtualization/</loc>
-    <lastmod>2020-03-02T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/neverlan-ctf-reverse-engineer-writeup/</loc>
-    <lastmod>2020-02-28T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/</loc>
-    <lastmod>2020-02-19T12:44:11+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/easy/</loc>
-    <lastmod>2020-02-19T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/file-descriptor/</loc>
-    <lastmod>2020-02-19T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/pwn/</loc>
-    <lastmod>2020-02-19T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/pwnable.kr/</loc>
-    <lastmod>2020-02-19T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/</loc>
-    <lastmod>2020-02-19T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-collision-writeup/</loc>
-    <lastmod>2020-02-19T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-fd-writeup/</loc>
-    <lastmod>2020-02-19T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/hacking/</loc>
-    <lastmod>2020-02-18T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/2020/02/sites/</loc>
-    <lastmod>2020-02-18T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/practice/</loc>
-    <lastmod>2020-02-18T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/</loc>
-    <lastmod>2020-02-16T13:27:29+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/neverlan_ctf/</loc>
-    <lastmod>2020-02-16T13:24:20+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/ctf_writeups/</loc>
-    <lastmod>2020-02-15T22:37:10+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/writeups/</loc>
-    <lastmod>2020-02-15T22:35:45+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/</loc>
-    <lastmod>2020-01-15T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/about/</loc>
-    <lastmod>2020-01-15T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/archive/</loc>
-    <lastmod>2019-10-19T11:44:14+09:00</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://example.com/tags/index/</loc>
+    <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   
