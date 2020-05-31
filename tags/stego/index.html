@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+        A personal cybersecurity blog</title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>A personal cybersecurity blog</title>
+    
+    <link rel="alternate" type="application/rss+xml" href="/tags/stego/index.xml" title="A personal cybersecurity blog" />
+    
+    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="stego" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="/tags/stego/" />
+<meta property="og:updated_time" content="2020-05-21T00:00:00+00:00" />
+<meta itemprop="name" content="stego">
+<meta itemprop="description" content=""><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="stego"/>
+<meta name="twitter:description" content=""/>
+
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
+
+  </head>
+
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">5</span></li>
+            <li class="category-list-item"><a href="/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">3</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">3</span>
+            
+            
+            <a href="/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/" class="title">TryHackMe - Year of the Rabbit - Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-21</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/" class="title">TryHackMe - UltraTech Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-16</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/" class="title">TryHackMe - DogCat Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-12</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<main class="main" role="main">
+    <article class="content article article-tags post-type-list" itemscope="">
+        <header class="article-header">
+            <h1 itemprop="name" class="hidden-xs">stego</h1>
+            <p class="text-muted hidden-xs">Total 44 tags</p>
+            <nav role="navigation" id="nav-main" class="okayNav">
+                <ul>
+                    <li><a href="/tags">All</a></li>
+                    <li><a href="/tags/ad/">ad</a></li>
+                    <li><a href="/tags/adminer/">adminer</a></li>
+                    <li><a href="/tags/azure/">azure</a></li>
+                    <li><a href="/tags/azure-ad-connect/">azure ad connect</a></li>
+                    <li><a href="/tags/brainfuck/">brainfuck</a></li>
+                    <li><a href="/tags/command-injection/">command injection</a></li>
+                    <li><a href="/tags/crackmapexec/">crackmapexec</a></li>
+                    <li><a href="/tags/cron/">cron</a></li>
+                    <li><a href="/tags/cve-2019-14287/">CVE-2019-14287</a></li>
+                    <li><a href="/tags/dll-injection/">dll injection</a></li>
+                    <li><a href="/tags/dns/">dns</a></li>
+                    <li><a href="/tags/dnsadmins/">dnsadmins</a></li>
+                    <li><a href="/tags/docker/">docker</a></li>
+                    <li><a href="/tags/easy/">easy</a></li>
+                    <li><a href="/tags/evil-winrm/">evil-winrm</a></li>
+                    <li><a href="/tags/file-descriptor/">file descriptor</a></li>
+                    <li><a href="/tags/ftp/">ftp</a></li>
+                    <li><a href="/tags/fuzzing/">fuzzing</a></li>
+                    <li><a href="/tags/gtfobins/">gtfobins</a></li>
+                    <li><a href="/tags/hacking/">hacking</a></li>
+                    <li><a href="/tags/hydra/">hydra</a></li>
+                    <li><a href="/tags/john/">john</a></li>
+                    <li><a href="/tags/kvm/">kvm</a></li>
+                    <li><a href="/tags/ldap/">ldap</a></li>
+                    <li><a href="/tags/ldapsearch/">ldapsearch</a></li>
+                    <li><a href="/tags/lfi/">lfi</a></li>
+                    <li><a href="/tags/linux/">linux</a></li>
+                    <li><a href="/tags/mysql/">mysql</a></li>
+                    <li><a href="/tags/passthrough/">passthrough</a></li>
+                    <li><a href="/tags/php/">php</a></li>
+                    <li><a href="/tags/powershell/">powershell</a></li>
+                    <li><a href="/tags/practice/">practice</a></li>
+                    <li><a href="/tags/privesc/">privesc</a></li>
+                    <li><a href="/tags/pt_chown/">pt_chown</a></li>
+                    <li><a href="/tags/pwn/">pwn</a></li>
+                    <li><a href="/tags/python/">python</a></li>
+                    <li><a href="/tags/python-path-hijack/">python path hijack</a></li>
+                    <li><a href="/tags/qemu/">qemu</a></li>
+                    <li><a href="/tags/rce/">rce</a></li>
+                    <li><a href="/tags/rpcclient/">rpcclient</a></li>
+                    <li><a href="/tags/stego/">stego</a></li>
+                    <li><a href="/tags/sudo/">sudo</a></li>
+                    <li><a href="/tags/virtualization/">virtualization</a></li>
+                    <li><a href="/tags/web/">web</a></li>
+                </ul>
+            </nav>
+        </header>
+        
+        <div class="article-body">
+            <div class="col-md-6"><article class="panel panel-default hover-shadow hover-grow" itemscope itemtype="http://schema.org/BlogPosting">
+    <div class="panel-body">
+        <div class="article-meta">
+            <time datetime="2020-05-21 00:00:00 &#43;0000 UTC"
+                itemprop="datePublished">2020-05-21</time>
+        </div>
+        <h2 class="article-title" itemprop="name">
+            <a class="article-link" href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/">TryHackMe - Year of the Rabbit - Writeup</a>
+        </h2>
+        <div class="article-entry text-muted" itemprop="description">topics: sudo CVE-2019-14287 privesc, ftp, hydra, brainfuck, stego, pt_chown</div>
+				<br>
+				<div style="text-align: center">
+					<a href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/">
+						<img src="/img/tryhackme_yearoftherabbit/card.png"
+								 style="max-width:330px; max-height:200px;"/>
+					</a>
+				</div>
+  </div>
+    <div class="panel-footer">
+        <a href="/tags/sudo" class="label label-default mb">sudo</a>
+        <a href="/tags/cve-2019-14287" class="label label-default mb">CVE-2019-14287</a>
+        <a href="/tags/privesc" class="label label-default mb">privesc</a>
+        <span class="label label-default mb">···</span>
+    </div>
+</article>
+
+            </div>
+        </div>
+    </article>
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            ROOT_URL: '\/',
+            CONTENT_URL: '\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+  </body>
+</html>

