@@ -5,51 +5,10 @@
     <link>/tags/</link>
     <description>Recent content in Tags on A personal cybersecurity blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 21 May 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
     
-    
-    <item>
-      <title>Hackthebox - Montevarde Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</link>
-      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</guid>
-      <description>Nmap Scan 1nmap -sC -sV -sS -oN nmap.out 10.10.10.172 Open ports:
- PORT STATE SERVICE VERSION
-53/tcp open domain?
-| fingerprint-strings:
-| DNSVersionBindReqTCP:
-| version
-|_ bind
-88/tcp open kerberos-sec Microsoft Windows Kerberos (server time:
-2020-05-24 10:34:50Z)
-135/tcp open msrpc Microsoft Windows RPC
-139/tcp open netbios-ssn Microsoft Windows netbios-ssn
-389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain:
-MEGABANK.LOCAL0., Site: Default-First-Site-Name)
-445/tcp open microsoft-ds?
-464/tcp open kpasswd5?
-593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.</description>
-    </item>
-    
-    <item>
-      <title>Hackthebox - Resolute Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</link>
-      <pubDate>Fri, 29 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</guid>
-      <description>Nmap Scan 1export ip=10.10.10.169 1nmap -sC -sV -sS -oN nmap.put $ip Open ports:
- 53/tcp open domain?
-88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z)
-135/tcp open msrpc Microsoft Windows RPC
-139/tcp open netbios-ssn Microsoft Windows netbios-ssn
-389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name)
-445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK)
-464/tcp open kpasswd5?
-593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.</description>
-    </item>
     
     <item>
       <title>TryHackMe - Year of the Rabbit - Writeup</title>
@@ -84,52 +43,6 @@ We find a php file at /10.10.57.192/sup3r_s3cr3t_fl4g.php Going to the page pops
       <description>Nmap scan  nmap -sC -sV -oN nmap.out 10.10.174.171 Open ports:
  22 - SSH 80- http  We have a look at the webpage where it lets us view some dot or cat pictures
 Having a look at the url, we see that the page is running a php that shows the pictures stored in the dogs/ or cats/ folder which passes the value &amp;ldquo;dog&amp;rdquo; or &amp;ldquo;cat&amp;rdquo; to the variable &amp;ldquo;view&amp;rdquo;.</description>
-    </item>
-    
-    <item>
-      <title>Hackthebox - Admirer Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</link>
-      <pubDate>Wed, 06 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</guid>
-      <description>Initial Foothold  Nmap  Open ports: 21/tcp open ftp vsftpd 3.0.3 22/tcp open ssh OpenSSH 7.4p1 Debian 10+deb9u7 (protocol 2.0) 80/tcp open tcpwrapped
-Found robots.txt that disallows /admin-dir
-Found a possible user named waldo
-Directory Busting  Fuzzing for .txt files in the /admin-dir, found 2 files:
- contacts.txt credentials.txt  1ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.187/admin-dir/FUZZ.txt We find the following in the credentials.txt file.
-[Internal mail account] w.cooper@admirer.htb fgJr6q#S\W:$P [FTP account] ftpuser %n?</description>
-    </item>
-    
-    <item>
-      <title>Hackthebox[Web-Challenge] Writeups</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/</link>
-      <pubDate>Wed, 06 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/</guid>
-      <description>Em Dee Five for Life  We start the instance
-The page gives us a string and asks for the md5sum as the input, after we inpput the md5sum of the string got from our terminal, we get a response of too slow.
-So to make the response fast, we can write a simple python script. First, we intercept the post request to the page in burpsuite to chech how the md5 hash is passed and find that it is passed as raw data.</description>
-    </item>
-    
-    <item>
-      <title>Hackthebox - Obscurity Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/</link>
-      <pubDate>Sun, 03 May 2020 08:24:19 +0600</pubDate>
-      
-      <guid>/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/</guid>
-      <description>Initial Foothold  Nmap scan:  # nmap -sC -sV -sS -oA nmap.out 10.10.10.168 Intersting open ports:
- 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) 80/tcp closed http 8080/tcp open http-proxy BadHTTPServer 9000 unknown(nc does not show any banner)  Website at port 8080:   Looks like the server runs custom software for security   We have some contact information. We see that the box domain is obscure.</description>
-    </item>
-    
-    <item>
-      <title>Hackthebox - OpenAdmin Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</link>
-      <pubDate>Sat, 02 May 2020 08:24:19 +0600</pubDate>
-      
-      <guid>/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</guid>
-      <description>Initial Foothold - Getting www-data shell using exploit  Nmap scan  Interesting ports:
- 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) 80/tcp open http Apache httpd 2.4.29 ((Ubuntu)) |_http-server-header: Apache/2.4.29 (Ubuntu) |_http-title: Apache2 Ubuntu Default Page: It works  We have a look at the webpage and we find a default apache webpage.
-Directory searching with Gobuster:  We now search for any web directories using gobuster</description>
     </item>
     
     <item>
