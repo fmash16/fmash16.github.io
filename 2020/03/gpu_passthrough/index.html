@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+        Ryzen Gpu passthrough guide on debian - A personal cybersecurity blog
+      </title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    <meta name="description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10" />
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>Ryzen Gpu passthrough guide on debian - A personal cybersecurity blog</title>
+    
+    
+    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="Ryzen Gpu passthrough guide on debian" />
+<meta property="og:description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/2020/03/gpu_passthrough/" />
+<meta property="article:published_time" content="2020-03-02T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-03-02T00:00:00+00:00" />
+<meta itemprop="name" content="Ryzen Gpu passthrough guide on debian">
+<meta itemprop="description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10">
+<meta itemprop="datePublished" content="2020-03-02T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-03-02T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="3067">
+
+
+
+<meta itemprop="keywords" content="qemu,kvm,virtualization,passthrough," /><meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Ryzen Gpu passthrough guide on debian"/>
+<meta name="twitter:description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10"/>
+
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
+
+  </head>
+
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">5</span></li>
+            <li class="category-list-item"><a href="/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">3</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">3</span>
+            
+            
+            <a href="/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/" class="title">TryHackMe - Year of the Rabbit - Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-21</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/" class="title">TryHackMe - UltraTech Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-16 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-16</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/" class="title">TryHackMe - DogCat Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-12 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-12</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <h4 class="toc-title">Table of Contents</h4>
+    <nav id="toc" class="js-toc toc">
+
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main"><div class="content">
+  <article id="-" class="article article-type-" itemscope
+    itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      <h3 itemprop="name">
+  <a
+    class="article-title"
+    href="/2020/03/gpu_passthrough/"
+    >Ryzen Gpu passthrough guide on debian</a
+  >
+</h3>
+
+      <div class="article-meta">
+        
+<span class="article-date">
+  <i class="icon icon-calendar-check"></i>&nbsp;
+<a href="/2020/03/gpu_passthrough/" class="article-date">
+  <time datetime="2020-03-02 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-03-02</time>
+</a>
+</span>
+  
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>&nbsp;
+    <a class="article-tag-link" href="/tags/qemu/"> qemu </a>
+    <a class="article-tag-link" href="/tags/kvm/"> kvm </a>
+    <a class="article-tag-link" href="/tags/virtualization/"> virtualization </a>
+    <a class="article-tag-link" href="/tags/passthrough/"> passthrough </a>
+  </span>
+<br>
+        
+        
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
+      <h2 id="preamble">Preamble</h2>
+<p>This guide shows how to passthrough a gpu to a vm running on QEMU/KVM on linux
+for improved graphical performance. In my case, I did it to run windows and
+play games while I can still work on my linux machine. Dual booting is not
+a good solution in this case as rebooting into windows just for the purpose of
+gaming is a pain. Passing through my gpu, I can switch between games and work
+with muxh ease. This is a guide of how I set it up on my machine running Debian
+10.</p>
+<h2 id="introduction-to-vfio-and-pci-passthrough">Introduction to VFIO and PCI passthrough:</h2>
+<p><a href="https://www.kernel.org/doc/Documentation/vfio.txt">Virtual Function IO</a> (or
+VFIO) allows a virtual machine (VM) direct access to a pci hardware resource,
+such as a graphics processing unit (GPU). Virtual machines with set up GPU
+passthrough can gain close to bare metal performance, which makes running games
+in a Windows virtual machine possible.</p>
+<p>Unfortunately, the setup process can be pretty complex. It consists of fixed
+base settings, some variable settings and several optional (mostly performance)
+settings. In order to sustain readability of this post, and because I aim to
+use the virtual machine for gaming only, I minimized the variable parts for
+latency optimization. The variable topics itself are linked in articles
+– I hope this makes sense. 🙂</p>
+<h2 id="requirements">Requirements:</h2>
+<h2 id="hardware">Hardware:</h2>
+<p>In order to successfully follow this guide, it is mandatory that the used
+hardware supports virtualization and IOMMU groups.</p>
+<p>The hardware I use is as follows:</p>
+<ul>
+<li>Ryzen 6 2600 @ 4.00Ghz</li>
+<li>MSI X470 Gaming Plus</li>
+<li>24gb corsair vengeance 3200Mhz cl16 RAM</li>
+<li>240GB WD Green SSD for vm</li>
+<li>NVIDIA GT710 (host gpu)</li>
+<li>AMD Radeon RX580 (passthrough gpu)</li>
+</ul>
+<h2 id="software">Software:</h2>
+<p>Before we start, install the virtualization manager and related software via:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>sudo apt-get install libvirt-bin bridge-utils virt-manager qemu-kvm ovmf
+</code></pre></div><h2 id="setting-up-the-vfio-ryzen-passthrough">Setting up the vfio ryzen passthrough:</h2>
+<p>Devices connected to the mainboard, are members of (IOMMU) groups – depending
+on where and how they are connected. It is possible to pass devices into
+a virtual machine. Passed through devices have nearly bare metal performance
+when used inside the VM.</p>
+<p>On the downside, passed through devices are isolated and thus no longer
+available to the host system. Furthermore it is only possible to isolate all
+devices of one IOMMU group at the same time. This means, even when not used in
+the VM if a devices is IOMMU-group sibling of a passed through device, it can
+not be used on the host system.</p>
+<h2 id="enabling-the-iommu-feature">Enabling the IOMMU feature:</h2>
+<p>To enable the IOMMU feature on an AMD Ryzen system, modify your grub config.
+Run <code>sudo nano /etc/default/grub</code> and edit the line which starts with
+<code>GRUB_CMDLINE_LINUX_DEFAULT</code>, to match:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#ef6155">GRUB_CMDLINE_LINUX_DEFAULT</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#34;amd_iommu=on iommu=pt kvm_amd.npt=1 kvm_amd.avic=1&#34;</span>
+</code></pre></div><p>in case you are using an Intel CPU the line should read:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#ef6155">GRUB_CMDLINE_LINUX_DEFAULT</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#34;intel_iommu=on&#34;</span>
+</code></pre></div><p>Save the changes and update grub.</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>sudo update-grub
+</code></pre></div><p>Reboot your system when the command has finished.</p>
+<p>One can verify after a system start if IOMMU is enabled by running:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>dmesg |grep AMD-Vi
+</code></pre></div><p>My output:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">[</span>    0.758804<span style="color:#5bc4bf">]</span> AMD-Vi: IOMMU performance counters supported                             
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#5bc4bf">[</span>    0.760735<span style="color:#5bc4bf">]</span> AMD-Vi: Found IOMMU at 0000:00:00.2 cap 0x40                             
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#5bc4bf">[</span>    0.760737<span style="color:#5bc4bf">]</span> AMD-Vi: Extended features <span style="color:#5bc4bf">(</span>0xf77ef22294ada<span style="color:#5bc4bf">)</span>:                             
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span style="color:#5bc4bf">[</span>    0.760741<span style="color:#5bc4bf">]</span> AMD-Vi: Interrupt remapping enabled  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span><span style="color:#5bc4bf">[</span>    0.760742<span style="color:#5bc4bf">]</span> AMD-Vi: virtual APIC enabled         
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span><span style="color:#5bc4bf">[</span>    0.760832<span style="color:#5bc4bf">]</span> AMD-Vi: Lazy IO/TLB flushing enabled 
+</code></pre></div><h2 id="finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the iommu group of the guest gpu to isolate:</h2>
+<p>In order to activate the hardware passthrough for virtual machines, we have to
+make sure the nvidia/amd driver is not taking ownership of the PCIe devices;
+isolate it before we can hand it over.</p>
+<p>This is done by applying the vfio-pci to the guest GPU, during the system
+startup.</p>
+<p>Depending on the PCIe slot installed, the hardware has different IOMMU group
+affilation. One can use a bash script like this in order to determine devices
+and their grouping:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#776e71">#!/bin/bash
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#776e71"></span>shopt -s nullglob
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#815ba4">for</span> d in /sys/kernel/iommu_groups/*/devices/*; <span style="color:#815ba4">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>    <span style="color:#ef6155">n</span><span style="color:#5bc4bf">=</span><span style="color:#f99b15">${</span><span style="color:#ef6155">d</span>#*/iommu_groups/*<span style="color:#f99b15">}</span>; <span style="color:#ef6155">n</span><span style="color:#5bc4bf">=</span><span style="color:#f99b15">${</span><span style="color:#ef6155">n</span>%%/*<span style="color:#f99b15">}</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>    printf <span style="color:#48b685">&#39;IOMMU Group %s &#39;</span> <span style="color:#48b685">&#34;</span><span style="color:#ef6155">$n</span><span style="color:#48b685">&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>    lspci -nns <span style="color:#48b685">&#34;</span><span style="color:#f99b15">${</span><span style="color:#ef6155">d</span>##*/<span style="color:#f99b15">}</span><span style="color:#48b685">&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span><span style="color:#815ba4">done</span>;
+</code></pre></div><p>Output:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>IOMMU Group <span style="color:#f99b15">0</span> 00:01.0 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Family 17h PCIe Dummy Host Bridge <span style="color:#5bc4bf">[</span>1022:1452<span style="color:#5bc4bf">]</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>IOMMU Group <span style="color:#f99b15">10</span> 00:08.1 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>Family 17h Internal PCIe GPP Bridge <span style="color:#f99b15">0</span> to Bus B <span style="color:#5bc4bf">[</span>1022:1454<span style="color:#5bc4bf">]</span>     
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>IOMMU Group <span style="color:#f99b15">11</span> 00:14.0 SMBus <span style="color:#5bc4bf">[</span>0c05<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span> FCH
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>SMBus Contro<span style="color:#5bc4bf">(</span>rev 59<span style="color:#5bc4bf">)</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>IOMMU Group <span style="color:#f99b15">11</span> 00:14.3 ISA bridge <span style="color:#5bc4bf">[</span>0601<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>FCH LPC Brirev 51<span style="color:#5bc4bf">)</span>                   
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.0 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">0</span> <span style="color:#5bc4bf">[</span>1022:1460<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.1 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">1</span> <span style="color:#5bc4bf">[</span>1022:1461<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.2 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">2</span> <span style="color:#5bc4bf">[</span>1022:1462<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.3 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">3</span> <span style="color:#5bc4bf">[</span>1022:1463<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.4 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">4</span> <span style="color:#5bc4bf">[</span>1022:1464<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.5 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">5</span> <span style="color:#5bc4bf">[</span>1022:1465<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.6 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">6</span> <span style="color:#5bc4bf">[</span>1022:1466<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>IOMMU Group <span style="color:#f99b15">12</span> 00:18.7 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>Family 17h Data Fabric: Device 18h; Function <span style="color:#f99b15">7</span> <span style="color:#5bc4bf">[</span>1022:1467<span style="color:#5bc4bf">]</span>    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>IOMMU Group <span style="color:#f99b15">13</span> 03:00.0 USB controller <span style="color:#5bc4bf">[</span>0c03<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span> Device 01<span style="color:#5bc4bf">)</span>                       
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>IOMMU Group <span style="color:#f99b15">13</span> 03:00.1 SATA controller <span style="color:#5bc4bf">[</span>0106<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span> <span style="color:#f99b15">400</span> Se Controller <span style="color:#5bc4bf">[</span>1022:43c8<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>                    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>IOMMU Group <span style="color:#f99b15">13</span> 03:00.2 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span style="color:#f99b15">400</span> Series ge <span style="color:#5bc4bf">[</span>1022:43c6<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>   
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>IOMMU Group <span style="color:#f99b15">13</span> 16:00.0 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span style="color:#f99b15">400</span> Series  <span style="color:#5bc4bf">[</span>1022:43c7<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>     
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>IOMMU Group <span style="color:#f99b15">13</span> 16:01.0 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span><span style="color:#f99b15">400</span> Series  <span style="color:#5bc4bf">[</span>1022:43c7<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>     
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>IOMMU Group <span style="color:#f99b15">13</span> 16:02.0 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span style="color:#f99b15">400</span> Series  <span style="color:#5bc4bf">[</span>1022:43c7<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>     
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span>IOMMU Group <span style="color:#f99b15">13</span> 16:03.0 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span><span style="color:#f99b15">400</span> Series  <span style="color:#5bc4bf">[</span>1022:43c7<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>     
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span>IOMMU Group <span style="color:#f99b15">13</span> 16:04.0 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span><span style="color:#f99b15">400</span> Series  <span style="color:#5bc4bf">[</span>1022:43c7<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>     
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span>IOMMU Group <span style="color:#f99b15">13</span> 16:08.0 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span><span style="color:#f99b15">400</span> Series  <span style="color:#5bc4bf">[</span>1022:43c7<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 01<span style="color:#5bc4bf">)</span>     
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span>IOMMU Group <span style="color:#f99b15">13</span> 18:00.0 Ethernet controller <span style="color:#5bc4bf">[</span>0200<span style="color:#5bc4bf">]</span>: Realtek Semiconductor Co.,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span>Ltd. RTL81Express Gigabit Ethernet Controller <span style="color:#5bc4bf">[</span>10ec:8168<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 15<span style="color:#5bc4bf">)</span>                                
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span>IOMMU Group <span style="color:#f99b15">13</span> 1c:00.0 USB controller <span style="color:#5bc4bf">[</span>0c03<span style="color:#5bc4bf">]</span>: ASMedia Technology Inc. ASM1143
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span>USB 3.1 Ho21:1343<span style="color:#5bc4bf">]</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span>IOMMU Group <span style="color:#f99b15">14</span> 1d:00.0 VGA compatible controller <span style="color:#5bc4bf">[</span>0300<span style="color:#5bc4bf">]</span>: NVIDIA Corporation
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span>GK208 <span style="color:#5bc4bf">[</span>GeFor:128b<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev a1<span style="color:#5bc4bf">)</span>           
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49</span>IOMMU Group <span style="color:#f99b15">14</span> 1d:00.1 Audio device <span style="color:#5bc4bf">[</span>0403<span style="color:#5bc4bf">]</span>: NVIDIA Corporation GK208 HDMI/DP
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50</span>Audio Contr <span style="color:#5bc4bf">(</span>rev a1<span style="color:#5bc4bf">)</span>                 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51</span>IOMMU Group <span style="color:#f99b15">15</span> 1e:00.0 VGA compatible controller <span style="color:#5bc4bf">[</span>0300<span style="color:#5bc4bf">]</span>: Advanced Micro
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52</span>Devices, Inc. <span style="color:#5bc4bf">[</span>A <span style="color:#5bc4bf">[</span>Radeon RX 470/480<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span>1002:67df<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev e7<span style="color:#5bc4bf">)</span>           
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53</span>IOMMU Group <span style="color:#f99b15">15</span> 1e:00.1 Audio device <span style="color:#5bc4bf">[</span>0403<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54</span><span style="color:#5bc4bf">[</span>AMD/ATI<span style="color:#5bc4bf">]</span> EllesRadeon RX 470/480 / 570/580/590<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span>1002:aaf0<span style="color:#5bc4bf">]</span>        
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55</span>IOMMU Group <span style="color:#f99b15">16</span> 1f:00.0 Non-Essential Instrumentation <span style="color:#5bc4bf">[</span>1300<span style="color:#5bc4bf">]</span>: Advanced Micro
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56</span>Devices, IncRaven/Raven2 PCIe Dummy Function <span style="color:#5bc4bf">[</span>1022:145a<span style="color:#5bc4bf">]</span>        
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">57</span>IOMMU Group <span style="color:#f99b15">17</span> 1f:00.2 Encryption controller <span style="color:#5bc4bf">[</span>1080<span style="color:#5bc4bf">]</span>: Advanced Micro Devices,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">58</span>Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span> s 00h-0fh<span style="color:#5bc4bf">)</span> Platform Security Processor <span style="color:#5bc4bf">[</span>1022:1456<span style="color:#5bc4bf">]</span>  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">59</span>IOMMU Group <span style="color:#f99b15">18</span> 1f:00.3 USB controller <span style="color:#5bc4bf">[</span>0c03<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">60</span><span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span> USB 3.0<span style="color:#5bc4bf">[</span>1022:145f<span style="color:#5bc4bf">]</span>               
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">61</span>IOMMU Group <span style="color:#f99b15">19</span> 20:00.0 Non-Essential Instrumentation <span style="color:#5bc4bf">[</span>1300<span style="color:#5bc4bf">]</span>: Advanced Micro
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">62</span>Devices, IncRenoir PCIe Dummy Function <span style="color:#5bc4bf">[</span>1022:1455<span style="color:#5bc4bf">]</span>              
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">63</span>IOMMU Group <span style="color:#f99b15">1</span> 00:01.3 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">64</span>Family 17h <span style="color:#5bc4bf">(</span>CIe GPP Bridge <span style="color:#5bc4bf">[</span>1022:1453<span style="color:#5bc4bf">]</span>                          
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">65</span>IOMMU Group <span style="color:#f99b15">20</span> 20:00.2 SATA controller <span style="color:#5bc4bf">[</span>0106<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">66</span><span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span> FCH SACI mode<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span>1022:7901<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev 51<span style="color:#5bc4bf">)</span>                       
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">67</span>IOMMU Group <span style="color:#f99b15">21</span> 20:00.3 Audio device <span style="color:#5bc4bf">[</span>0403<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">68</span>Family 17<span style="color:#5bc4bf">)</span> HD Audio Controller <span style="color:#5bc4bf">[</span>1022:1457<span style="color:#5bc4bf">]</span>                   
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">69</span>IOMMU Group <span style="color:#f99b15">2</span> 00:02.0 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">70</span>Family 17h PCIe Dummy Host Bridge <span style="color:#5bc4bf">[</span>1022:1452<span style="color:#5bc4bf">]</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">71</span>IOMMU Group <span style="color:#f99b15">3</span> 00:03.0 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">72</span>Family 17h PCIe Dummy Host Bridge <span style="color:#5bc4bf">[</span>1022:1452<span style="color:#5bc4bf">]</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">73</span>IOMMU Group <span style="color:#f99b15">4</span> 00:03.1 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">74</span>Family 17h <span style="color:#5bc4bf">(</span>CIe GPP Bridge <span style="color:#5bc4bf">[</span>1022:1453<span style="color:#5bc4bf">]</span>                          
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">75</span>IOMMU Group <span style="color:#f99b15">5</span> 00:03.2 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">76</span>Family 17h <span style="color:#5bc4bf">(</span>CIe GPP Bridge <span style="color:#5bc4bf">[</span>1022:1453<span style="color:#5bc4bf">]</span>                          
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">77</span>IOMMU Group <span style="color:#f99b15">6</span> 00:04.0 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">78</span>Family 17h PCIe Dummy Host Bridge <span style="color:#5bc4bf">[</span>1022:1452<span style="color:#5bc4bf">]</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">79</span>IOMMU Group <span style="color:#f99b15">7</span> 00:07.0 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">80</span>Family 17h PCIe Dummy Host Bridge <span style="color:#5bc4bf">[</span>1022:1452<span style="color:#5bc4bf">]</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">81</span>IOMMU Group <span style="color:#f99b15">8</span> 00:07.1 PCI bridge <span style="color:#5bc4bf">[</span>0604<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">82</span>Family 17h <span style="color:#5bc4bf">(</span>nternal PCIe GPP Bridge <span style="color:#f99b15">0</span> to Bus B <span style="color:#5bc4bf">[</span>1022:1454<span style="color:#5bc4bf">]</span>      
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">83</span>IOMMU Group <span style="color:#f99b15">9</span> 00:08.0 Host bridge <span style="color:#5bc4bf">[</span>0600<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD<span style="color:#5bc4bf">]</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">84</span>Family 17h PCIe Dummy Host Bridge <span style="color:#5bc4bf">[</span>1022:1452<span style="color:#5bc4bf">]</span>
+</code></pre></div><p>We are looking for the device id of the guest GPU (in my case, Radeon RX
+470/480)
+for isolation. Keep in mind that the GPU usually comes combined with an audio
+device.</p>
+<p>We will isolate the GPU in PCIe slot 2, with host gpu in PCIe slot 1.</p>
+<p>For the next step only the GPU-Id is needed.
+We have to isolate <code>1002:67df</code> and <code>1002:aaf0</code></p>
+<h2 id="isolation-of-guest-gpu">Isolation of guest gpu</h2>
+<p>In order to isolate the gfx card modify <code>/etc/initramfs-tools/modules</code> via:
+<code>sudo nano /etc/initramfs-tools/modules</code> and add:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>softdep amdgpu pre: vfio vfio_pci
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>vfio vfio_iommu_type1 vfio_virqfd vfio_pci <span style="color:#ef6155">ids</span><span style="color:#5bc4bf">=</span>1002:67df,1002:aaf0
+</code></pre></div><p>modify <code>/etc/modules</code> aswell via: <code>sudo nano /etc/modules</code> and add:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>vfio
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>vfio_iommu_type1
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>vfio_pci <span style="color:#ef6155">ids</span><span style="color:#5bc4bf">=</span>1002:67df,1002:aaf0
+</code></pre></div><p>These changes will pass device-ids to the vfio_pci module, in order to reserve
+these devices for the passthrough. It is crucial that the vfio_pci module
+claims the GPU before the actual driver (in this case the nvidia graphic-cards
+driver) loads, otherwise it is not possible to isolate the GPU. Make sure your
+cards are using the Nvidia driver (not nouvea one).</p>
+<p>In order to alter the load sequence in favour to vfio_pci before the nvidia
+driver, create a file in the <code>modprobe.d</code> folder via <code>sudo nano /etc/modprobe.d/nvidia.conf</code> and add the the following line:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>softdep nouveau pre: vfio-pci 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>softdep nvidia pre: vfio-pci 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>softdep nvidia* pre: vfio-pci
+</code></pre></div><p>Create another file via <code>sudo nano /etc/modprobe.d/vfio.conf</code> to add the the
+following line:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>options vfio-pci <span style="color:#ef6155">ids</span><span style="color:#5bc4bf">=</span>1002:67df,1002:aaf0
+</code></pre></div><p>Obviously, the ids have to be the same we have added before to the modules
+file. Now save and close the file.</p>
+<p>Since the Windows 10 update 1803 the following additional entry needs to be set
+(otherwise BSOD) create the kvm.conf file via<code> sudo nano /etc/modprobe.d/kvm.conf</code> to add the the following line:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>options kvm <span style="color:#ef6155">ignore_msrs</span><span style="color:#5bc4bf">=</span><span style="color:#f99b15">1</span>
+</code></pre></div><p>Save and close the file.</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>when all is <span style="color:#815ba4">done</span> run: sudo update-initramfs -u -k all
+</code></pre></div><h2 id="verify-the-isolation">Verify the isolation</h2>
+<p>In order to verify a proper isolation of the device, run:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>lspci -nnv
+</code></pre></div><p>find the line <code>&quot;Kernel driver in use&quot;</code> for the GPU and its audio part. It should
+state <code>vfio-pci</code>.</p>
+<p>My output:</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>1e:00.0 VGA compatible controller <span style="color:#5bc4bf">[</span>0300<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#5bc4bf">[</span>AMD/ATI<span style="color:#5bc4bf">]</span> Ellesmere <span style="color:#5bc4bf">[</span>Radeon RX 470/480<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span>1002:67df<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>rev e7<span style="color:#5bc4bf">)</span> <span style="color:#5bc4bf">(</span>prog-if <span style="color:#f99b15">00</span> <span style="color:#5bc4bf">[</span>VGA
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>controller<span style="color:#5bc4bf">])</span>               
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>        Subsystem: Sapphire Technology Limited Ellesmere <span style="color:#5bc4bf">[</span>Radeon RX
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>470/480/570/570X/580/580X/590<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">(</span>Nitro+ Radeon RX 570/580<span style="color:#5bc4bf">)</span> <span style="color:#5bc4bf">[</span>1da2:e366<span style="color:#5bc4bf">]</span>                                       
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>        Flags: fast devsel, IRQ <span style="color:#f99b15">11</span>          
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        Memory at d0000000 <span style="color:#5bc4bf">(</span>64-bit, prefetchable<span style="color:#5bc4bf">)</span> <span style="color:#5bc4bf">[</span>disabled<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span><span style="color:#ef6155">size</span><span style="color:#5bc4bf">=</span>256M<span style="color:#5bc4bf">]</span>                
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>        Memory at e0000000 <span style="color:#5bc4bf">(</span>64-bit, prefetchable<span style="color:#5bc4bf">)</span> <span style="color:#5bc4bf">[</span>disabled<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span><span style="color:#ef6155">size</span><span style="color:#5bc4bf">=</span>2M<span style="color:#5bc4bf">]</span>                  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>        I/O ports at d000 <span style="color:#5bc4bf">[</span>disabled<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span><span style="color:#ef6155">size</span><span style="color:#5bc4bf">=</span>256<span style="color:#5bc4bf">]</span>                                         
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        Memory at f7900000 <span style="color:#5bc4bf">(</span>32-bit, non-prefetchable<span style="color:#5bc4bf">)</span> <span style="color:#5bc4bf">[</span>disabled<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span><span style="color:#ef6155">size</span><span style="color:#5bc4bf">=</span>256K<span style="color:#5bc4bf">]</span>            
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        Expansion ROM at f7940000 <span style="color:#5bc4bf">[</span>disabled<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span><span style="color:#ef6155">size</span><span style="color:#5bc4bf">=</span>128K<span style="color:#5bc4bf">]</span>                                
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>        Capabilities: &lt;access denied&gt;       
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        Kernel driver in use: vfio-pci      
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>        Kernel modules: amdgpu              
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>1e:00.1 Audio device <span style="color:#5bc4bf">[</span>0403<span style="color:#5bc4bf">]</span>: Advanced Micro Devices, Inc. <span style="color:#5bc4bf">[</span>AMD/ATI<span style="color:#5bc4bf">]</span> Ellesmere
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>HDMI Audio <span style="color:#5bc4bf">[</span>Radeon RX 470/480 / 570/580/590<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span>1002:aaf0<span style="color:#5bc4bf">]</span>                                          
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>        Subsystem: Sapphire Technology Limited Ellesmere HDMI Audio <span style="color:#5bc4bf">[</span>Radeon RX
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>470/480 / 570/580/590<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span>1da2:aaf0<span style="color:#5bc4bf">]</span>                   
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>        Flags: fast devsel, IRQ <span style="color:#f99b15">10</span>          
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>        Memory at f7960000 <span style="color:#5bc4bf">(</span>64-bit, non-prefetchable<span style="color:#5bc4bf">)</span> <span style="color:#5bc4bf">[</span>disabled<span style="color:#5bc4bf">]</span> <span style="color:#5bc4bf">[</span><span style="color:#ef6155">size</span><span style="color:#5bc4bf">=</span>16K<span style="color:#5bc4bf">]</span>             
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>        Capabilities: &lt;access denied&gt;       
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>        Kernel driver in use: vfio-pci      
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>        Kernel modules: snd_hda_intel       
+</code></pre></div><h2 id="creating-the-windows-virtual-machine">Creating the windows virtual machine</h2>
+<p>The virtualization is done via an open source machine emulator and virtualizer
+called QEMU. One can either run qemu directly, or use a GUI called virt-manager
+in order setup, and run a virtual machine. I prefer using the GUI.
+Unfortunately not every settings is supported in the Virtual Manager. Thus,
+I define the basic settings in the UI do a quick VM start and force stop it
+right after I see the GPU is passed-over correctly. Afterwards one can edit the
+missing bits into the VM config via virsh.</p>
+<ol>
+<li>
+<p>Open <code>virt-manager</code></p>
+<p><img src="/img/virt-manager.png" alt="image"></p>
+</li>
+<li>
+<p>Create a new windows virtual machine</p>
+<p><img src="/img/virt1.png" alt="image"></p>
+</li>
+<li>
+<p>Select the iso file of windows10</p>
+<p><img src="/img/virt2.png" alt="image"></p>
+</li>
+<li>
+<p>Choose the desired amount of RAM and CPU cores</p>
+<p><img src="/img/virt3.png" alt="image"></p>
+</li>
+<li>
+<p>Create a custom storage(since we are using a wholess SSD for this vm)</p>
+<p><img src="/img/virt4.png" alt="image"></p>
+</li>
+<li>
+<p>Add a new pool</p>
+<p><img src="/img/virt5.png" alt="image"></p>
+</li>
+<li>
+<p>First, find the dev name of your ssd for vm using the command <code>lsblk</code> in
+terminal. In my case, it was /dev/sdc. You must select physical disk drive
+as we are using a seperate disk.</p>
+<p><img src="/img/virt6.png" alt="image"></p>
+</li>
+<li>
+<p>Build the pool</p>
+<p><img src="/img/virt7.png" alt="image"></p>
+</li>
+<li>
+<p>Next create a new volume in the pool by the name <code>win10</code>(or whatever you
+like). and select this voilume as the storage.</p>
+</li>
+<li>
+<p>You must check the box</p>
+<p><img src="/img/virt8.png" alt="image"></p>
+</li>
+<li>
+<p>After finishing, the following box will appear. Select chipset <code>Q35</code>
+and firmware <code>uefi</code> and apply.</p>
+<p><img src="/img/virt9.png" alt="image"></p>
+</li>
+<li>
+<p>In the CPUs, manually set the cpu topology with 1 socket and cores and
+threads as your choice, better follow usual configurations of cores/threads</p>
+<p><img src="/img/virt10.png" alt="image"></p>
+</li>
+<li>
+<p>Remove the <code>Display spice</code> and <code>Video QXL</code> from the hardwares.</p>
+</li>
+<li>
+<p>Go to <code>Add hardware</code>, there yoiu will find your passthrough gpu and
+sound in the <code>pci host device</code> section. Add those.</p>
+<p><img src="/img/virt11.png" alt="image"></p>
+</li>
+<li>
+<blockquote>
+<p>A problem that I faced during installing windows is that I couldn&rsquo;t boot
+into the iso file inserted as cd rom and got stuck on the UEFI shell. Going
+into the bios, I still couldn&rsquo;t boot from the iso. But when I used BIOS instead
+of UEFI, it booted into windows installation alright, but going to install
+windows, it shows that my disk is GPT instead of MBR required for BIOS, and so
+cannot install windows to that disk.</p>
+</blockquote>
+<p>So, what you have to do is create a windows bootable drive with GPT. You can do
+this in many ways, either in linux or using a sofware like rufus on windows.
+Create a bootable pendrive and attach it. Now in the <code>add hardware</code>
+section, under the <code>USB Host Device</code>, you will find your pendrive. Add it.</p>
+<p><img src="/img/virt12.png" alt="image"></p>
+</li>
+<li>
+<p>Go to boot options, check <code>Enable boot menu</code> and in the serial, check
+and move
+the USB device(your bootable drive), to the top.</p>
+<p><img src="/img/virt13.png" alt="image"></p>
+</li>
+<li>
+<p>Next, start installation.</p>
+</li>
+</ol>
+<h2 id="install-windows">Install windows:</h2>
+<p>Connect a second monitor to you host gpu, or you can connect to the monnitor
+you already have and can switch the inputs between your host and guest gpu.</p>
+<p>The windows installation should come up, install windows and voila! you are
+done, almost</p>
+<h2 id="install-necessary-drivers">Install necessary drivers</h2>
+<p>Performance is supposed to get better if you use virtio drivers on windows,
+Download the virtio drivers and attack them to the vm as a cdrom device and
+install the drivers from there.</p>
+<p>You must also install the required graphics drivers(Radeon/NVIDIA) to eliminate
+display issues (in my case , I was not gettint the 1080p resolution).</p>
+<h2 id="editing-configurations-using-virsh">Editing configurations using virsh</h2>
+<p>You can edit the config of your vm from terminal by editing the xml file
+generate, To edit the xml file, in the termial, type
+<code>virsh edit win10</code>
+In place if win10, place the name of your windows vm.</p>
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  1</span><span style="color:#5bc4bf">&lt;domain</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;kvm&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  2</span>  <span style="color:#5bc4bf">&lt;name&gt;</span>win10<span style="color:#5bc4bf">&lt;/name&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  3</span>  <span style="color:#5bc4bf">&lt;uuid&gt;</span>ba67aec1-75a4-4639-b905-2e9c444aef85<span style="color:#5bc4bf">&lt;/uuid&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  4</span>  <span style="color:#5bc4bf">&lt;metadata&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  5</span>    <span style="color:#5bc4bf">&lt;libosinfo:libosinfo</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  6</span><span style="color:#06b6ef">xmlns:libosinfo=</span><span style="color:#48b685">&#34;http://libosinfo.org/xmlns/libvirt/domain/1.0&#34;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  7</span>      <span style="color:#5bc4bf">&lt;libosinfo:os</span> <span style="color:#06b6ef">id=</span><span style="color:#48b685">&#34;http://microsoft.com/win/10&#34;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  8</span>    <span style="color:#5bc4bf">&lt;/libosinfo:libosinfo&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">  9</span>  <span style="color:#5bc4bf">&lt;/metadata&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 10</span>  <span style="color:#5bc4bf">&lt;memory</span> <span style="color:#06b6ef">unit=</span><span style="color:#48b685">&#39;KiB&#39;</span><span style="color:#5bc4bf">&gt;</span>8388608<span style="color:#5bc4bf">&lt;/memory&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 11</span>  <span style="color:#5bc4bf">&lt;currentMemory</span> <span style="color:#06b6ef">unit=</span><span style="color:#48b685">&#39;KiB&#39;</span><span style="color:#5bc4bf">&gt;</span>8388608<span style="color:#5bc4bf">&lt;/currentMemory&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 12</span>  <span style="color:#5bc4bf">&lt;vcpu</span> <span style="color:#06b6ef">placement=</span><span style="color:#48b685">&#39;static&#39;</span><span style="color:#5bc4bf">&gt;</span>6<span style="color:#5bc4bf">&lt;/vcpu&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 13</span>  <span style="color:#5bc4bf">&lt;os&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 14</span>    <span style="color:#5bc4bf">&lt;type</span> <span style="color:#06b6ef">arch=</span><span style="color:#48b685">&#39;x86_64&#39;</span> <span style="color:#06b6ef">machine=</span><span style="color:#48b685">&#39;pc-q35-3.1&#39;</span><span style="color:#5bc4bf">&gt;</span>hvm<span style="color:#5bc4bf">&lt;/type&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 15</span>    <span style="color:#5bc4bf">&lt;loader</span> <span style="color:#06b6ef">readonly=</span><span style="color:#48b685">&#39;yes&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pflash&#39;</span><span style="color:#5bc4bf">&gt;</span>/usr/share/OVMF/OVMF_CODE.fd<span style="color:#5bc4bf">&lt;/loader&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 16</span>    <span style="color:#5bc4bf">&lt;nvram&gt;</span>/var/lib/libvirt/qemu/nvram/win10_VARS.fd<span style="color:#5bc4bf">&lt;/nvram&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 17</span>    <span style="color:#5bc4bf">&lt;bootmenu</span> <span style="color:#06b6ef">enable=</span><span style="color:#48b685">&#39;yes&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 18</span>  <span style="color:#5bc4bf">&lt;/os&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 19</span>  <span style="color:#5bc4bf">&lt;features&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 20</span>    <span style="color:#5bc4bf">&lt;acpi/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 21</span>    <span style="color:#5bc4bf">&lt;apic/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 22</span>    <span style="color:#5bc4bf">&lt;hyperv&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 23</span>      <span style="color:#5bc4bf">&lt;relaxed</span> <span style="color:#06b6ef">state=</span><span style="color:#48b685">&#39;on&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 24</span>      <span style="color:#5bc4bf">&lt;vapic</span> <span style="color:#06b6ef">state=</span><span style="color:#48b685">&#39;on&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 25</span>      <span style="color:#5bc4bf">&lt;spinlocks</span> <span style="color:#06b6ef">state=</span><span style="color:#48b685">&#39;on&#39;</span> <span style="color:#06b6ef">retries=</span><span style="color:#48b685">&#39;8191&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 26</span>    <span style="color:#5bc4bf">&lt;/hyperv&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 27</span>    <span style="color:#5bc4bf">&lt;vmport</span> <span style="color:#06b6ef">state=</span><span style="color:#48b685">&#39;off&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 28</span>  <span style="color:#5bc4bf">&lt;/features&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 29</span>  <span style="color:#5bc4bf">&lt;cpu</span> <span style="color:#06b6ef">mode=</span><span style="color:#48b685">&#39;host-model&#39;</span> <span style="color:#06b6ef">check=</span><span style="color:#48b685">&#39;partial&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 30</span>    <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">fallback=</span><span style="color:#48b685">&#39;allow&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 31</span>    <span style="color:#5bc4bf">&lt;topology</span> <span style="color:#06b6ef">sockets=</span><span style="color:#48b685">&#39;1&#39;</span> <span style="color:#06b6ef">cores=</span><span style="color:#48b685">&#39;6&#39;</span> <span style="color:#06b6ef">threads=</span><span style="color:#48b685">&#39;1&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 32</span>  <span style="color:#5bc4bf">&lt;/cpu&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 33</span>  <span style="color:#5bc4bf">&lt;clock</span> <span style="color:#06b6ef">offset=</span><span style="color:#48b685">&#39;localtime&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 34</span>    <span style="color:#5bc4bf">&lt;timer</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;rtc&#39;</span> <span style="color:#06b6ef">tickpolicy=</span><span style="color:#48b685">&#39;catchup&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 35</span>    <span style="color:#5bc4bf">&lt;timer</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;pit&#39;</span> <span style="color:#06b6ef">tickpolicy=</span><span style="color:#48b685">&#39;delay&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 36</span><span style="color:#5bc4bf">&lt;timer</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;hpet&#39;</span> <span style="color:#06b6ef">present=</span><span style="color:#48b685">&#39;no&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 37</span>    <span style="color:#5bc4bf">&lt;timer</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;hypervclock&#39;</span> <span style="color:#06b6ef">present=</span><span style="color:#48b685">&#39;yes&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 38</span>  <span style="color:#5bc4bf">&lt;/clock&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 39</span>  <span style="color:#5bc4bf">&lt;on_poweroff&gt;</span>destroy<span style="color:#5bc4bf">&lt;/on_poweroff&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 40</span>  <span style="color:#5bc4bf">&lt;on_reboot&gt;</span>restart<span style="color:#5bc4bf">&lt;/on_reboot&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 41</span>  <span style="color:#5bc4bf">&lt;on_crash&gt;</span>destroy<span style="color:#5bc4bf">&lt;/on_crash&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 42</span>  <span style="color:#5bc4bf">&lt;pm&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 43</span>    <span style="color:#5bc4bf">&lt;suspend-to-mem</span> <span style="color:#06b6ef">enabled=</span><span style="color:#48b685">&#39;no&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 44</span>    <span style="color:#5bc4bf">&lt;suspend-to-disk</span> <span style="color:#06b6ef">enabled=</span><span style="color:#48b685">&#39;no&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 45</span>  <span style="color:#5bc4bf">&lt;/pm&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 46</span>  <span style="color:#5bc4bf">&lt;devices&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 47</span>    <span style="color:#5bc4bf">&lt;emulator&gt;</span>/usr/bin/qemu-system-x86_64<span style="color:#5bc4bf">&lt;/emulator&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 48</span>    <span style="color:#5bc4bf">&lt;disk</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;block&#39;</span> <span style="color:#06b6ef">device=</span><span style="color:#48b685">&#39;disk&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 49</span>      <span style="color:#5bc4bf">&lt;driver</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;qemu&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;raw&#39;</span> <span style="color:#06b6ef">cache=</span><span style="color:#48b685">&#39;none&#39;</span> <span style="color:#06b6ef">io=</span><span style="color:#48b685">&#39;native&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 50</span>      <span style="color:#5bc4bf">&lt;source</span> <span style="color:#06b6ef">dev=</span><span style="color:#48b685">&#39;/dev/sdc1&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 51</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">dev=</span><span style="color:#48b685">&#39;sda&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;sata&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 52</span>      <span style="color:#5bc4bf">&lt;boot</span> <span style="color:#06b6ef">order=</span><span style="color:#48b685">&#39;2&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 53</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;drive&#39;</span> <span style="color:#06b6ef">controller=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">target=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">unit=</span><span style="color:#48b685">&#39;0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 54</span>    <span style="color:#5bc4bf">&lt;/disk&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 55</span>    <span style="color:#5bc4bf">&lt;disk</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;file&#39;</span> <span style="color:#06b6ef">device=</span><span style="color:#48b685">&#39;cdrom&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 56</span>      <span style="color:#5bc4bf">&lt;driver</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;qemu&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;raw&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 57</span>      <span style="color:#5bc4bf">&lt;source</span> <span style="color:#06b6ef">file=</span><span style="color:#48b685">&#39;/home/fmash/gpu_passthru/virtio-win-0.1.141.iso&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 58</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">dev=</span><span style="color:#48b685">&#39;sdb&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;sata&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 59</span>      <span style="color:#5bc4bf">&lt;readonly/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 60</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;drive&#39;</span> <span style="color:#06b6ef">controller=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">target=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">unit=</span><span style="color:#48b685">&#39;1&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 61</span>    <span style="color:#5bc4bf">&lt;/disk&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 62</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;qemu-xhci&#39;</span> <span style="color:#06b6ef">ports=</span><span style="color:#48b685">&#39;15&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 63</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x02&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x00&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 64</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 65</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 66</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;sata&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;0&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 67</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x1f&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 68</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x2&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 69</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 70</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;pcie-root&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 71</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;1&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 72</span>      <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 73</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">chassis=</span><span style="color:#48b685">&#39;1&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0x8&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 74</span><span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x01&#39;</span> <span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 75</span><span style="color:#06b6ef">multifunction=</span><span style="color:#48b685">&#39;on&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 76</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 77</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;2&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 78</span>      <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 79</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">chassis=</span><span style="color:#48b685">&#39;2&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0x9&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 80</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x01&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 81</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x1&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 82</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 83</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;3&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 84</span>      <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 85</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">chassis=</span><span style="color:#48b685">&#39;3&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0xa&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 86</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x01&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 87</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x2&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 88</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 89</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;4&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 90</span>      <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 91</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">chassis=</span><span style="color:#48b685">&#39;4&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0xb&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 92</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x01&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 93</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x3&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 94</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 95</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;5&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 96</span>      <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 97</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">chassis=</span><span style="color:#48b685">&#39;5&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0xc&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 98</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x01&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 99</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x4&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">100</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">101</span>    <span style="color:#5bc4bf">&lt;controller</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">index=</span><span style="color:#48b685">&#39;6&#39;</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">102</span>      <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;pcie-root-port&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">103</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">chassis=</span><span style="color:#48b685">&#39;6&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0xd&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">104</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x01&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">105</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x5&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">106</span>    <span style="color:#5bc4bf">&lt;/controller&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">107</span>    <span style="color:#5bc4bf">&lt;interface</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;network&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">108</span>      <span style="color:#5bc4bf">&lt;mac</span> <span style="color:#06b6ef">address=</span><span style="color:#48b685">&#39;52:54:00:e4:b0:ef&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">109</span>      <span style="color:#5bc4bf">&lt;source</span> <span style="color:#06b6ef">network=</span><span style="color:#48b685">&#39;default&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">110</span>      <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;e1000e&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">111</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x01&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x00&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">112</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">113</span>    <span style="color:#5bc4bf">&lt;/interface&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">114</span>    <span style="color:#5bc4bf">&lt;serial</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pty&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">115</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;isa-serial&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">116</span>        <span style="color:#5bc4bf">&lt;model</span> <span style="color:#06b6ef">name=</span><span style="color:#48b685">&#39;isa-serial&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">117</span><span style="color:#5bc4bf">&lt;/target&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">118</span>    <span style="color:#5bc4bf">&lt;/serial&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">119</span>    <span style="color:#5bc4bf">&lt;console</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pty&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">120</span>      <span style="color:#5bc4bf">&lt;target</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;serial&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">121</span>    <span style="color:#5bc4bf">&lt;/console&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">122</span>    <span style="color:#5bc4bf">&lt;input</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;tablet&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;usb&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">123</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;2&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">124</span>    <span style="color:#5bc4bf">&lt;/input&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">125</span>    <span style="color:#5bc4bf">&lt;input</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;mouse&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;ps2&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">126</span>    <span style="color:#5bc4bf">&lt;input</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;keyboard&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;ps2&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">127</span>    <span style="color:#5bc4bf">&lt;sound</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;ich9&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">128</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x1b&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">129</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">130</span>    <span style="color:#5bc4bf">&lt;/sound&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">131</span>    <span style="color:#5bc4bf">&lt;hostdev</span> <span style="color:#06b6ef">mode=</span><span style="color:#48b685">&#39;subsystem&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">managed=</span><span style="color:#48b685">&#39;yes&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">132</span>      <span style="color:#5bc4bf">&lt;source&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">133</span>        <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x1e&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">134</span>      <span style="color:#5bc4bf">&lt;/source&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">135</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x03&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x00&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">136</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">137</span>    <span style="color:#5bc4bf">&lt;/hostdev&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">138</span>    <span style="color:#5bc4bf">&lt;hostdev</span> <span style="color:#06b6ef">mode=</span><span style="color:#48b685">&#39;subsystem&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">managed=</span><span style="color:#48b685">&#39;yes&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">139</span>      <span style="color:#5bc4bf">&lt;source&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">140</span>        <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x1e&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x00&#39;</span> <span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x1&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">141</span>      <span style="color:#5bc4bf">&lt;/source&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">142</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x04&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x00&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">143</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">144</span>    <span style="color:#5bc4bf">&lt;/hostdev&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">145</span>    <span style="color:#5bc4bf">&lt;hostdev</span> <span style="color:#06b6ef">mode=</span><span style="color:#48b685">&#39;subsystem&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">managed=</span><span style="color:#48b685">&#39;yes&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">146</span>      <span style="color:#5bc4bf">&lt;source&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">147</span>        <span style="color:#5bc4bf">&lt;vendor</span> <span style="color:#06b6ef">id=</span><span style="color:#48b685">&#39;0x046d&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">148</span>        <span style="color:#5bc4bf">&lt;product</span> <span style="color:#06b6ef">id=</span><span style="color:#48b685">&#39;0xc07e&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">149</span>      <span style="color:#5bc4bf">&lt;/source&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">150</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;5&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">151</span>    <span style="color:#5bc4bf">&lt;/hostdev&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">152</span>    <span style="color:#5bc4bf">&lt;redirdev</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;spicevmc&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">153</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;3&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">154</span>    <span style="color:#5bc4bf">&lt;/redirdev&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">155</span>    <span style="color:#5bc4bf">&lt;redirdev</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;spicevmc&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">156</span><span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;usb&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0&#39;</span> <span style="color:#06b6ef">port=</span><span style="color:#48b685">&#39;4&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">157</span>    <span style="color:#5bc4bf">&lt;/redirdev&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">158</span>    <span style="color:#5bc4bf">&lt;memballoon</span> <span style="color:#06b6ef">model=</span><span style="color:#48b685">&#39;virtio&#39;</span><span style="color:#5bc4bf">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">159</span>      <span style="color:#5bc4bf">&lt;address</span> <span style="color:#06b6ef">type=</span><span style="color:#48b685">&#39;pci&#39;</span> <span style="color:#06b6ef">domain=</span><span style="color:#48b685">&#39;0x0000&#39;</span> <span style="color:#06b6ef">bus=</span><span style="color:#48b685">&#39;0x05&#39;</span> <span style="color:#06b6ef">slot=</span><span style="color:#48b685">&#39;0x00&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">160</span><span style="color:#06b6ef">function=</span><span style="color:#48b685">&#39;0x0&#39;</span><span style="color:#5bc4bf">/&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">161</span>    <span style="color:#5bc4bf">&lt;/memballoon&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">162</span>  <span style="color:#5bc4bf">&lt;/devices&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">163</span><span style="color:#5bc4bf">&lt;/domain&gt;</span>
+</code></pre></div><p>And thats it! You are done!</p>
+<h2 id="sources">Sources</h2>
+<p>The guide that I mainly followed is this:</p>
+<ul>
+<li>(<a href="http://mathiashueber.com/windows-virtual-machine-gpu-passthrough-ubuntu/">http://mathiashueber.com/windows-virtual-machine-gpu-passthrough-ubuntu/</a>)</li>
+</ul>
+<p>A major part pf my guide has been taken from this guide, but as you know, all
+systems are not the same, and so to get my setupo working , I had to follow
+somw other resources as well. You must watch the level1tech videos on this
+topic. They also got an article on this. The resources I used are:</p>
+<ul>
+<li>(<a href="https://level1techs.com/article/ryzen-gpu-passthrough-setup-guide-fedora-26-windows-gaming-linux">https://level1techs.com/article/ryzen-gpu-passthrough-setup-guide-fedora-26-windows-gaming-linux</a>)</li>
+<li>(<a href="https://heiko-sieger.info/running-windows-10-on-linux-using-kvm-with-vga-passthrough/">https://heiko-sieger.info/running-windows-10-on-linux-using-kvm-with-vga-passthrough/</a>)</li>
+<li>(<a href="https://scottlinux.com/2016/08/28/gpu-passthrough-with-kvm-and-debian-linux/">https://scottlinux.com/2016/08/28/gpu-passthrough-with-kvm-and-debian-linux/</a>)</li>
+<li>(<a href="https://www.reddit.com/r/VFIO/comments/af71pf/kernel_driver_in_use_amdgpu_instead_of_vfiopci/ee0emkf/">https://www.reddit.com/r/VFIO/comments/af71pf/kernel_driver_in_use_amdgpu_instead_of_vfiopci/ee0emkf/</a>)</li>
+</ul>
+<p>Videos to watch:
+<a href="http://www.youtube.com/watch?v=aLeWg11ZBn0" title="GPU Passthrough for Virtualization with Ryzen: Now Working"><img src="http://img.youtube.com/vi/aLeWg11ZBn0/0.jpg" alt="IMAGE ALTTEXT"></a></p>
+
+    </div>
+    <div class="article-footer">
+<blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    <li class="post-copyright-link hidden-xs">
+      <strong>Permalink: </strong>
+      <a href="/2020/03/gpu_passthrough/" title="Ryzen Gpu passthrough guide on debian" target="_blank" rel="external">/2020/03/gpu_passthrough/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
+    </li>
+  </ul>
+</blockquote>
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
+        <div>Hack the Planet</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+    </div>
+  </article>
+<section id="comments">
+</section>
+
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+    <div class="bar-inner">
+        <ul class="pager pull-left">
+            <li class="prev">
+                <a href="/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/neverlan-ctf-reverse-engineer-writeup/" title="NeverLAN CTF - Reverse Engineer writeup"><i
+                        class="icon icon-angle-left"
+                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            <li class="next">
+                <a href="/writeups/tryhackme-writeups/tryhackme-basic-pentesting-writeup/"
+                    title="TryHackMe - Basic Pentesting Writeup"><span>Newer&nbsp;&nbsp;</span><i
+                        class="icon icon-angle-right" aria-hidden="true"></i></a>
+            </li>
+            
+            <li class="toggle-toc">
+                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
+                    title="Catalogue" role="button">
+                    <span>[&nbsp;</span><span>Index</span>
+                    <i class="text-collapsed icon icon-anchor"></i>
+                    <i class="text-in icon icon-close"></i>
+                    <span>]</span>
+                </a>
+            </li>
+        </ul>
+        <div class="bar-right">
+            <div class="share-component" data-sites="facebook,twitter"
+                data-mobile-sites="">Share on:</div>
+        </div>
+    </div>
+</nav>
+
+
+
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+            },
+            ROOT_URL: '\/',
+            CONTENT_URL: '\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+
+
+  </body>
+</html>
