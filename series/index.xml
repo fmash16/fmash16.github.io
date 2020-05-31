@@ -5,10 +5,26 @@
     <link>/series/</link>
     <description>Recent content in Series on A personal cybersecurity blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sat, 30 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="/series/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Hackthebox - Blunder Writeup</title>
+      <link>/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</link>
+      <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</guid>
+      <description>Nmap Scan Open ports:
+ 21/tcp closed ftp 80/tcp open http Apache httpd 2.4.41 ((Ubuntu))
+http-generator: Blunder
+http-server-header: Apache/2.4.41 (Ubuntu)
+http-title: Blunder | A blunder of interesting facts  Enumeration ffuf fuzzing 1ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ We get a /admin that has the login for the &amp;ldquo;Bludit cms&amp;rdquo; We also get a /LICENSE. The file shows an MIT license.
+Got a possible user:
+ User: Diego Najar
+ Fuzzing for file with .</description>
+    </item>
     
     <item>
       <title>Hackthebox - Montevarde Writeup</title>
@@ -219,15 +235,6 @@ $ssh fd@pwnable.kr -p2222 fd@pwnable.kr&#39;s password: ____ __ __ ____ ____ ___
       
       <guid>/2020/02/sites/</guid>
       <description>Have you ever wondered where to start hacking, acquire more hacking knowledge and even train, test and improve your hacking skills? Here is a compilation, collection, list, directory of the best sites that will help you. The sites listed below will help you understand and practice every aspect of the secure (or rather insecure) side of software, networks (networking), servers and every single element that may be exposed in the(our) binary world.</description>
-    </item>
-    
-    <item>
-      <title>Writeups</title>
-      <link>/writeups/writeups/</link>
-      <pubDate>Sat, 15 Feb 2020 22:35:45 +0600</pubDate>
-      
-      <guid>/writeups/writeups/</guid>
-      <description>Hello Hello from fahim</description>
     </item>
     
     <item>

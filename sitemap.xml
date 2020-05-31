@@ -3,6 +3,90 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>/tags/bludit-cms/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/cewl/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/fuzzing/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/series/hackthebox/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/categories/hackthebox-writeups/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/series/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/sudo/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/sudo-privesc/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/tags/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>/writeups/</loc>
+    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>/tags/ad/</loc>
     <lastmod>2020-05-30T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -24,13 +108,6 @@
   </url>
   
   <url>
-    <loc>/categories/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>/tags/crackmapexec/</loc>
     <lastmod>2020-05-30T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -38,21 +115,7 @@
   </url>
   
   <url>
-    <loc>/series/hackthebox/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/categories/hackthebox-writeups/</loc>
     <lastmod>2020-05-30T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -67,27 +130,6 @@
   
   <url>
     <loc>/tags/powershell/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/series/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/</loc>
-    <lastmod>2020-05-30T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/</loc>
     <lastmod>2020-05-30T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -192,13 +234,6 @@
   </url>
   
   <url>
-    <loc>/tags/sudo/</loc>
-    <lastmod>2020-05-21T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>/series/tryhackme/</loc>
     <lastmod>2020-05-21T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -284,13 +319,6 @@
   
   <url>
     <loc>/tags/adminer/</loc>
-    <lastmod>2020-05-06T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/tags/fuzzing/</loc>
     <lastmod>2020-05-06T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -544,13 +572,6 @@
   <url>
     <loc>/writeups/ctf_writeups/</loc>
     <lastmod>2020-02-15T22:37:10+06:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>/writeups/writeups/</loc>
-    <lastmod>2020-02-15T22:35:45+06:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
