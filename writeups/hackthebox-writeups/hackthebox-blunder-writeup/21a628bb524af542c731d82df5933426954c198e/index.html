@@ -19,16 +19,16 @@
     <meta http-equiv="window-target" content="_top" />
     
     
-    <meta name="description" content="An easy linux box." />
+    <meta name="description" content="An easy difficulty linux box" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
     <title>Hackthebox - Blunder Writeup - A personal cybersecurity blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
+    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox - Blunder Writeup" />
-<meta property="og:description" content="An easy linux box." />
+<meta property="og:description" content="An easy difficulty linux box" />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="/writeups/hackthebox-writeups/hackthebox-blunder-writeup/" />
 <meta property="og:image" content="/img/htb_blunder/card.png" />
@@ -37,10 +37,10 @@
 <meta property="article:modified_time" content="2020-05-31T00:00:00+00:00" />
 
 <meta itemprop="name" content="Hackthebox - Blunder Writeup">
-<meta itemprop="description" content="An easy linux box.">
+<meta itemprop="description" content="An easy difficulty linux box">
 <meta itemprop="datePublished" content="2020-05-31T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-05-31T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="704">
+<meta itemprop="wordCount" content="730">
 <meta itemprop="image" content="/img/htb_blunder/card.png">
 <meta itemprop="image" content="/">
 
@@ -50,7 +50,7 @@
 <meta name="twitter:image" content="/img/htb_blunder/card.png"/>
 
 <meta name="twitter:title" content="Hackthebox - Blunder Writeup"/>
-<meta name="twitter:description" content="An easy linux box."/>
+<meta name="twitter:description" content="An easy difficulty linux box"/>
 
     <!--[if lte IE 9]>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
@@ -196,7 +196,7 @@
             <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
             
             
-            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
+            <a href="/tags/dll/" class="tag-list-link">dll</a><span class="tag-list-count">1</span>
             
             
             <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
@@ -230,6 +230,9 @@
             
             
             <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/injection/" class="tag-list-link">injection</a><span class="tag-list-count">1</span>
             
             
             <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
@@ -338,7 +341,7 @@
                         <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
                     </p>
                     <p class="item-date">
-                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+                        <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
                     </p>
                 </div>
             </li>
@@ -403,7 +406,7 @@
 </span>
 <span class="article-category">
   <i class="icon icon-folder"></i>&nbsp;
-  <a class="article-category-link" href="/categories/hackthebox-writeups/"> Hackthebox writeups </a>
+  <a class="article-category-link" href="/categories/hackthebox-writeups/"> Hackthebox Writeups </a>
 </span>  
   <span class="article-tag">
     <i class="icon icon-tags"></i>&nbsp;
@@ -422,32 +425,38 @@
       <p><img src="/img/htb_blunder/card.png" alt=""></p>
 <h1 id="nmap-scan">Nmap Scan</h1>
 <p>Open ports:</p>
-<ul>
-<li>21/tcp closed ftp</li>
-<li>80/tcp open   http    Apache httpd 2.4.41 ((Ubuntu))<br>
+<blockquote>
+<p>Starting Nmap 7.80 ( <a href="https://nmap.org">https://nmap.org</a> ) at 2020-05-31 00:27 EDT<br>
+Nmap scan report for 10.10.10.191<br>
+Host is up (0.49s latency).<br>
+Not shown: 998 filtered ports<br>
+PORT   STATE  SERVICE VERSION<br>
+21/tcp closed ftp<br>
+80/tcp open   http    Apache httpd 2.4.41 ((Ubuntu))<br>
 http-generator: Blunder<br>
 http-server-header: Apache/2.4.41 (Ubuntu)<br>
-http-title: Blunder | A blunder of interesting facts</li>
-</ul>
+http-title: Blunder | A blunder of interesting facts</p>
+</blockquote>
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="ffuf-fuzzing">ffuf fuzzing</h2>
 <div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ
 </code></pre></div><p><img src="/img/htb_blunder/2.png" alt=""></p>
 <p>We get a /admin that has the login for the <strong>&ldquo;Bludit cms&rdquo;</strong>
-We also get a /LICENSE. The file shows an MIT license.</p>
-<p>Got a possible user:</p>
-<blockquote>
-<p>User: Diego Najar</p>
-</blockquote>
+We also get a /LICENSE. The file shows</p>
+<p><img src="/img/htb_blunder/1.png" alt=""></p>
 <p>Fuzzing for file with .txt extensions, we get something interesting</p>
 <div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ -x
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>.txt
-</code></pre></div><p><img src="/img/htb_blunder/3.png" alt=""></p>
-<p>Going to the URL: http://10.10.10.191/todo.txt, we get:</p>
-<p><img src="/img/htb_blunder/4.png" alt=""></p>
-<p>We get a possible username <strong>fergus</strong></p>
+</code></pre></div><p>We get a possible username <strong>fergus</strong></p>
 <blockquote>
 <p>User: fergus</p>
+</blockquote>
+<p><img src="/img/htb_blunder/3.png" alt=""></p>
+<p>Gowing to the URL: http://10.10.10.191/todo.txt, we get:</p>
+<p><img src="/img/htb_blunder/4.png" alt=""></p>
+<p>Got a possible user:</p>
+<blockquote>
+<p>User: Diego Najar</p>
 </blockquote>
 <h1 id="exploit">Exploit</h1>
 <h2 id="bruteforce">Bruteforce</h2>

