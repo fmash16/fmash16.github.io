@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        pwnable.kr - fd writeup - A personal cybersecurity blog
+        pwnable.kr - fd writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="difficulty --&gt; easy" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>pwnable.kr - fd writeup - A personal cybersecurity blog</title>
+    <title>pwnable.kr - fd writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="pwnable.kr - fd writeup" />
@@ -453,27 +453,27 @@ learn about Linux file IO
 </code></pre><p>We are told to learn about file IO in linux. Read
 <a href="https://www.digitalocean.com/community/tutorials/an-introduction-to-linux-i-o-redirection">this</a> to learn about linux file IO and descriptors.</p>
 <p>We analyze the code fd.c:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;stdio.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;stdlib.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;string.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#776e71"></span><span style="color:#fec418">char</span> buf[<span style="color:#f99b15">32</span>];
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#fec418">int</span> <span style="color:#06b6ef">main</span>(<span style="color:#fec418">int</span> argc, <span style="color:#fec418">char</span><span style="color:#5bc4bf">*</span> argv[], <span style="color:#fec418">char</span><span style="color:#5bc4bf">*</span> envp[]){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>        <span style="color:#815ba4">if</span>(argc<span style="color:#5bc4bf">&lt;</span><span style="color:#f99b15">2</span>){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>                printf(<span style="color:#48b685">&#34;pass argv[1] a number</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>                <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        <span style="color:#fec418">int</span> fd <span style="color:#5bc4bf">=</span> atoi( argv[<span style="color:#f99b15">1</span>] ) <span style="color:#5bc4bf">-</span> <span style="color:#f99b15">0x1234</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        <span style="color:#fec418">int</span> len <span style="color:#5bc4bf">=</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>        len <span style="color:#5bc4bf">=</span> read(fd, buf, <span style="color:#f99b15">32</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        <span style="color:#815ba4">if</span>(<span style="color:#5bc4bf">!</span>strcmp(<span style="color:#48b685">&#34;LETMEWIN</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>, buf)){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>                printf(<span style="color:#48b685">&#34;good job :)</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>                system(<span style="color:#48b685">&#34;/bin/cat flag&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>                exit(<span style="color:#f99b15">0</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>        printf(<span style="color:#48b685">&#34;learn about Linux file IO</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>        <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>}
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;stdio.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;stdlib.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;string.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#cd2828;font-weight:bold"></span><span style="color:#6ab825;font-weight:bold">char</span> buf[<span style="color:#3677a9">32</span>];
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span><span style="color:#6ab825;font-weight:bold">int</span> <span style="color:#447fcf">main</span>(<span style="color:#6ab825;font-weight:bold">int</span> argc, <span style="color:#6ab825;font-weight:bold">char</span>* argv[], <span style="color:#6ab825;font-weight:bold">char</span>* envp[]){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>        <span style="color:#6ab825;font-weight:bold">if</span>(argc&lt;<span style="color:#3677a9">2</span>){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>                printf(<span style="color:#ed9d13">&#34;pass argv[1] a number</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>                <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>        <span style="color:#6ab825;font-weight:bold">int</span> fd = atoi( argv[<span style="color:#3677a9">1</span>] ) - <span style="color:#3677a9">0x1234</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>        <span style="color:#6ab825;font-weight:bold">int</span> len = <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>        len = read(fd, buf, <span style="color:#3677a9">32</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>        <span style="color:#6ab825;font-weight:bold">if</span>(!strcmp(<span style="color:#ed9d13">&#34;LETMEWIN</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>, buf)){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>                printf(<span style="color:#ed9d13">&#34;good job :)</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>                system(<span style="color:#ed9d13">&#34;/bin/cat flag&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>                exit(<span style="color:#3677a9">0</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>        printf(<span style="color:#ed9d13">&#34;learn about Linux file IO</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>        <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>}
 </code></pre></div><p>Here, we see that it uses the <code>read</code> function to read a string from
 <code>buf</code> and compares it with the string &ldquo;LETMEWIN&rdquo;. On success, it calls the
 system to execute the command <code>/bin/cat flag</code> which prints out the flag to
@@ -483,8 +483,8 @@ is the file descriptor to 0, which is the stdin stream. The arg supplied is
 converted from ascii to int and <code>0x1234</code> is subtracted from it. So, the
 the hex value of arg should also be 0x1234 for fd=0. We find the decimal/ascii
 value of 0x1234 using python</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> int(<span style="color:#48b685">&#34;1234&#34;</span>, <span style="color:#f99b15">16</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f99b15">4660</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>&gt;&gt;&gt; <span style="color:#24909d">int</span>(<span style="color:#ed9d13">&#34;1234&#34;</span>, <span style="color:#3677a9">16</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#3677a9">4660</span>
 </code></pre></div><p>Now we run <code>fd</code> again with the value 4660 as arg</p>
 <pre><code class="language-shellsession" data-lang="shellsession">fd@pwnable:~$ ./fd 4660
 LETMEWIN
@@ -632,6 +632,64 @@ mommy! I think I know what a file descriptor is!!
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        TryHackMe - Year of the Rabbit - Writeup - A personal cybersecurity blog
+        TryHackMe - Year of the Rabbit - Writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="topics: sudo CVE-2019-14287 privesc, ftp, hydra, brainfuck, stego, pt_chown" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>TryHackMe - Year of the Rabbit - Writeup - A personal cybersecurity blog</title>
+    <title>TryHackMe - Year of the Rabbit - Writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="TryHackMe - Year of the Rabbit - Writeup" />
@@ -428,7 +428,7 @@
     <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
       <h2 id="initial-foothold">Initial Foothold</h2>
 <h3 id="nmap-scan">Nmap scan</h3>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>nmap -sC -sV -sS -oN nmap.out 10.10.104.143
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nmap -sC -sV -sS -oN nmap.out 10.10.104.143
 </code></pre></div><p>Open ports:</p>
 <blockquote>
 <p>21 - vsftpd 3.0.2
@@ -457,17 +457,17 @@ response.</p>
 <h3 id="steg-image">Steg image</h3>
 <p>We download the picture to our local machine and take a look at it using
 exiftool</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>exiftool Hot_Babe.png
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>exiftool Hot_Babe.png
 </code></pre></div><p><img src="/img/tryhackme_yearoftherabbit/8.png" alt=""></p>
 <p>It shows us that the picture has some trailing data after PNG IEND chunk. We
 have a look at the data using</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>strings Hot_Babe.png
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>strings Hot_Babe.png
 </code></pre></div><p><img src="/img/tryhackme_yearoftherabbit/9.png" alt=""></p>
 <p>So the ftp username is &ldquo;ftpuser&rdquo;</p>
 <h3 id="ftp-login-bruteforce-with-hydra">ftp login bruteforce with hydra</h3>
 <p>And we get a list of possible passwords. So we can bruteforce the password
 using hydra.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>hydra -l ftpuser -P wordlist.txt ftp://<span style="color:#ef6155">$ip</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>hydra -l ftpuser -P wordlist.txt ftp://<span style="color:#40ffff">$ip</span>
 </code></pre></div><p>And we get a hit.
 <img src="/img/tryhackme_yearoftherabbit/10.png" alt=""></p>
 <p>Creds found:</p>
@@ -518,48 +518,48 @@ the file and get the password for the user gwendolne</p>
 but not root. This <code>(ALL, !root)</code> sudo permission is a known sudo
 vulnerability with <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-14287">CVE-2019-14287</a>. The exploit is found <a href="https://www.exploit-db.com/exploits/47502">here</a>.</p>
 <p>So we run the  following command:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>sudo -u#-1 /usr/bin/vi /home/gwendoline/user.txt
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>sudo -u#-1 /usr/bin/vi /home/gwendoline/user.txt
 </code></pre></div><p>And we get our vim editor running as root. Now to get a root shell, we go over
 to <a href="https://gtfobins.github.io/gtfobins/vim/#shell">gtfobins</a> and follow the
 instructions to get a root shell and read our flag from root.txt file.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vim" data-lang="vim"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#06b6ef">vim</span><span style="color:#ef6155">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#ef6155"></span>:<span style="color:#06b6ef">set</span> <span style="color:#06b6ef">shell</span>=<span style="color:#48b685">/bin/</span><span style="color:#06b6ef">sh</span><span style="color:#ef6155">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#ef6155"></span>:<span style="color:#06b6ef">shell</span><span style="color:#ef6155">
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-vim" data-lang="vim"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>vim<span style="color:#a61717;background-color:#e3d2d2">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#a61717;background-color:#e3d2d2"></span>:set shell=<span style="color:#ed9d13">/bin/</span>sh<span style="color:#a61717;background-color:#e3d2d2">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span><span style="color:#a61717;background-color:#e3d2d2"></span>:shell<span style="color:#a61717;background-color:#e3d2d2">
 </span></code></pre></div><p><img src="/img/tryhackme_yearoftherabbit/19.png" alt=""></p>
 <h3 id="extra-findings">Extra findings</h3>
 <p>suid3num.py found us some interesting SUID files:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">[</span>~<span style="color:#5bc4bf">]</span> Custom SUID Binaries <span style="color:#5bc4bf">(</span>Interesting Stuff<span style="color:#5bc4bf">)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>------------------------------
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>/usr/bin/X
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>/usr/bin/procmail
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>/usr/lib/pt_chown
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span>------------------------------
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>[~] Custom SUID Binaries (Interesting Stuff)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>------------------------------
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>/usr/bin/X
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span>/usr/bin/procmail
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">5</span>/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">6</span>/usr/lib/pt_chown
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">7</span>------------------------------
 </code></pre></div><p>Looking for suid files, we got:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71"># find / -perm -u=s -type f 2&gt;/dev/null</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>/bin/mount
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>/bin/umount
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>/bin/su
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>/bin/fusermount
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>/bin/ntfs-3g
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>/usr/bin/vmware-user-suid-wrapper
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>/usr/bin/X
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>/usr/bin/procmail
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>/usr/bin/pkexec
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>/usr/bin/gpasswd
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>/usr/bin/newgrp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>/usr/bin/sudo
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>/usr/bin/chsh
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>/usr/bin/chfn
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>/usr/bin/at
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>/usr/sbin/exim4
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>/usr/sbin/pppd
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>/usr/lib/policykit-1/polkit-agent-helper-1
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>/usr/lib/dbus-1.0/dbus-daemon-launch-helper
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>/usr/lib/openssh/ssh-keysign
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>/usr/lib/pt_chown
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>/usr/lib/eject/dmcrypt-get-device
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#999;font-style:italic"># find / -perm -u=s -type f 2&gt;/dev/null</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>/bin/mount
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>/bin/umount
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>/bin/su
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>/bin/fusermount
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>/bin/ntfs-3g
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>/usr/bin/vmware-user-suid-wrapper
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>/usr/bin/X
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>/usr/bin/procmail
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>/usr/bin/pkexec
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>/usr/bin/gpasswd
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>/usr/bin/newgrp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>/usr/bin/sudo
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>/usr/bin/chsh
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>/usr/bin/chfn
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>/usr/bin/at
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>/usr/sbin/exim4
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>/usr/sbin/pppd
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>/usr/lib/policykit-1/polkit-agent-helper-1
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>/usr/lib/dbus-1.0/dbus-daemon-launch-helper
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span>/usr/lib/openssh/ssh-keysign
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>/usr/lib/pt_chown
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>/usr/lib/eject/dmcrypt-get-device
 </code></pre></div><ul>
 <li>
 <p>We find a vulnerability for pt_chown which allowd privesc to root <a href="ihttps://www.exploit-db.com/exploits/19467">here</a>
@@ -569,8 +569,8 @@ It is installed setuid root.
 We download the exploit to our local machine and transfer it to our target.
 Compiling the exploit with gcc, we run it with /dev/ptyxx as arg. But get
 a permission denied.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>gcc exploit.c -o exploit
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>./exploit /dev/pty12
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>gcc exploit.c -o exploit
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>./exploit /dev/pty12
 </code></pre></div></li>
 <li>
 <p>Exim is vunerable as well. It is a mail server. We find it running on a port
@@ -718,6 +718,64 @@ exploit it.</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

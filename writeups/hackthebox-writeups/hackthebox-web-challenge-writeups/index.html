@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        Hackthebox[Web-Challenge] Writeups - A personal cybersecurity blog
+        Hackthebox[Web-Challenge] Writeups - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="topics: web, python, proxy, requests, session, md5, regex" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>Hackthebox[Web-Challenge] Writeups - A personal cybersecurity blog</title>
+    <title>Hackthebox[Web-Challenge] Writeups - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox[Web-Challenge] Writeups" />
@@ -429,62 +429,62 @@ intercept the post request to the page in burpsuite to chech how the md5 hash
 is passed and find that it is passed as raw data.</p>
 <p><img src="/img/htb_challenges/md52.png" alt=""></p>
 <p>Now, we write our script.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solution.py" data-lang="solution.py"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#! /usr/bin/env python</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#5bc4bf">from</span> <span style="color:#fec418">__future__</span> <span style="color:#5bc4bf">import</span> print_function
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">requests</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">re</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">hashlib</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">os</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#776e71"># We setup our proxy here to pass our requests through burpsuite for checking</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#776e71">#---------------------------------------------------------------------------------</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>proxy <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#39;127.0.0.1:8080&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#776e71">#  os.environ[&#39;http_proxy&#39;] = proxy</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#776e71">#  os.environ[&#39;HTTP_PROXY&#39;] = proxy</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#776e71">#  os.environ[&#39;https_proxy&#39;] = proxy</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#776e71">#  os.environ[&#39;HTTPS_PROXY&#39;] = proxy</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span style="color:#776e71"># Here, we make the get request to get our initial page requesting for the md5</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>by creating a session, <span style="color:#815ba4">as</span> we need to post our response to the same session
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#776e71">#---------------------------------------------------------------------------------</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>url <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;http://docker.hackthebox.eu:31405&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>req <span style="color:#5bc4bf">=</span> requests<span style="color:#5bc4bf">.</span>Session()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>page <span style="color:#5bc4bf">=</span> req<span style="color:#5bc4bf">.</span>get(url)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>text <span style="color:#5bc4bf">=</span> page<span style="color:#5bc4bf">.</span>content
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span style="color:#815ba4">print</span>(text)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span style="color:#776e71"># We use python regex to find seperate our hash out of the html file, we can</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>find the regex by analyzing the whole html file first<span style="color:#5bc4bf">.</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span style="color:#776e71">#---------------------------------------------------------------------------------</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>x <span style="color:#5bc4bf">=</span> re<span style="color:#5bc4bf">.</span>findall(<span style="color:#48b685">&#34;&lt;h3 align=&#39;center&#39;&gt;(.*)&lt;/h3&gt;&#34;</span>, text)[<span style="color:#f99b15">0</span>]
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>x <span style="color:#5bc4bf">=</span> x<span style="color:#5bc4bf">.</span>rstrip()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span style="color:#776e71"># print(&#34;hash: &#34; + x)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span style="color:#776e71"># print(s)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span><span style="color:#776e71"># We find the md5sum of the supplied string and pass it as data to a post</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span>request made to the session
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span><span style="color:#776e71">#---------------------------------------------------------------------------------</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span>emd5 <span style="color:#5bc4bf">=</span> hashlib<span style="color:#5bc4bf">.</span>md5(x)<span style="color:#5bc4bf">.</span>hexdigest()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span><span style="color:#776e71"># print(&#34;md5sum: &#34; + emd5)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span>payload <span style="color:#5bc4bf">=</span> dict(hash<span style="color:#5bc4bf">=</span>emd5)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49</span>response <span style="color:#5bc4bf">=</span> req<span style="color:#5bc4bf">.</span>post(url, data <span style="color:#5bc4bf">=</span> payload)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">50</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">51</span><span style="color:#776e71"># And here we get the response back and get the flag out</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">52</span><span style="color:#776e71">#---------------------------------------------------------------------------------</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">53</span><span style="color:#776e71"># print(response.text)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">54</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">55</span>flag <span style="color:#5bc4bf">=</span> re<span style="color:#5bc4bf">.</span>findall(<span style="color:#48b685">&#34;&lt;p align=&#39;center&#39;&gt;(.*)&lt;/p&gt;&#34;</span>, response<span style="color:#5bc4bf">.</span>content)[<span style="color:#f99b15">0</span>]
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">56</span><span style="color:#815ba4">print</span>(<span style="color:#48b685">&#34;flag: &#34;</span> <span style="color:#5bc4bf">+</span> flag)
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-solution.py" data-lang="solution.py"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#999;font-style:italic">#! /usr/bin/env python</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#6ab825;font-weight:bold">from</span> <span style="color:#447fcf;text-decoration:underline">__future__</span> <span style="color:#6ab825;font-weight:bold">import</span> print_function
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">requests</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">re</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">hashlib</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">os</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span><span style="color:#999;font-style:italic"># We setup our proxy here to pass our requests through burpsuite for checking</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span><span style="color:#999;font-style:italic">#---------------------------------------------------------------------------------</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>proxy = <span style="color:#ed9d13">&#39;127.0.0.1:8080&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span><span style="color:#999;font-style:italic">#  os.environ[&#39;http_proxy&#39;] = proxy</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span><span style="color:#999;font-style:italic">#  os.environ[&#39;HTTP_PROXY&#39;] = proxy</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span><span style="color:#999;font-style:italic">#  os.environ[&#39;https_proxy&#39;] = proxy</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span><span style="color:#999;font-style:italic">#  os.environ[&#39;HTTPS_PROXY&#39;] = proxy</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span><span style="color:#999;font-style:italic"># Here, we make the get request to get our initial page requesting for the md5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>by creating a session, <span style="color:#6ab825;font-weight:bold">as</span> we need to post our response to the same session
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span><span style="color:#999;font-style:italic">#---------------------------------------------------------------------------------</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span>url = <span style="color:#ed9d13">&#34;http://docker.hackthebox.eu:31405&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>req = requests.Session()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span>page = req.get(url)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>text = page.content
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span><span style="color:#6ab825;font-weight:bold">print</span>(text)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span><span style="color:#999;font-style:italic"># We use python regex to find seperate our hash out of the html file, we can</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>find the regex by analyzing the whole html <span style="color:#24909d">file</span> first.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">32</span><span style="color:#999;font-style:italic">#---------------------------------------------------------------------------------</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">33</span>x = re.findall(<span style="color:#ed9d13">&#34;&lt;h3 align=&#39;center&#39;&gt;(.*)&lt;/h3&gt;&#34;</span>, text)[<span style="color:#3677a9">0</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">34</span>x = x.rstrip()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">35</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">36</span><span style="color:#999;font-style:italic"># print(&#34;hash: &#34; + x)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">37</span><span style="color:#999;font-style:italic"># print(s)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">38</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">39</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">40</span><span style="color:#999;font-style:italic"># We find the md5sum of the supplied string and pass it as data to a post</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">41</span>request made to the session
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">42</span><span style="color:#999;font-style:italic">#---------------------------------------------------------------------------------</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">43</span>emd5 = hashlib.md5(x).hexdigest()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">44</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">45</span><span style="color:#999;font-style:italic"># print(&#34;md5sum: &#34; + emd5)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">46</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">47</span>payload = <span style="color:#24909d">dict</span>(<span style="color:#24909d">hash</span>=emd5)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">48</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">49</span>response = req.post(url, data = payload)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">50</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">51</span><span style="color:#999;font-style:italic"># And here we get the response back and get the flag out</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">52</span><span style="color:#999;font-style:italic">#---------------------------------------------------------------------------------</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">53</span><span style="color:#999;font-style:italic"># print(response.text)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">54</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">55</span>flag = re.findall(<span style="color:#ed9d13">&#34;&lt;p align=&#39;center&#39;&gt;(.*)&lt;/p&gt;&#34;</span>, response.content)[<span style="color:#3677a9">0</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">56</span><span style="color:#6ab825;font-weight:bold">print</span>(<span style="color:#ed9d13">&#34;flag: &#34;</span> + flag)
 </code></pre></div><p>And we get our flag.</p>
 
     </div>
@@ -625,6 +625,64 @@ is passed and find that it is passed as raw data.</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

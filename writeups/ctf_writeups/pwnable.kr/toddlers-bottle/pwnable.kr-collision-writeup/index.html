@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        pwnable.kr - collision writeup - A personal cybersecurity blog
+        pwnable.kr - collision writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="difficulty --&gt; easy" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>pwnable.kr - collision writeup - A personal cybersecurity blog</title>
+    <title>pwnable.kr - collision writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="pwnable.kr - collision writeup" />
@@ -446,37 +446,37 @@ usage : ./col [passcode]
 col@pwnable:~$ ./col 1234
 passcode length should be 20 bytes
 </code></pre><p>We analyze the given source col.c</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;stdio.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71">#include</span> <span style="color:#776e71">&lt;string.h&gt;</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71"></span><span style="color:#fec418">unsigned</span> <span style="color:#fec418">long</span> hashcode <span style="color:#5bc4bf">=</span> <span style="color:#f99b15">0x21DD09EC</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#fec418">unsigned</span> <span style="color:#fec418">long</span> <span style="color:#06b6ef">check_password</span>(<span style="color:#815ba4">const</span> <span style="color:#fec418">char</span><span style="color:#5bc4bf">*</span> p){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>        <span style="color:#fec418">int</span><span style="color:#5bc4bf">*</span> ip <span style="color:#5bc4bf">=</span> (<span style="color:#fec418">int</span><span style="color:#5bc4bf">*</span>)p;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>        <span style="color:#fec418">int</span> i;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>        <span style="color:#fec418">int</span> res<span style="color:#5bc4bf">=</span><span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>        <span style="color:#815ba4">for</span>(i<span style="color:#5bc4bf">=</span><span style="color:#f99b15">0</span>; i<span style="color:#5bc4bf">&lt;</span><span style="color:#f99b15">5</span>; i<span style="color:#5bc4bf">++</span>){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>                res <span style="color:#5bc4bf">+=</span> ip[i];
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>        <span style="color:#815ba4">return</span> res;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>}
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#fec418">int</span> <span style="color:#06b6ef">main</span>(<span style="color:#fec418">int</span> argc, <span style="color:#fec418">char</span><span style="color:#5bc4bf">*</span> argv[]){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>        <span style="color:#815ba4">if</span>(argc<span style="color:#5bc4bf">&lt;</span><span style="color:#f99b15">2</span>){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>                printf(<span style="color:#48b685">&#34;usage : %s [passcode]</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>, argv[<span style="color:#f99b15">0</span>]);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>                <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>        <span style="color:#815ba4">if</span>(strlen(argv[<span style="color:#f99b15">1</span>]) <span style="color:#5bc4bf">!=</span> <span style="color:#f99b15">20</span>){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>                printf(<span style="color:#48b685">&#34;passcode length should be 20 bytes</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>                <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>        <span style="color:#815ba4">if</span>(hashcode <span style="color:#5bc4bf">==</span> check_password( argv[<span style="color:#f99b15">1</span>] )){
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>                system(<span style="color:#48b685">&#34;/bin/cat flag&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>                <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>        }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>        <span style="color:#815ba4">else</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>                printf(<span style="color:#48b685">&#34;wrong passcode.</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>        <span style="color:#815ba4">return</span> <span style="color:#f99b15">0</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>}
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;stdio.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#cd2828;font-weight:bold">#include</span> <span style="color:#cd2828;font-weight:bold">&lt;string.h&gt;</span><span style="color:#cd2828;font-weight:bold">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#cd2828;font-weight:bold"></span><span style="color:#6ab825;font-weight:bold">unsigned</span> <span style="color:#6ab825;font-weight:bold">long</span> hashcode = <span style="color:#3677a9">0x21DD09EC</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#6ab825;font-weight:bold">unsigned</span> <span style="color:#6ab825;font-weight:bold">long</span> <span style="color:#447fcf">check_password</span>(<span style="color:#6ab825;font-weight:bold">const</span> <span style="color:#6ab825;font-weight:bold">char</span>* p){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>        <span style="color:#6ab825;font-weight:bold">int</span>* ip = (<span style="color:#6ab825;font-weight:bold">int</span>*)p;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>        <span style="color:#6ab825;font-weight:bold">int</span> i;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>        <span style="color:#6ab825;font-weight:bold">int</span> res=<span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>        <span style="color:#6ab825;font-weight:bold">for</span>(i=<span style="color:#3677a9">0</span>; i&lt;<span style="color:#3677a9">5</span>; i++){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>                res += ip[i];
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>        <span style="color:#6ab825;font-weight:bold">return</span> res;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span><span style="color:#6ab825;font-weight:bold">int</span> <span style="color:#447fcf">main</span>(<span style="color:#6ab825;font-weight:bold">int</span> argc, <span style="color:#6ab825;font-weight:bold">char</span>* argv[]){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>        <span style="color:#6ab825;font-weight:bold">if</span>(argc&lt;<span style="color:#3677a9">2</span>){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>                printf(<span style="color:#ed9d13">&#34;usage : %s [passcode]</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>, argv[<span style="color:#3677a9">0</span>]);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>                <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>        <span style="color:#6ab825;font-weight:bold">if</span>(strlen(argv[<span style="color:#3677a9">1</span>]) != <span style="color:#3677a9">20</span>){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>                printf(<span style="color:#ed9d13">&#34;passcode length should be 20 bytes</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>                <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>        <span style="color:#6ab825;font-weight:bold">if</span>(hashcode == check_password( argv[<span style="color:#3677a9">1</span>] )){
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span>                system(<span style="color:#ed9d13">&#34;/bin/cat flag&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>                <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span>        }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>        <span style="color:#6ab825;font-weight:bold">else</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>                printf(<span style="color:#ed9d13">&#34;wrong passcode.</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span>        <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#3677a9">0</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>}
 </code></pre></div><p>We see that the program takes a 20 byte long string as a passcode and then
 checks is using the function <code>checkpass</code> and if the function return value
 matches the stored hashcode <code>0x21DD09EC</code>, it prints out the flag for us.</p>
@@ -490,20 +490,20 @@ takes 1 byte and each integer takes 4 byte. so on conversion of a 20 byte
 string to int, it takes 20/4=5 bytes.</strong>
 So, we have to supply a string such that the converted integers have a sum of
 <code>0x21DD09EC</code>. We can find this using python.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> <span style="color:#f99b15">0x21DD09EC</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f99b15">568134124</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>&gt;&gt;&gt; <span style="color:#3677a9">0x21DD09EC</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#3677a9">568134124</span>
 </code></pre></div><p>So, 568134124 this is the decimal value we are working with. We divide into
 5 equal parts so that the sum results in the given hashcode</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> <span style="color:#f99b15">568134124</span><span style="color:#5bc4bf">/</span><span style="color:#f99b15">5</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#f99b15">113626824</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> <span style="color:#f99b15">568134124</span><span style="color:#5bc4bf">%</span><span style="color:#f99b15">5</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span style="color:#f99b15">4</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>&gt;&gt;&gt; <span style="color:#3677a9">568134124</span>/<span style="color:#3677a9">5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#3677a9">113626824</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>&gt;&gt;&gt; <span style="color:#3677a9">568134124</span>%<span style="color:#3677a9">5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span><span style="color:#3677a9">4</span>
 </code></pre></div><p>We get a remainder 4. So, the five integers will be 113626824*4 and 113626828.
 Now we convert them to hex.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> hex(<span style="color:#f99b15">113626824</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#48b685">&#39;0x6c5cec8&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#5bc4bf">&gt;&gt;&gt;</span> hex(<span style="color:#f99b15">113626828</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span><span style="color:#48b685">&#39;0x6c5cecc&#39;</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>&gt;&gt;&gt; <span style="color:#24909d">hex</span>(<span style="color:#3677a9">113626824</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#ed9d13">&#39;0x6c5cec8&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>&gt;&gt;&gt; <span style="color:#24909d">hex</span>(<span style="color:#3677a9">113626828</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span><span style="color:#ed9d13">&#39;0x6c5cecc&#39;</span>
 </code></pre></div><p>Now, we run the program with the constructed passcode:</p>
 <pre><code class="language-shellsession" data-lang="shellsession">col@pwnable:~$ ./col `python -c &quot;print('\xc8\xce\xc5\x06'*4
 + '\xcc\xce\xc5\x06')&quot;`
@@ -650,6 +650,64 @@ daddy! I just managed to create a hash collision :)
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

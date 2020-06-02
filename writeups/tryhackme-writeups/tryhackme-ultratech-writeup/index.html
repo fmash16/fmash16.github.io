@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        TryHackMe - UltraTech Writeup - A personal cybersecurity blog
+        TryHackMe - UltraTech Writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="topics: php, command injection, gtfobins, docker" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>TryHackMe - UltraTech Writeup - A personal cybersecurity blog</title>
+    <title>TryHackMe - UltraTech Writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="TryHackMe - UltraTech Writeup" />
@@ -521,7 +521,7 @@ utility that we find installed on the target with the following url.</p>
 recipe of <a href="https://gchq.github.io/CyberChef/">cyberchef</a></p>
 <p><img src="/img/tryhackme_ultratech/16.png" alt=""></p>
 <p>We crack the hash using hashcat and the wordlist rockyou.txt</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>hashcat -m <span style="color:#f99b15">0</span> -o r00t.pass r00t.hash /usr/share/wordlists/rockyou.txt
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>hashcat -m <span style="color:#3677a9">0</span> -o r00t.pass r00t.hash /usr/share/wordlists/rockyou.txt
 </code></pre></div><p>We get the password cracking the hash</p>
 <p><img src="/img/tryhackme_ultratech/17.png" alt=""></p>
 <p><img src="/img/tryhackme_ultratech/18.png" alt=""></p>
@@ -546,7 +546,7 @@ to the group.</p>
 find the command for privesc.</p>
 <p>We list the docker images and find that we have one name bash. We craft our
 command accordingly to get a root shell</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span> docker run -v /:/mnt --rm -it bash chroot /mnt sh
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span> docker run -v /:/mnt --rm -it bash chroot /mnt sh
 </code></pre></div><p><img src="/img/tryhackme_ultratech/21.png" alt=""></p>
 <p>Now we can read our required private rsa key from the /root/.ssh/ directory</p>
 <p><img src="/img/tryhackme_ultratech/22.png" alt=""></p>
@@ -689,6 +689,64 @@ command accordingly to get a root shell</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

