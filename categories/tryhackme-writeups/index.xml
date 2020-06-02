@@ -2,20 +2,20 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>TryHackMe writeups on fmash16&#39;s blog</title>
-    <link>/categories/tryhackme-writeups/</link>
+    <link>https://fmash16.github.io/categories/tryhackme-writeups/</link>
     <description>Recent content in TryHackMe writeups on fmash16&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Thu, 21 May 2020 00:00:00 +0000</lastBuildDate>
     
-        <atom:link href="/categories/tryhackme-writeups/index.xml" rel="self" type="application/rss+xml" />
+        <atom:link href="https://fmash16.github.io/categories/tryhackme-writeups/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Hackthebox - Blunder Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</link>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</link>
       <pubDate>Sun, 31 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</guid>
       <description>Nmap Scan Open ports:
  Starting Nmap 7.80 ( https://nmap.org ) at 2020-05-31 00:27 EDT
 Nmap scan report for 10.10.10.191
@@ -32,10 +32,10 @@ http-title: Blunder | A blunder of interesting facts
     
     <item>
       <title>Hackthebox - Montevarde Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</link>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</link>
       <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</guid>
       <description>Nmap Scan  1nmap -sC -sV -sS -oN nmap.out 10.10.10.172 Open ports:
  PORT STATE SERVICE VERSION
 53/tcp open domain?
@@ -53,20 +53,20 @@ MEGABANK.LOCAL0., Site: Default-First-Site-Name)
     
     <item>
       <title>Hackthebox - Resolute Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</link>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</link>
       <pubDate>Thu, 28 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</guid>
       <description>Nmap Scan 1export ip=10.10.10.169 1nmap -sC -sV -sS -oN nmap.put $ip open ports:
  53/tcp open domain? 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.</description>
     </item>
     
     <item>
       <title>TryHackMe - Year of the Rabbit - Writeup</title>
-      <link>/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/</link>
+      <link>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/</link>
       <pubDate>Thu, 21 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/</guid>
       <description>Initial Foothold Nmap scan 1nmap -sC -sV -sS -oN nmap.out 10.10.104.143 Open ports:
  21 - vsftpd 3.0.2 22 - ssh 80 - httpd
  Port 80 We got a default apache2 webpage at port 80
@@ -77,20 +77,20 @@ We find a php file at /10.10.57.192/sup3r_s3cr3t_fl4g.php Going to the page pops
     
     <item>
       <title>TryHackMe - UltraTech Writeup</title>
-      <link>/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/</link>
+      <link>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/</link>
       <pubDate>Sat, 16 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/</guid>
       <description>Initial Foothold  Nmap scan  nmap -sC -sV -sS -oN nmap.out 10.10.138.104
  21/tcp open ftp vsftpd 3.0.3 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 dc:66:89:85:e7:05:c2:a5:da:7f:01:20:3a:13:fc:27 (RSA) | 256 c3:67:dd:26:fa:0c:56:92:f3:5b:a0:b3:8d:6d:20:ab (ECDSA) |_ 256 11:9b:5a:d6:ff:2f:e4:49:d2:b5:17:36:0e:2f:1d:2f (ED25519) 8081/tcp open http Node.js Express framework |_http-cors: HEAD GET POST PUT DELETE PATCH |_http-title: Site doesn&amp;rsquo;t have a title (text/html; charset=utf-8). Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel 2002/tcp filtered globe</description>
     </item>
     
     <item>
       <title>TryHackMe - DogCat Writeup</title>
-      <link>/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/</link>
+      <link>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/</link>
       <pubDate>Tue, 12 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-dogcat-writeup/</guid>
       <description>Nmap scan  nmap -sC -sV -oN nmap.out 10.10.174.171 Open ports:
  22 - SSH 80- http  We have a look at the webpage where it lets us view some dot or cat pictures
 Having a look at the url, we see that the page is running a php that shows the pictures stored in the dogs/ or cats/ folder which passes the value &amp;ldquo;dog&amp;rdquo; or &amp;ldquo;cat&amp;rdquo; to the variable &amp;ldquo;view&amp;rdquo;.</description>
@@ -98,10 +98,10 @@ Having a look at the url, we see that the page is running a php that shows the p
     
     <item>
       <title>Hackthebox - Admirer Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</link>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</link>
       <pubDate>Wed, 06 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-admirer-writeup/</guid>
       <description>Initial Foothold  Nmap  Open ports: 21/tcp open ftp vsftpd 3.0.3 22/tcp open ssh OpenSSH 7.4p1 Debian 10+deb9u7 (protocol 2.0) 80/tcp open tcpwrapped
 Found robots.txt that disallows /admin-dir
 Found a possible user named waldo
@@ -112,10 +112,10 @@ Directory Busting  Fuzzing for .txt files in the /admin-dir, found 2 files:
     
     <item>
       <title>Hackthebox[Web-Challenge] Writeups</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/</link>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/</link>
       <pubDate>Wed, 06 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/</guid>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-web-challenge-writeups/</guid>
       <description>Em Dee Five for Life  We start the instance
 The page gives us a string and asks for the md5sum as the input, after we inpput the md5sum of the string got from our terminal, we get a response of too slow.
 So to make the response fast, we can write a simple python script. First, we intercept the post request to the page in burpsuite to chech how the md5 hash is passed and find that it is passed as raw data.</description>
@@ -123,20 +123,20 @@ So to make the response fast, we can write a simple python script. First, we int
     
     <item>
       <title>Hackthebox - Obscurity Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/</link>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/</link>
       <pubDate>Sun, 03 May 2020 08:24:19 +0600</pubDate>
       
-      <guid>/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-obscurity-writeup/</guid>
       <description>Initial Foothold  Nmap scan:  # nmap -sC -sV -sS -oA nmap.out 10.10.10.168 Intersting open ports:
  22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) 80/tcp closed http 8080/tcp open http-proxy BadHTTPServer 9000 unknown(nc does not show any banner)  Website at port 8080:   Looks like the server runs custom software for security   We have some contact information. We see that the box domain is obscure.</description>
     </item>
     
     <item>
       <title>Hackthebox - OpenAdmin Writeup</title>
-      <link>/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</link>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</link>
       <pubDate>Sat, 02 May 2020 08:24:19 +0600</pubDate>
       
-      <guid>/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-openadmin-writeup/</guid>
       <description>Initial Foothold - Getting www-data shell using exploit  Nmap scan  Interesting ports:
  22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) 80/tcp open http Apache httpd 2.4.29 ((Ubuntu)) |_http-server-header: Apache/2.4.29 (Ubuntu) |_http-title: Apache2 Ubuntu Default Page: It works  We have a look at the webpage and we find a default apache webpage.
 Directory searching with Gobuster:  We now search for any web directories using gobuster</description>
@@ -144,20 +144,20 @@ Directory searching with Gobuster:  We now search for any web directories using 
     
     <item>
       <title>TryHackMe - Blue Writeup</title>
-      <link>/writeups/tryhackme-writeups/tryhackme-blue-writeup/</link>
+      <link>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-blue-writeup/</link>
       <pubDate>Thu, 26 Mar 2020 02:12:46 +0600</pubDate>
       
-      <guid>/writeups/tryhackme-writeups/tryhackme-blue-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-blue-writeup/</guid>
       <description>Task 1:  We use the usual nmap to scan the machine. Note that it says that the machine does not respond to ICMP requests. So, we have to use -Pn with nmap for scanning  nmap -sC -sV -Pn -oN nmap-out 10.10.221.176 The results:
 # Nmap 7.80 scan initiated Wed Mar 25 10:26:26 2020 as: nmap -sC -sV -Pn -oN nmap.out 10.10.221.176 Nmap scan report for 10.10.221.176 Host is up (0.</description>
     </item>
     
     <item>
       <title>TryHackMe - Basic Pentesting Writeup</title>
-      <link>/writeups/tryhackme-writeups/tryhackme-basic-pentesting-writeup/</link>
+      <link>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-basic-pentesting-writeup/</link>
       <pubDate>Thu, 26 Mar 2020 02:06:43 +0600</pubDate>
       
-      <guid>/writeups/tryhackme-writeups/tryhackme-basic-pentesting-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-basic-pentesting-writeup/</guid>
       <description>Task 1: 1. Deploy the machine and connect to our network We deploy the machine and connect to the vpn network using openvpn
 sudo openvpn [your generated .ovpn file] 2. Find the services exposed by the machine We use our usual nmap scan with service detection for scanning:
 nmap -sC -sV -oA nmap-out 10.10.174.122 Output:
@@ -166,19 +166,19 @@ nmap -sC -sV -oA nmap-out 10.10.174.122 Output:
     
     <item>
       <title>Ryzen Gpu passthrough guide on debian</title>
-      <link>/2020/03/gpu_passthrough/</link>
+      <link>https://fmash16.github.io/2020/03/gpu_passthrough/</link>
       <pubDate>Mon, 02 Mar 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/03/gpu_passthrough/</guid>
+      <guid>https://fmash16.github.io/2020/03/gpu_passthrough/</guid>
       <description>Preamble This guide shows how to passthrough a gpu to a vm running on QEMU/KVM on linux for improved graphical performance. In my case, I did it to run windows and play games while I can still work on my linux machine. Dual booting is not a good solution in this case as rebooting into windows just for the purpose of gaming is a pain. Passing through my gpu, I can switch between games and work with muxh ease.</description>
     </item>
     
     <item>
       <title>NeverLAN CTF - Reverse Engineer writeup</title>
-      <link>/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/neverlan-ctf-reverse-engineer-writeup/</link>
+      <link>https://fmash16.github.io/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/neverlan-ctf-reverse-engineer-writeup/</link>
       <pubDate>Fri, 28 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/neverlan-ctf-reverse-engineer-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/ctf_writeups/neverlan_ctf/reverse-engineering/neverlan-ctf-reverse-engineer-writeup/</guid>
       <description>PROBLEM STATEMENT This program seems to get stuck while running&amp;hellip; Can you get it to continue past the broken function?
 file : revseng
 SOLUTION: We use gdb to solve this problem. We see that the file is an ELF 64-bit LSB shared object
@@ -187,10 +187,10 @@ SOLUTION: We use gdb to solve this problem. We see that the file is an ELF 64-bi
     
     <item>
       <title>pwnable.kr - bof writeup</title>
-      <link>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/</link>
+      <link>https://fmash16.github.io/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/</link>
       <pubDate>Wed, 19 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-bof-writeup/</guid>
       <description>Nana told me that buffer overflow is one of the most common software vulnerability. Is that true?
 Download : http://pwnable.kr/bin/bof Download : http://pwnable.kr/bin/bof.c
 Running at : nc pwnable.kr 9000
@@ -200,10 +200,10 @@ Running at : nc pwnable.kr 9000
     
     <item>
       <title>pwnable.kr - collision writeup</title>
-      <link>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-collision-writeup/</link>
+      <link>https://fmash16.github.io/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-collision-writeup/</link>
       <pubDate>Wed, 19 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-collision-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-collision-writeup/</guid>
       <description>Daddy told me about cool MD5 hash collision today. I wanna do something like that too!
 ssh col@pwnable.kr -p2222 (pw:guest)
  Solution: We ssh with the given password and list the files in the directory
@@ -212,10 +212,10 @@ $ssh col@pwnable.kr -p2222 col@pwnable.kr&#39;s password: ____ __ __ ____ ____ _
     
     <item>
       <title>pwnable.kr - fd writeup</title>
-      <link>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-fd-writeup/</link>
+      <link>https://fmash16.github.io/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-fd-writeup/</link>
       <pubDate>Wed, 19 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-fd-writeup/</guid>
+      <guid>https://fmash16.github.io/writeups/ctf_writeups/pwnable.kr/toddlers-bottle/pwnable.kr-fd-writeup/</guid>
       <description>Mommy! what is a file descriptor in Linux?
  try to play the wargame your self but if you are ABSOLUTE beginner, follow this tutorial link: https://youtu.be/971eZhMHQQw  ssh fd@pwnable.kr -p2222 (pw:guest)
  Solution: This is the easiest of all the problems here. We login with via ssh with the given credentials and find 3 files.
@@ -224,28 +224,28 @@ $ssh fd@pwnable.kr -p2222 fd@pwnable.kr&#39;s password: ____ __ __ ____ ____ ___
     
     <item>
       <title>List of hacking sites</title>
-      <link>/2020/02/sites/</link>
+      <link>https://fmash16.github.io/2020/02/sites/</link>
       <pubDate>Tue, 18 Feb 2020 00:00:00 +0000</pubDate>
       
-      <guid>/2020/02/sites/</guid>
+      <guid>https://fmash16.github.io/2020/02/sites/</guid>
       <description>Have you ever wondered where to start hacking, acquire more hacking knowledge and even train, test and improve your hacking skills? Here is a compilation, collection, list, directory of the best sites that will help you. The sites listed below will help you understand and practice every aspect of the secure (or rather insecure) side of software, networks (networking), servers and every single element that may be exposed in the(our) binary world.</description>
     </item>
     
     <item>
       <title>Writeups</title>
-      <link>/writeups/writeups/</link>
+      <link>https://fmash16.github.io/writeups/writeups/</link>
       <pubDate>Sat, 15 Feb 2020 22:35:45 +0600</pubDate>
       
-      <guid>/writeups/writeups/</guid>
+      <guid>https://fmash16.github.io/writeups/writeups/</guid>
       <description>Hello Hello from fahim</description>
     </item>
     
     <item>
       <title>About</title>
-      <link>/about/</link>
+      <link>https://fmash16.github.io/about/</link>
       <pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate>
       
-      <guid>/about/</guid>
+      <guid>https://fmash16.github.io/about/</guid>
       <description>I am a student currently studying Electronics Engineering, with a passion for cybersecurity and a thirst for tech stuff. This is my personal blog site, which I set up with a view to document my journey learning cybersecurity through articles on topics I learn. Besides the site will also hold some other tech stuff that I might be interested in and take up as a project.
 One basic point of this site will be CTFs.</description>
     </item>
