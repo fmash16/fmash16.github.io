@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>command injection on fmash16&#39;s blog</title>
+    <link>https://fmash16.github.io/tags/command-injection/</link>
+    <description>Recent content in command injection on fmash16&#39;s blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 16 May 2020 00:00:00 +0000</lastBuildDate>
+    
+        <atom:link href="https://fmash16.github.io/tags/command-injection/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About</title>
+      <link>https://fmash16.github.io/about/</link>
+      <pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fmash16.github.io/about/</guid>
+      <description>I am a student currently studying Electronics Engineering, with a passion for cybersecurity and a thirst for tech stuff. This is my personal blog site, which I set up with a view to document my journey learning cybersecurity through articles on topics I learn. Besides the site will also hold some other tech stuff that I might be interested in and take up as a project.
+One basic point of this site will be CTFs.</description>
+    </item>
+    
+  </channel>
+</rss>

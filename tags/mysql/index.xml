@@ -5,10 +5,20 @@
     <link>https://fmash16.github.io/tags/mysql/</link>
     <description>Recent content in mysql on fmash16&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 06 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://fmash16.github.io/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>TryHackMe - CMesS Writeup</title>
+      <link>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/</link>
+      <pubDate>Wed, 03 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/</guid>
+      <description>Nmap Scan 1nmap -sC -sV -sS -oN nmap.out cmess.thm Open ports:
+ 22/tcp open ssh OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0) ssh-hostkey: 2048 d9:b6:52:d3:93:9a:38:50:b4:23:3b:fd:21:0c:05:1f (RSA) 256 21:c3:6e:31:8b:85:22:8a:6d:72:86:8f:ae:64:66:2b (ECDSA) 256 5b:b9:75:78:05:d7:ec:43:30:96:17:ff:c6:a8:6c:ed (ED25519) 80/tcp open http Apache httpd 2.4.18 ((Ubuntu)) http-generator: Gila CMS http-robots.txt: 3 disallowed entries /src/ /themes/ /lib/ http-title: Site doesn&amp;rsquo;t have a title (text/html; charset=UTF-8).  Enumeration Going to port 80, we find the Gila CMS home page</description>
+    </item>
     
     <item>
       <title>Hackthebox - Blunder Writeup</title>
@@ -238,16 +248,6 @@ $ssh fd@pwnable.kr -p2222 fd@pwnable.kr&#39;s password: ____ __ __ ____ ____ ___
       
       <guid>https://fmash16.github.io/writeups/writeups/</guid>
       <description>Hello Hello from fahim</description>
-    </item>
-    
-    <item>
-      <title>About</title>
-      <link>https://fmash16.github.io/about/</link>
-      <pubDate>Wed, 15 Jan 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fmash16.github.io/about/</guid>
-      <description>I am a student currently studying Electronics Engineering, with a passion for cybersecurity and a thirst for tech stuff. This is my personal blog site, which I set up with a view to document my journey learning cybersecurity through articles on topics I learn. Besides the site will also hold some other tech stuff that I might be interested in and take up as a project.
-One basic point of this site will be CTFs.</description>
     </item>
     
   </channel>
