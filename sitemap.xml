@@ -3,8 +3,120 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</loc>
+    <lastmod>2020-05-28T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://fmash16.github.io/categories/</loc>
-    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/dynamic-js/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/dynamic-xss/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/series/hackthebox/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/categories/hackthebox-writeups/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/lfi/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/linux/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/logrotate-race-condition/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/real-world/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/series/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/sql/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/sql-truncation-attack/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/writeups/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/xss/</loc>
+    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -38,13 +150,6 @@
   </url>
   
   <url>
-    <loc>https://fmash16.github.io/tags/linux/</loc>
-    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://fmash16.github.io/tags/mysql/</loc>
     <lastmod>2020-06-03T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -66,21 +171,7 @@
   </url>
   
   <url>
-    <loc>https://fmash16.github.io/series/</loc>
-    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://fmash16.github.io/tags/subdomain/</loc>
-    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/tags/</loc>
     <lastmod>2020-06-03T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -129,13 +220,6 @@
   </url>
   
   <url>
-    <loc>https://fmash16.github.io/writeups/</loc>
-    <lastmod>2020-06-03T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://fmash16.github.io/tags/bludit-cms/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -150,21 +234,7 @@
   </url>
   
   <url>
-    <loc>https://fmash16.github.io/series/hackthebox/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-blunder-writeup/</loc>
-    <lastmod>2020-05-31T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/categories/hackthebox-writeups/</loc>
     <lastmod>2020-05-31T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -256,13 +326,6 @@
   
   <url>
     <loc>https://fmash16.github.io/tags/evil-winrm/</loc>
-    <lastmod>2020-05-28T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</loc>
     <lastmod>2020-05-28T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -376,13 +439,6 @@
   <url>
     <loc>https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-ultratech-writeup/</loc>
     <lastmod>2020-05-16T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/tags/lfi/</loc>
-    <lastmod>2020-05-12T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>

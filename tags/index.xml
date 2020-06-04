@@ -5,10 +5,31 @@
     <link>https://fmash16.github.io/tags/</link>
     <description>Recent content in Tags on fmash16&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Wed, 03 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 04 Jun 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://fmash16.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Hackthebox - Resolute Writeup</title>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</link>
+      <pubDate>Thu, 28 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</guid>
+      <description>Nmap Scan 1export ip=10.10.10.169 1nmap -sC -sV -sS -oN nmap.put $ip open ports:
+ 53/tcp open domain? 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.</description>
+    </item>
+    
+    <item>
+      <title>Hackthebox - Book Writeup</title>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/</link>
+      <pubDate>Thu, 04 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/</guid>
+      <description>Nmap Scan 1nmap -sC -sV -sS -oN nmap.out book.htb Open ports:
+ 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) 80/tcp open http Apache httpd 2.4.29 ((Ubuntu))  Enumeration Web Going to the webpage, we find a login prompt. We sign up for an accound and login.
+There is a section called &amp;ldquo;Collections&amp;rdquo; where we can submit a book. Seems like we can upload a file to the server.</description>
+    </item>
     
     <item>
       <title>TryHackMe - CMesS Writeup</title>
@@ -59,16 +80,6 @@ MEGABANK.LOCAL0., Site: Default-First-Site-Name)
 464/tcp open kpasswd5?
 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0
 636/tcp open tcpwrapped</description>
-    </item>
-    
-    <item>
-      <title>Hackthebox - Resolute Writeup</title>
-      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</link>
-      <pubDate>Thu, 28 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</guid>
-      <description>Nmap Scan 1export ip=10.10.10.169 1nmap -sC -sV -sS -oN nmap.put $ip open ports:
- 53/tcp open domain? 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.</description>
     </item>
     
     <item>
@@ -239,15 +250,6 @@ $ssh fd@pwnable.kr -p2222 fd@pwnable.kr&#39;s password: ____ __ __ ____ ____ ___
       
       <guid>https://fmash16.github.io/2020/02/sites/</guid>
       <description>Have you ever wondered where to start hacking, acquire more hacking knowledge and even train, test and improve your hacking skills? Here is a compilation, collection, list, directory of the best sites that will help you. The sites listed below will help you understand and practice every aspect of the secure (or rather insecure) side of software, networks (networking), servers and every single element that may be exposed in the(our) binary world.</description>
-    </item>
-    
-    <item>
-      <title>Writeups</title>
-      <link>https://fmash16.github.io/writeups/writeups/</link>
-      <pubDate>Sat, 15 Feb 2020 22:35:45 +0600</pubDate>
-      
-      <guid>https://fmash16.github.io/writeups/writeups/</guid>
-      <description>Hello Hello from fahim</description>
     </item>
     
   </channel>

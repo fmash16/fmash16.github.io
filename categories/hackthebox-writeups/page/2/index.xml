@@ -5,10 +5,19 @@
     <link>https://fmash16.github.io/categories/hackthebox-writeups/</link>
     <description>Recent content in Hackthebox Writeups on fmash16&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Sun, 31 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 04 Jun 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://fmash16.github.io/categories/hackthebox-writeups/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Writeups</title>
+      <link>https://fmash16.github.io/writeups/writeups/</link>
+      <pubDate>Sat, 15 Feb 2020 22:35:45 +0600</pubDate>
+      
+      <guid>https://fmash16.github.io/writeups/writeups/</guid>
+      <description>Hello Hello from fahim</description>
+    </item>
     
     <item>
       <title>About</title>
