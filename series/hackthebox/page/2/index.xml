@@ -5,10 +5,19 @@
     <link>https://fmash16.github.io/series/hackthebox/</link>
     <description>Recent content in Hackthebox on fmash16&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 04 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jun 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://fmash16.github.io/series/hackthebox/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>List of hacking sites</title>
+      <link>https://fmash16.github.io/2020/02/sites/</link>
+      <pubDate>Tue, 18 Feb 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fmash16.github.io/2020/02/sites/</guid>
+      <description>Have you ever wondered where to start hacking, acquire more hacking knowledge and even train, test and improve your hacking skills? Here is a compilation, collection, list, directory of the best sites that will help you. The sites listed below will help you understand and practice every aspect of the secure (or rather insecure) side of software, networks (networking), servers and every single element that may be exposed in the(our) binary world.</description>
+    </item>
     
     <item>
       <title>Writeups</title>

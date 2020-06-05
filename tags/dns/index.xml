@@ -5,10 +5,23 @@
     <link>https://fmash16.github.io/tags/dns/</link>
     <description>Recent content in dns on fmash16&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 28 May 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Fri, 05 Jun 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://fmash16.github.io/tags/dns/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Hackthebox - Nest Writeup</title>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/</link>
+      <pubDate>Fri, 05 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/</guid>
+      <description>Nmap scan Open ports:
+ 445/tcp microsoft-ds? 4386/tcp open unknown  Enumeration smbclient We use smblient to list the shares. And find a share named &amp;ldquo;Data&amp;rdquo; using NULL auth.
+1smbclient -L \\\\10.10.10.178 We connect to the share using
+1smbclient \\\\10.10.10.178\\Data We find an interesting file under \Shared\Templates\HR\ named &amp;ldquo;Welcome Email.txt&amp;rdquo;. We get the file on our local mahcine using
+1smb: \Shared\Templates\HR\&amp;gt; get &amp;#34;Welcome Email.txt&amp;#34; Having a look at the file we find</description>
+    </item>
     
     <item>
       <title>Hackthebox - Resolute Writeup</title>
@@ -241,15 +254,6 @@ $ssh col@pwnable.kr -p2222 col@pwnable.kr&#39;s password: ____ __ __ ____ ____ _
  try to play the wargame your self but if you are ABSOLUTE beginner, follow this tutorial link: https://youtu.be/971eZhMHQQw  ssh fd@pwnable.kr -p2222 (pw:guest)
  Solution: This is the easiest of all the problems here. We login with via ssh with the given credentials and find 3 files.
 $ssh fd@pwnable.kr -p2222 fd@pwnable.kr&#39;s password: ____ __ __ ____ ____ ____ _ ___ __ _ ____ | \| |__| || \ / || \ | | / _] | |/ ]| \ | o ) | | || _ || o || o )| | / [_ | &#39; / | D ) | _/| | | || | || || || |___ | _] | \ | / | | | ` &#39; || | || _ || O || || [_ __ | \| \ | | \ / | | || | || || || || || .</description>
-    </item>
-    
-    <item>
-      <title>List of hacking sites</title>
-      <link>https://fmash16.github.io/2020/02/sites/</link>
-      <pubDate>Tue, 18 Feb 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fmash16.github.io/2020/02/sites/</guid>
-      <description>Have you ever wondered where to start hacking, acquire more hacking knowledge and even train, test and improve your hacking skills? Here is a compilation, collection, list, directory of the best sites that will help you. The sites listed below will help you understand and practice every aspect of the secure (or rather insecure) side of software, networks (networking), servers and every single element that may be exposed in the(our) binary world.</description>
     </item>
     
   </channel>

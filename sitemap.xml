@@ -3,6 +3,13 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</loc>
     <lastmod>2020-05-28T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -10,8 +17,113 @@
   </url>
   
   <url>
+    <loc>https://fmash16.github.io/tags/.net/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/.netfiddle/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/c#/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
     <loc>https://fmash16.github.io/categories/</loc>
-    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/dns/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/dnspy/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/series/hackthebox/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/categories/hackthebox-writeups/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/series/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/smb/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/smbclient/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/vb/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/visual-basic/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/tags/windows/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  
+  <url>
+    <loc>https://fmash16.github.io/writeups/</loc>
+    <lastmod>2020-06-05T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -31,21 +143,7 @@
   </url>
   
   <url>
-    <loc>https://fmash16.github.io/series/hackthebox/</loc>
-    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/</loc>
-    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/categories/hackthebox-writeups/</loc>
     <lastmod>2020-06-04T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -80,13 +178,6 @@
   </url>
   
   <url>
-    <loc>https://fmash16.github.io/series/</loc>
-    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
     <loc>https://fmash16.github.io/tags/sql/</loc>
     <lastmod>2020-06-04T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
@@ -95,20 +186,6 @@
   
   <url>
     <loc>https://fmash16.github.io/tags/sql-truncation-attack/</loc>
-    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/tags/</loc>
-    <lastmod>2020-06-04T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/writeups/</loc>
     <lastmod>2020-06-04T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
@@ -305,13 +382,6 @@
   
   <url>
     <loc>https://fmash16.github.io/tags/dll/</loc>
-    <lastmod>2020-05-28T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
-  </url>
-  
-  <url>
-    <loc>https://fmash16.github.io/tags/dns/</loc>
     <lastmod>2020-05-28T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.5</priority>
