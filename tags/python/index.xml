@@ -5,32 +5,30 @@
     <link>https://fmash16.github.io/tags/python/</link>
     <description>Recent content in python on fmash16&#39;s blog</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Mon, 08 Jun 2020 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 06 May 2020 00:00:00 +0000</lastBuildDate>
     
         <atom:link href="https://fmash16.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
-      <title>Hackthebox - Nest Writeup</title>
-      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/</link>
-      <pubDate>Fri, 05 Jun 2020 00:00:00 +0000</pubDate>
+      <title>Hackthebox - Montevarde Writeup</title>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</link>
+      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/</guid>
-      <description>Nmap scan Open ports:
- 445/tcp microsoft-ds? 4386/tcp open unknown  Enumeration smbclient We use smblient to list the shares. And find a share named &amp;ldquo;Data&amp;rdquo; using NULL auth.
-1smbclient -L \\\\10.10.10.178 We connect to the share using
-1smbclient \\\\10.10.10.178\\Data We find an interesting file under \Shared\Templates\HR\ named &amp;ldquo;Welcome Email.txt&amp;rdquo;. We get the file on our local mahcine using
-1smb: \Shared\Templates\HR\&amp;gt; get &amp;#34;Welcome Email.txt&amp;#34; Having a look at the file we find</description>
-    </item>
-    
-    <item>
-      <title>Hackthebox - Resolute Writeup</title>
-      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</link>
-      <pubDate>Thu, 28 May 2020 00:00:00 +0000</pubDate>
-      
-      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</guid>
-      <description>Nmap Scan 1export ip=10.10.10.169 1nmap -sC -sV -sS -oN nmap.put $ip open ports:
- 53/tcp open domain? 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.</description>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</guid>
+      <description>Nmap Scan  1nmap -sC -sV -sS -oN nmap.out 10.10.10.172 Open ports:
+ PORT STATE SERVICE VERSION
+53/tcp open domain?
+88/tcp open kerberos-sec Microsoft Windows Kerberos (server time:
+2020-05-24 10:34:50Z)
+135/tcp open msrpc Microsoft Windows RPC
+139/tcp open netbios-ssn Microsoft Windows netbios-ssn
+389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain:
+MEGABANK.LOCAL0., Site: Default-First-Site-Name)
+445/tcp open microsoft-ds?
+464/tcp open kpasswd5?
+593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0
+636/tcp open tcpwrapped</description>
     </item>
     
     <item>
@@ -43,6 +41,19 @@
 110.10.226.99 wonderland.thm Nmap Scan 1nmap -sC -sV -sS -oN nmap.out wonderland.thm Open ports:
  22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) 80/tcp open http Golang net/http server (Go-IPFS json-rpc or InfluxDB API)  Enumeration HTTP web page Going to port 80, we find a webpage.
 Gobuster Fuzzing 1gobuster dir -u http://wonderland.thm/ -w /usr/share/wordlists/dirb/common.txt We find the following</description>
+    </item>
+    
+    <item>
+      <title>Hackthebox - Nest Writeup</title>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/</link>
+      <pubDate>Fri, 05 Jun 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/</guid>
+      <description>Nmap scan Open ports:
+ 445/tcp microsoft-ds? 4386/tcp open unknown  Enumeration smbclient We use smblient to list the shares. And find a share named &amp;ldquo;Data&amp;rdquo; using NULL auth.
+1smbclient -L \\\\10.10.10.178 We connect to the share using
+1smbclient \\\\10.10.10.178\\Data We find an interesting file under \Shared\Templates\HR\ named &amp;ldquo;Welcome Email.txt&amp;rdquo;. We get the file on our local mahcine using
+1smb: \Shared\Templates\HR\&amp;gt; get &amp;#34;Welcome Email.txt&amp;#34; Having a look at the file we find</description>
     </item>
     
     <item>
@@ -87,24 +98,13 @@ http-title: Blunder | A blunder of interesting facts
     </item>
     
     <item>
-      <title>Hackthebox - Montevarde Writeup</title>
-      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</link>
-      <pubDate>Sat, 30 May 2020 00:00:00 +0000</pubDate>
+      <title>Hackthebox - Resolute Writeup</title>
+      <link>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</link>
+      <pubDate>Thu, 28 May 2020 00:00:00 +0000</pubDate>
       
-      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/</guid>
-      <description>Nmap Scan  1nmap -sC -sV -sS -oN nmap.out 10.10.10.172 Open ports:
- PORT STATE SERVICE VERSION
-53/tcp open domain?
-88/tcp open kerberos-sec Microsoft Windows Kerberos (server time:
-2020-05-24 10:34:50Z)
-135/tcp open msrpc Microsoft Windows RPC
-139/tcp open netbios-ssn Microsoft Windows netbios-ssn
-389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain:
-MEGABANK.LOCAL0., Site: Default-First-Site-Name)
-445/tcp open microsoft-ds?
-464/tcp open kpasswd5?
-593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0
-636/tcp open tcpwrapped</description>
+      <guid>https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/</guid>
+      <description>Nmap Scan 1export ip=10.10.10.169 1nmap -sC -sV -sS -oN nmap.put $ip open ports:
+ 53/tcp open domain? 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) 135/tcp open msrpc Microsoft Windows RPC 139/tcp open netbios-ssn Microsoft Windows netbios-ssn 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) 464/tcp open kpasswd5? 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.</description>
     </item>
     
     <item>

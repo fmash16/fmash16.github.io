@@ -20,7 +20,7 @@
     
     
     <meta name="description" content="A linux machine having a number of techniques for privesc - python path hijack, environment PATH hijack, linux file capabilities." />
-    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <meta name="generator" content="Hugo 0.72.0 with theme pure" />
     <title>TryHackMe - Wonderland Writeup - fmash16&#39;s blog</title>
     
     
@@ -403,20 +403,10 @@
             <li>
                 <div class="item-inner">
                     <p class="item-title">
-                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/" class="title">Hackthebox - Nest Writeup</a>
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
                     </p>
                     <p class="item-date">
-                        <time datetime="2020-06-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-05</time>
-                    </p>
-                </div>
-            </li>
-            <li>
-                <div class="item-inner">
-                    <p class="item-title">
-                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
-                    </p>
-                    <p class="item-date">
-                        <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
                     </p>
                 </div>
             </li>
@@ -427,6 +417,16 @@
                     </p>
                     <p class="item-date">
                         <time datetime="2020-06-08 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-08</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/" class="title">Hackthebox - Nest Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-05</time>
                     </p>
                 </div>
             </li>
@@ -543,7 +543,7 @@ So the path becomes /r/a/b/b/i/t. We go to the address <code>http://wonderland.t
 <p><img src="/img/tryhackme_wonderland/6.png" alt=""></p>
 <p>Creds found :</p>
 <blockquote>
-<p>alice:Ho.................................il</p>
+<p>alice:HowDothTheLittleCrocodileImproveHisShiningTail</p>
 </blockquote>
 <p>We can use these creds to login to the machine using SSH.</p>
 <p><img src="/img/tryhackme_wonderland/7.png" alt=""></p>
@@ -604,7 +604,7 @@ hatter.We make it executable and add the directory to our Environment PATH</p>
 <p>In the home directory, we find the password for user hatter.
 Creds found:</p>
 <blockquote>
-<p>hatter:Wh.....................................sk?</p>
+<p>hatter:WhyIsARavenLikeAWritingDesk?</p>
 </blockquote>
 <p>So, now, we can SSH into the machine as user hatter.</p>
 <h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
@@ -660,13 +660,13 @@ root.txt is in users&rsquo; home, and user.txt is in /root.</p>
     <div class="bar-inner">
         <ul class="pager pull-left">
             <li class="prev">
-                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" title="Hackthebox - Book Writeup"><i
+                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/" title="Hackthebox - Nest Writeup"><i
                         class="icon icon-angle-left"
                         aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
             </li>
             <li class="next">
-                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/"
-                    title="Hackthebox - Resolute Writeup"><span>Newer&nbsp;&nbsp;</span><i
+                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/"
+                    title="Hackthebox - Montevarde Writeup"><span>Newer&nbsp;&nbsp;</span><i
                         class="icon icon-angle-right" aria-hidden="true"></i></a>
             </li>
             

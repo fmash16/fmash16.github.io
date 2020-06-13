@@ -20,7 +20,7 @@
     
     
     <meta name="description" content="An easy machine in HTB standards, but is quite hard." />
-    <meta name="generator" content="Hugo 0.71.0 with theme pure" />
+    <meta name="generator" content="Hugo 0.72.0 with theme pure" />
     <title>Hackthebox - Nest Writeup - fmash16&#39;s blog</title>
     
     
@@ -403,20 +403,10 @@
             <li>
                 <div class="item-inner">
                     <p class="item-title">
-                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/" class="title">Hackthebox - Nest Writeup</a>
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-montevarde-writeup/" class="title">Hackthebox - Montevarde Writeup</a>
                     </p>
                     <p class="item-date">
-                        <time datetime="2020-06-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-05</time>
-                    </p>
-                </div>
-            </li>
-            <li>
-                <div class="item-inner">
-                    <p class="item-title">
-                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" class="title">Hackthebox - Resolute Writeup</a>
-                    </p>
-                    <p class="item-date">
-                        <time datetime="2020-05-28 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-28</time>
+                        <time datetime="2020-05-30 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-05-30</time>
                     </p>
                 </div>
             </li>
@@ -427,6 +417,16 @@
                     </p>
                     <p class="item-date">
                         <time datetime="2020-06-08 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-08</time>
+                    </p>
+                </div>
+            </li>
+            <li>
+                <div class="item-inner">
+                    <p class="item-title">
+                        <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-nest-writeup/" class="title">Hackthebox - Nest Writeup</a>
+                    </p>
+                    <p class="item-date">
+                        <time datetime="2020-06-05 00:00:00 &#43;0000 UTC" itemprop="datePublished">2020-06-05</time>
                     </p>
                 </div>
             </li>
@@ -724,7 +724,7 @@ Password: yyEq0Uvvhq2uQOcWG8peLoeRQehqip/fKdeG/kjEVb4=</p>
 <h2 id="decryting-encrypted-pass-debugging-hqkldapexednspy">Decryting encrypted pass debugging HqkLdap.exe(dnSpy)</h2>
 <p>The password is encrypted. We also found a HqkLdap.exe file there. We can have
 a look at the file. We found this file in the Users share under &ldquo;C.Smith/HQK
-Reporting/AD Integration Module/&quot;. The file is a .NET binary.</p>
+Reporting/AD Integration Module/&rdquo;. The file is a .NET binary.</p>
 <p>In order to debug the file, we use a tool called <a href="https://github.com/0xd4d/dnSpy">dnSpy</a>
 We can decompile the binary into C# code. Looking at the code, we find a class
 <code>HqkLdap.CR</code> that has a function <code>DS</code> which decrypts the string
@@ -881,9 +881,14 @@ Password: XtH4nkS4Pl4y1nGX</p>
     <div class="bar-inner">
         <ul class="pager pull-left">
             <li class="prev">
-                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-resolute-writeup/" title="Hackthebox - Resolute Writeup"><i
+                <a href="https://fmash16.github.io/writeups/hackthebox-writeups/hackthebox-book-writeup/" title="Hackthebox - Book Writeup"><i
                         class="icon icon-angle-left"
                         aria-hidden="true"></i><span>&nbsp;&nbsp;Older</span></a>
+            </li>
+            <li class="next">
+                <a href="https://fmash16.github.io/writeups/tryhackme-writeups/tryhackme-wonderland-writeup/"
+                    title="TryHackMe - Wonderland Writeup"><span>Newer&nbsp;&nbsp;</span><i
+                        class="icon icon-angle-right" aria-hidden="true"></i></a>
             </li>
             
             <li class="toggle-toc">
