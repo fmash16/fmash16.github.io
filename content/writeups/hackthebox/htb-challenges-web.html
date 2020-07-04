@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>fmash16's blog</title>
+<meta property="og:title" content="Hackthebox[Web-Challenge] Writeups" />
+      <meta property="og:description" content="topics" />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h2 id="em-dee-five-for-life">## Em Dee Five for Life</h2>
+<p>We start the instance</p>
+<p>The page gives us a string and asks for the md5sum as the input, after we inpput the md5sum of the string got from our terminal, we get a response of too slow.</p>
+<div class="figure">
+<img src="/img/htb_challenges/md51.png" />
+
+</div>
+<p>So to make the response fast, we can write a simple python script. First, we intercept the post request to the page in burpsuite to chech how the md5 hash is passed and find that it is passed as raw data.</p>
+<div class="figure">
+<img src="/img/htb_challenges/md52.png" />
+
+</div>
+<p>Now, we write our script.</p>
+<div class="sourceCode"><pre class="sourceCode solution.py"><code class="sourceCode python"><span class="co">#! /usr/bin/env python</span>
+
+<span class="im">from</span> __future__ <span class="im">import</span> print_function
+<span class="im">import</span> requests
+<span class="im">import</span> re
+<span class="im">import</span> hashlib
+<span class="im">import</span> os
+
+<span class="co"># We setup our proxy here to pass our requests through burpsuite for checking</span>
+<span class="co">#---------------------------------------------------------------------------------</span>
+proxy <span class="op">=</span> <span class="st">&#39;127.0.0.1:8080&#39;</span>
+
+<span class="co">#  os.environ[&#39;http_proxy&#39;] = proxy</span>
+<span class="co">#  os.environ[&#39;HTTP_PROXY&#39;] = proxy</span>
+<span class="co">#  os.environ[&#39;https_proxy&#39;] = proxy</span>
+<span class="co">#  os.environ[&#39;HTTPS_PROXY&#39;] = proxy</span>
+
+
+<span class="co"># Here, we make the get request to get our initial page requesting for the md5</span>
+by creating a session, <span class="im">as</span> we need to post our response to the same session
+<span class="co">#---------------------------------------------------------------------------------</span>
+url <span class="op">=</span> <span class="st">&quot;http://docker.hackthebox.eu:31405&quot;</span>
+
+req <span class="op">=</span> requests.Session()
+page <span class="op">=</span> req.get(url)
+text <span class="op">=</span> page.content
+<span class="bu">print</span>(text)
+
+
+<span class="co"># We use python regex to find seperate our hash out of the html file, we can</span>
+find the regex by analyzing the whole html <span class="bu">file</span> first.
+<span class="co">#---------------------------------------------------------------------------------</span>
+x <span class="op">=</span> re.findall(<span class="st">&quot;&lt;h3 align=&#39;center&#39;&gt;(.*)&lt;/h3&gt;&quot;</span>, text)[<span class="dv">0</span>]
+x <span class="op">=</span> x.rstrip()
+
+<span class="co"># print(&quot;hash: &quot; + x)</span>
+<span class="co"># print(s)</span>
+
+
+<span class="co"># We find the md5sum of the supplied string and pass it as data to a post</span>
+request made to the session
+<span class="co">#---------------------------------------------------------------------------------</span>
+emd5 <span class="op">=</span> hashlib.md5(x).hexdigest()
+
+<span class="co"># print(&quot;md5sum: &quot; + emd5)</span>
+
+payload <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">hash</span><span class="op">=</span>emd5)
+
+response <span class="op">=</span> req.post(url, data <span class="op">=</span> payload)
+
+<span class="co"># And here we get the response back and get the flag out</span>
+<span class="co">#---------------------------------------------------------------------------------</span>
+<span class="co"># print(response.text)</span>
+
+flag <span class="op">=</span> re.findall(<span class="st">&quot;&lt;p align=&#39;center&#39;&gt;(.*)&lt;/p&gt;&quot;</span>, response.content)[<span class="dv">0</span>]
+<span class="bu">print</span>(<span class="st">&quot;flag: &quot;</span> <span class="op">+</span> flag)</code></pre></div>
+<p>And we get our flag.</p>
+</article>
+
+<footer>
+  <p> By fmash16 </p>
+</footer>
+</body>

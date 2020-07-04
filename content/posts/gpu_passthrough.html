@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>fmash16's blog</title>
+<meta property="og:title" content="Ryzen Gpu passthrough guide on debian" />
+      <meta property="og:description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10" />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h2 id="preamble">Preamble</h2>
+<p>This guide shows how to passthrough a gpu to a vm running on QEMU/KVM on linux for improved graphical performance. In my case, I did it to run windows and play games while I can still work on my linux machine. Dual booting is not a good solution in this case as rebooting into windows just for the purpose of gaming is a pain. Passing through my gpu, I can switch between games and work with muxh ease. This is a guide of how I set it up on my machine running Debian 10.</p>
+<h2 id="introduction-to-vfio-and-pci-passthrough">Introduction to VFIO and PCI passthrough:</h2>
+<p><a href="https://www.kernel.org/doc/Documentation/vfio.txt">Virtual Function IO</a> (or VFIO) allows a virtual machine (VM) direct access to a pci hardware resource, such as a graphics processing unit (GPU). Virtual machines with set up GPU passthrough can gain close to bare metal performance, which makes running games in a Windows virtual machine possible.</p>
+<p>Unfortunately, the setup process can be pretty complex. It consists of fixed base settings, some variable settings and several optional (mostly performance) settings. In order to sustain readability of this post, and because I aim to use the virtual machine for gaming only, I minimized the variable parts for latency optimization. The variable topics itself are linked in articles – I hope this makes sense. 🙂</p>
+<h2 id="requirements">Requirements:</h2>
+<h2 id="hardware">Hardware:</h2>
+<p>In order to successfully follow this guide, it is mandatory that the used hardware supports virtualization and IOMMU groups.</p>
+<p>The hardware I use is as follows: * Ryzen 6 2600 @ 4.00Ghz * MSI X470 Gaming Plus * 24gb corsair vengeance 3200Mhz cl16 RAM * 240GB WD Green SSD for vm * NVIDIA GT710 (host gpu) * AMD Radeon RX580 (passthrough gpu)</p>
+<h2 id="software">Software:</h2>
+<p>Before we start, install the virtualization manager and related software via:</p>
+<pre class="shell"><code>sudo apt-get install libvirt-bin bridge-utils virt-manager qemu-kvm ovmf</code></pre>
+<h2 id="setting-up-the-vfio-ryzen-passthrough">Setting up the vfio ryzen passthrough:</h2>
+<p>Devices connected to the mainboard, are members of (IOMMU) groups – depending on where and how they are connected. It is possible to pass devices into a virtual machine. Passed through devices have nearly bare metal performance when used inside the VM.</p>
+<p>On the downside, passed through devices are isolated and thus no longer available to the host system. Furthermore it is only possible to isolate all devices of one IOMMU group at the same time. This means, even when not used in the VM if a devices is IOMMU-group sibling of a passed through device, it can not be used on the host system.</p>
+<h2 id="enabling-the-iommu-feature">Enabling the IOMMU feature:</h2>
+<p>To enable the IOMMU feature on an AMD Ryzen system, modify your grub config. Run <code>sudo nano /etc/default/grub</code> and edit the line which starts with <code>GRUB_CMDLINE_LINUX_DEFAULT</code>, to match:</p>
+<pre class="shell"><code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;amd_iommu=on iommu=pt kvm_amd.npt=1 kvm_amd.avic=1&quot;</code></pre>
+<p>in case you are using an Intel CPU the line should read:</p>
+<pre class="shell"><code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;intel_iommu=on&quot;</code></pre>
+<p>Save the changes and update grub.</p>
+<pre class="shell"><code>sudo update-grub</code></pre>
+<p>Reboot your system when the command has finished.</p>
+<p>One can verify after a system start if IOMMU is enabled by running:</p>
+<pre class="shell"><code>dmesg |grep AMD-Vi</code></pre>
+<p>My output:</p>
+<pre class="shell"><code>[    0.758804] AMD-Vi: IOMMU performance counters supported                             
+[    0.760735] AMD-Vi: Found IOMMU at 0000:00:00.2 cap 0x40                             
+[    0.760737] AMD-Vi: Extended features (0xf77ef22294ada):                             
+[    0.760741] AMD-Vi: Interrupt remapping enabled  
+[    0.760742] AMD-Vi: virtual APIC enabled         
+[    0.760832] AMD-Vi: Lazy IO/TLB flushing enabled </code></pre>
+<h2 id="finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the iommu group of the guest gpu to isolate:</h2>
+<p>In order to activate the hardware passthrough for virtual machines, we have to make sure the nvidia/amd driver is not taking ownership of the PCIe devices; isolate it before we can hand it over.</p>
+<p>This is done by applying the vfio-pci to the guest GPU, during the system startup.</p>
+<p>Depending on the PCIe slot installed, the hardware has different IOMMU group affilation. One can use a bash script like this in order to determine devices and their grouping:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/bash</span>
+<span class="bu">shopt</span> -s nullglob
+<span class="kw">for</span> <span class="ex">d</span> in /sys/kernel/iommu_groups/*/devices/*<span class="kw">;</span> <span class="kw">do</span>
+    <span class="va">n=${d#</span>*/iommu_groups/*<span class="va">}</span>; <span class="va">n=${n%%</span>/*<span class="va">}</span>
+    <span class="bu">printf</span> <span class="st">&#39;IOMMU Group %s &#39;</span> <span class="st">&quot;</span><span class="va">$n</span><span class="st">&quot;</span>
+    <span class="ex">lspci</span> -nns <span class="st">&quot;</span><span class="va">${d##</span>*/<span class="va">}</span><span class="st">&quot;</span>
+<span class="kw">done</span>;</code></pre></div>
+<p>Output:</p>
+<pre class="shell"><code>IOMMU Group 0 00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h PCIe Dummy Host Bridge [1022:1452]                  
+IOMMU Group 10 00:08.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Internal PCIe GPP Bridge 0 to Bus B [1022:1454]     
+IOMMU Group 11 00:14.0 SMBus [0c05]: Advanced Micro Devices, Inc. [AMD] FCH
+SMBus Contro(rev 59)                  
+IOMMU Group 11 00:14.3 ISA bridge [0601]: Advanced Micro Devices, Inc. [AMD]
+FCH LPC Brirev 51)                   
+IOMMU Group 12 00:18.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 0 [1022:1460]    
+IOMMU Group 12 00:18.1 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 1 [1022:1461]    
+IOMMU Group 12 00:18.2 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 2 [1022:1462]    
+IOMMU Group 12 00:18.3 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 3 [1022:1463]    
+IOMMU Group 12 00:18.4 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 4 [1022:1464]    
+IOMMU Group 12 00:18.5 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 5 [1022:1465]    
+IOMMU Group 12 00:18.6 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 6 [1022:1466]    
+IOMMU Group 12 00:18.7 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h Data Fabric: Device 18h; Function 7 [1022:1467]    
+IOMMU Group 13 03:00.0 USB controller [0c03]: Advanced Micro Devices, Inc.
+[AMD] Device 01)                       
+IOMMU Group 13 03:00.1 SATA controller [0106]: Advanced Micro Devices, Inc.
+[AMD] 400 Se Controller [1022:43c8] (rev 01)                    
+IOMMU Group 13 03:00.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+400 Series ge [1022:43c6] (rev 01)   
+IOMMU Group 13 16:00.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+400 Series  [1022:43c7] (rev 01)     
+IOMMU Group 13 16:01.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+400 Series  [1022:43c7] (rev 01)     
+IOMMU Group 13 16:02.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+400 Series  [1022:43c7] (rev 01)     
+IOMMU Group 13 16:03.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+400 Series  [1022:43c7] (rev 01)     
+IOMMU Group 13 16:04.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+400 Series  [1022:43c7] (rev 01)     
+IOMMU Group 13 16:08.0 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+400 Series  [1022:43c7] (rev 01)     
+IOMMU Group 13 18:00.0 Ethernet controller [0200]: Realtek Semiconductor Co.,
+Ltd. RTL81Express Gigabit Ethernet Controller [10ec:8168] (rev 15)                                
+IOMMU Group 13 1c:00.0 USB controller [0c03]: ASMedia Technology Inc. ASM1143
+USB 3.1 Ho21:1343]                  
+IOMMU Group 14 1d:00.0 VGA compatible controller [0300]: NVIDIA Corporation
+GK208 [GeFor:128b] (rev a1)           
+IOMMU Group 14 1d:00.1 Audio device [0403]: NVIDIA Corporation GK208 HDMI/DP
+Audio Contr (rev a1)                 
+IOMMU Group 15 1e:00.0 VGA compatible controller [0300]: Advanced Micro
+Devices, Inc. [A [Radeon RX 470/480] [1002:67df] (rev e7)           
+IOMMU Group 15 1e:00.1 Audio device [0403]: Advanced Micro Devices, Inc.
+[AMD/ATI] EllesRadeon RX 470/480 / 570/580/590] [1002:aaf0]        
+IOMMU Group 16 1f:00.0 Non-Essential Instrumentation [1300]: Advanced Micro
+Devices, IncRaven/Raven2 PCIe Dummy Function [1022:145a]        
+IOMMU Group 17 1f:00.2 Encryption controller [1080]: Advanced Micro Devices,
+Inc. [AMD] s 00h-0fh) Platform Security Processor [1022:1456]  
+IOMMU Group 18 1f:00.3 USB controller [0c03]: Advanced Micro Devices, Inc.
+[AMD] USB 3.0[1022:145f]               
+IOMMU Group 19 20:00.0 Non-Essential Instrumentation [1300]: Advanced Micro
+Devices, IncRenoir PCIe Dummy Function [1022:1455]              
+IOMMU Group 1 00:01.3 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+Family 17h (CIe GPP Bridge [1022:1453]                          
+IOMMU Group 20 20:00.2 SATA controller [0106]: Advanced Micro Devices, Inc.
+[AMD] FCH SACI mode] [1022:7901] (rev 51)                       
+IOMMU Group 21 20:00.3 Audio device [0403]: Advanced Micro Devices, Inc. [AMD]
+Family 17) HD Audio Controller [1022:1457]                   
+IOMMU Group 2 00:02.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h PCIe Dummy Host Bridge [1022:1452]                  
+IOMMU Group 3 00:03.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h PCIe Dummy Host Bridge [1022:1452]                  
+IOMMU Group 4 00:03.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+Family 17h (CIe GPP Bridge [1022:1453]                          
+IOMMU Group 5 00:03.2 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+Family 17h (CIe GPP Bridge [1022:1453]                          
+IOMMU Group 6 00:04.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h PCIe Dummy Host Bridge [1022:1452]                  
+IOMMU Group 7 00:07.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h PCIe Dummy Host Bridge [1022:1452]                  
+IOMMU Group 8 00:07.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
+Family 17h (nternal PCIe GPP Bridge 0 to Bus B [1022:1454]      
+IOMMU Group 9 00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
+Family 17h PCIe Dummy Host Bridge [1022:1452]</code></pre>
+<p>We are looking for the device id of the guest GPU (in my case, Radeon RX 470/480) for isolation. Keep in mind that the GPU usually comes combined with an audio device.</p>
+<p>We will isolate the GPU in PCIe slot 2, with host gpu in PCIe slot 1.</p>
+<p>For the next step only the GPU-Id is needed. We have to isolate <code>1002:67df</code> and <code>1002:aaf0</code></p>
+<h2 id="isolation-of-guest-gpu">Isolation of guest gpu</h2>
+<p>In order to isolate the gfx card modify <code>/etc/initramfs-tools/modules</code> via: <code>sudo nano /etc/initramfs-tools/modules</code> and add:</p>
+<pre class="shell"><code>softdep amdgpu pre: vfio vfio_pci
+vfio vfio_iommu_type1 vfio_virqfd vfio_pci ids=1002:67df,1002:aaf0</code></pre>
+<p>modify <code>/etc/modules</code> aswell via: <code>sudo nano /etc/modules</code> and add:</p>
+<pre class="shell"><code>vfio
+vfio_iommu_type1
+vfio_pci ids=1002:67df,1002:aaf0</code></pre>
+<p>These changes will pass device-ids to the vfio_pci module, in order to reserve these devices for the passthrough. It is crucial that the vfio_pci module claims the GPU before the actual driver (in this case the nvidia graphic-cards driver) loads, otherwise it is not possible to isolate the GPU. Make sure your cards are using the Nvidia driver (not nouvea one).</p>
+<p>In order to alter the load sequence in favour to vfio_pci before the nvidia driver, create a file in the <code>modprobe.d</code> folder via <code>sudo nano /etc/modprobe.d/nvidia.conf</code> and add the the following line:</p>
+<pre class="shell"><code>softdep nouveau pre: vfio-pci 
+softdep nvidia pre: vfio-pci 
+softdep nvidia* pre: vfio-pci</code></pre>
+<p>Create another file via <code>sudo nano /etc/modprobe.d/vfio.conf</code> to add the the following line:</p>
+<pre class="shell"><code>options vfio-pci ids=1002:67df,1002:aaf0</code></pre>
+<p>Obviously, the ids have to be the same we have added before to the modules file. Now save and close the file.</p>
+<p>Since the Windows 10 update 1803 the following additional entry needs to be set (otherwise BSOD) create the kvm.conf file via<code>sudo nano /etc/modprobe.d/kvm.conf</code> to add the the following line:</p>
+<pre class="shell"><code>options kvm ignore_msrs=1</code></pre>
+<p>Save and close the file.</p>
+<pre class="shell"><code>when all is done run: sudo update-initramfs -u -k all</code></pre>
+<h2 id="verify-the-isolation">Verify the isolation</h2>
+<p>In order to verify a proper isolation of the device, run:</p>
+<pre class="shell"><code>lspci -nnv</code></pre>
+<p>find the line <code>&quot;Kernel driver in use&quot;</code> for the GPU and its audio part. It should state <code>vfio-pci</code>.</p>
+<p>My output:</p>
+<pre class="shell"><code>1e:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc.
+[AMD/ATI] Ellesmere [Radeon RX 470/480] [1002:67df] (rev e7) (prog-if 00 [VGA
+controller])               
+        Subsystem: Sapphire Technology Limited Ellesmere [Radeon RX
+470/480/570/570X/580/580X/590] (Nitro+ Radeon RX 570/580) [1da2:e366]                                       
+        Flags: fast devsel, IRQ 11          
+        Memory at d0000000 (64-bit, prefetchable) [disabled] [size=256M]                
+        Memory at e0000000 (64-bit, prefetchable) [disabled] [size=2M]                  
+        I/O ports at d000 [disabled] [size=256]                                         
+        Memory at f7900000 (32-bit, non-prefetchable) [disabled] [size=256K]            
+        Expansion ROM at f7940000 [disabled] [size=128K]                                
+        Capabilities: &lt;access denied&gt;       
+        Kernel driver in use: vfio-pci      
+        Kernel modules: amdgpu              
+
+1e:00.1 Audio device [0403]: Advanced Micro Devices, Inc. [AMD/ATI] Ellesmere
+HDMI Audio [Radeon RX 470/480 / 570/580/590] [1002:aaf0]                                          
+        Subsystem: Sapphire Technology Limited Ellesmere HDMI Audio [Radeon RX
+470/480 / 570/580/590] [1da2:aaf0]                   
+        Flags: fast devsel, IRQ 10          
+        Memory at f7960000 (64-bit, non-prefetchable) [disabled] [size=16K]             
+        Capabilities: &lt;access denied&gt;       
+        Kernel driver in use: vfio-pci      
+        Kernel modules: snd_hda_intel       </code></pre>
+<h2 id="creating-the-windows-virtual-machine">Creating the windows virtual machine</h2>
+<p>The virtualization is done via an open source machine emulator and virtualizer called QEMU. One can either run qemu directly, or use a GUI called virt-manager in order setup, and run a virtual machine. I prefer using the GUI. Unfortunately not every settings is supported in the Virtual Manager. Thus, I define the basic settings in the UI do a quick VM start and force stop it right after I see the GPU is passed-over correctly. Afterwards one can edit the missing bits into the VM config via virsh.</p>
+<ol style="list-style-type: decimal">
+<li><p>Open <code>virt-manager</code></p>
+<div class="figure">
+<img src="/img/virt-manager.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Create a new windows virtual machine</p>
+<div class="figure">
+<img src="/img/virt1.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Select the iso file of windows10</p>
+<div class="figure">
+<img src="/img/virt2.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Choose the desired amount of RAM and CPU cores</p>
+<div class="figure">
+<img src="/img/virt3.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Create a custom storage(since we are using a wholess SSD for this vm)</p>
+<div class="figure">
+<img src="/img/virt4.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Add a new pool</p>
+<div class="figure">
+<img src="/img/virt5.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>First, find the dev name of your ssd for vm using the command <code>lsblk</code> in terminal. In my case, it was /dev/sdc. You must select physical disk drive as we are using a seperate disk.</p>
+<div class="figure">
+<img src="/img/virt6.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Build the pool</p>
+<div class="figure">
+<img src="/img/virt7.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Next create a new volume in the pool by the name <code>win10</code>(or whatever you like). and select this voilume as the storage.</p></li>
+<li><p>You must check the box</p>
+<div class="figure">
+<img src="/img/virt8.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>After finishing, the following box will appear. Select chipset <code>Q35</code> and firmware <code>uefi</code> and apply.</p>
+<div class="figure">
+<img src="/img/virt9.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>In the CPUs, manually set the cpu topology with 1 socket and cores and threads as your choice, better follow usual configurations of cores/threads</p>
+<div class="figure">
+<img src="/img/virt10.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Remove the <code>Display spice</code> and <code>Video QXL</code> from the hardwares.</p></li>
+<li><p>Go to <code>Add hardware</code>, there yoiu will find your passthrough gpu and sound in the <code>pci host device</code> section. Add those.</p>
+<div class="figure">
+<img src="/img/virt11.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><blockquote>
+<p>A problem that I faced during installing windows is that I couldn't boot into the iso file inserted as cd rom and got stuck on the UEFI shell. Going into the bios, I still couldn't boot from the iso. But when I used BIOS instead of UEFI, it booted into windows installation alright, but going to install windows, it shows that my disk is GPT instead of MBR required for BIOS, and so cannot install windows to that disk.</p>
+</blockquote>
+<p>So, what you have to do is create a windows bootable drive with GPT. You can do this in many ways, either in linux or using a sofware like rufus on windows. Create a bootable pendrive and attach it. Now in the <code>add hardware</code> section, under the <code>USB Host Device</code>, you will find your pendrive. Add it.</p>
+<div class="figure">
+<img src="/img/virt12.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Go to boot options, check <code>Enable boot menu</code> and in the serial, check and move the USB device(your bootable drive), to the top.</p>
+<div class="figure">
+<img src="/img/virt13.png" alt="image" />
+<p class="caption">image</p>
+</div></li>
+<li><p>Next, start installation.</p></li>
+</ol>
+<h2 id="install-windows">Install windows:</h2>
+<p>Connect a second monitor to you host gpu, or you can connect to the monnitor you already have and can switch the inputs between your host and guest gpu.</p>
+<p>The windows installation should come up, install windows and voila! you are done, almost</p>
+<h2 id="install-necessary-drivers">Install necessary drivers</h2>
+<p>Performance is supposed to get better if you use virtio drivers on windows, Download the virtio drivers and attack them to the vm as a cdrom device and install the drivers from there.</p>
+<p>You must also install the required graphics drivers(Radeon/NVIDIA) to eliminate display issues (in my case , I was not gettint the 1080p resolution).</p>
+<h2 id="editing-configurations-using-virsh">Editing configurations using virsh</h2>
+<p>You can edit the config of your vm from terminal by editing the xml file generate, To edit the xml file, in the termial, type <code>virsh edit win10</code> In place if win10, place the name of your windows vm.</p>
+<div class="sourceCode"><pre class="sourceCode xml"><code class="sourceCode xml"><span class="kw">&lt;domain</span><span class="ot"> type=</span><span class="st">&#39;kvm&#39;</span><span class="kw">&gt;</span>
+  <span class="kw">&lt;name&gt;</span>win10<span class="kw">&lt;/name&gt;</span>
+  <span class="kw">&lt;uuid&gt;</span>ba67aec1-75a4-4639-b905-2e9c444aef85<span class="kw">&lt;/uuid&gt;</span>
+  <span class="kw">&lt;metadata&gt;</span>
+    <span class="kw">&lt;libosinfo:libosinfo</span>
+<span class="ot">xmlns:libosinfo=</span><span class="st">&quot;http://libosinfo.org/xmlns/libvirt/domain/1.0&quot;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;libosinfo:os</span><span class="ot"> id=</span><span class="st">&quot;http://microsoft.com/win/10&quot;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/libosinfo:libosinfo&gt;</span>
+  <span class="kw">&lt;/metadata&gt;</span>
+  <span class="kw">&lt;memory</span><span class="ot"> unit=</span><span class="st">&#39;KiB&#39;</span><span class="kw">&gt;</span>8388608<span class="kw">&lt;/memory&gt;</span>
+  <span class="kw">&lt;currentMemory</span><span class="ot"> unit=</span><span class="st">&#39;KiB&#39;</span><span class="kw">&gt;</span>8388608<span class="kw">&lt;/currentMemory&gt;</span>
+  <span class="kw">&lt;vcpu</span><span class="ot"> placement=</span><span class="st">&#39;static&#39;</span><span class="kw">&gt;</span>6<span class="kw">&lt;/vcpu&gt;</span>
+  <span class="kw">&lt;os&gt;</span>
+    <span class="kw">&lt;type</span><span class="ot"> arch=</span><span class="st">&#39;x86_64&#39;</span><span class="ot"> machine=</span><span class="st">&#39;pc-q35-3.1&#39;</span><span class="kw">&gt;</span>hvm<span class="kw">&lt;/type&gt;</span>
+    <span class="kw">&lt;loader</span><span class="ot"> readonly=</span><span class="st">&#39;yes&#39;</span><span class="ot"> type=</span><span class="st">&#39;pflash&#39;</span><span class="kw">&gt;</span>/usr/share/OVMF/OVMF_CODE.fd<span class="kw">&lt;/loader&gt;</span>
+    <span class="kw">&lt;nvram&gt;</span>/var/lib/libvirt/qemu/nvram/win10_VARS.fd<span class="kw">&lt;/nvram&gt;</span>
+    <span class="kw">&lt;bootmenu</span><span class="ot"> enable=</span><span class="st">&#39;yes&#39;</span><span class="kw">/&gt;</span>
+  <span class="kw">&lt;/os&gt;</span>
+  <span class="kw">&lt;features&gt;</span>
+    <span class="kw">&lt;acpi/&gt;</span>
+    <span class="kw">&lt;apic/&gt;</span>
+    <span class="kw">&lt;hyperv&gt;</span>
+      <span class="kw">&lt;relaxed</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;vapic</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;spinlocks</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span><span class="ot"> retries=</span><span class="st">&#39;8191&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/hyperv&gt;</span>
+    <span class="kw">&lt;vmport</span><span class="ot"> state=</span><span class="st">&#39;off&#39;</span><span class="kw">/&gt;</span>
+  <span class="kw">&lt;/features&gt;</span>
+  <span class="kw">&lt;cpu</span><span class="ot"> mode=</span><span class="st">&#39;host-model&#39;</span><span class="ot"> check=</span><span class="st">&#39;partial&#39;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;model</span><span class="ot"> fallback=</span><span class="st">&#39;allow&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;topology</span><span class="ot"> sockets=</span><span class="st">&#39;1&#39;</span><span class="ot"> cores=</span><span class="st">&#39;6&#39;</span><span class="ot"> threads=</span><span class="st">&#39;1&#39;</span><span class="kw">/&gt;</span>
+  <span class="kw">&lt;/cpu&gt;</span>
+  <span class="kw">&lt;clock</span><span class="ot"> offset=</span><span class="st">&#39;localtime&#39;</span><span class="kw">&gt;</span>
+    <span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;rtc&#39;</span><span class="ot"> tickpolicy=</span><span class="st">&#39;catchup&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;pit&#39;</span><span class="ot"> tickpolicy=</span><span class="st">&#39;delay&#39;</span><span class="kw">/&gt;</span>
+<span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;hpet&#39;</span><span class="ot"> present=</span><span class="st">&#39;no&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;hypervclock&#39;</span><span class="ot"> present=</span><span class="st">&#39;yes&#39;</span><span class="kw">/&gt;</span>
+  <span class="kw">&lt;/clock&gt;</span>
+  <span class="kw">&lt;on_poweroff&gt;</span>destroy<span class="kw">&lt;/on_poweroff&gt;</span>
+  <span class="kw">&lt;on_reboot&gt;</span>restart<span class="kw">&lt;/on_reboot&gt;</span>
+  <span class="kw">&lt;on_crash&gt;</span>destroy<span class="kw">&lt;/on_crash&gt;</span>
+  <span class="kw">&lt;pm&gt;</span>
+    <span class="kw">&lt;suspend-to-mem</span><span class="ot"> enabled=</span><span class="st">&#39;no&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;suspend-to-disk</span><span class="ot"> enabled=</span><span class="st">&#39;no&#39;</span><span class="kw">/&gt;</span>
+  <span class="kw">&lt;/pm&gt;</span>
+  <span class="kw">&lt;devices&gt;</span>
+    <span class="kw">&lt;emulator&gt;</span>/usr/bin/qemu-system-x86_64<span class="kw">&lt;/emulator&gt;</span>
+    <span class="kw">&lt;disk</span><span class="ot"> type=</span><span class="st">&#39;block&#39;</span><span class="ot"> device=</span><span class="st">&#39;disk&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;driver</span><span class="ot"> name=</span><span class="st">&#39;qemu&#39;</span><span class="ot"> type=</span><span class="st">&#39;raw&#39;</span><span class="ot"> cache=</span><span class="st">&#39;none&#39;</span><span class="ot"> io=</span><span class="st">&#39;native&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;source</span><span class="ot"> dev=</span><span class="st">&#39;/dev/sdc1&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> dev=</span><span class="st">&#39;sda&#39;</span><span class="ot"> bus=</span><span class="st">&#39;sata&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;boot</span><span class="ot"> order=</span><span class="st">&#39;2&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;drive&#39;</span><span class="ot"> controller=</span><span class="st">&#39;0&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> target=</span><span class="st">&#39;0&#39;</span><span class="ot"> unit=</span><span class="st">&#39;0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/disk&gt;</span>
+    <span class="kw">&lt;disk</span><span class="ot"> type=</span><span class="st">&#39;file&#39;</span><span class="ot"> device=</span><span class="st">&#39;cdrom&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;driver</span><span class="ot"> name=</span><span class="st">&#39;qemu&#39;</span><span class="ot"> type=</span><span class="st">&#39;raw&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;source</span><span class="ot"> file=</span><span class="st">&#39;/home/fmash/gpu_passthru/virtio-win-0.1.141.iso&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> dev=</span><span class="st">&#39;sdb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;sata&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;readonly/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;drive&#39;</span><span class="ot"> controller=</span><span class="st">&#39;0&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> target=</span><span class="st">&#39;0&#39;</span><span class="ot"> unit=</span><span class="st">&#39;1&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/disk&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="ot"> model=</span><span class="st">&#39;qemu-xhci&#39;</span><span class="ot"> ports=</span><span class="st">&#39;15&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x02&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;sata&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x1f&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x2&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;1&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;1&#39;</span><span class="ot"> port=</span><span class="st">&#39;0x8&#39;</span><span class="kw">/&gt;</span>
+<span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x0&#39;</span>
+<span class="ot">multifunction=</span><span class="st">&#39;on&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;2&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;2&#39;</span><span class="ot"> port=</span><span class="st">&#39;0x9&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x1&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;3&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;3&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xa&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x2&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;4&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;4&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xb&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x3&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;5&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;5&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xc&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x4&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;6&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;6&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xd&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x5&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/controller&gt;</span>
+    <span class="kw">&lt;interface</span><span class="ot"> type=</span><span class="st">&#39;network&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;mac</span><span class="ot"> address=</span><span class="st">&#39;52:54:00:e4:b0:ef&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;source</span><span class="ot"> network=</span><span class="st">&#39;default&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;model</span><span class="ot"> type=</span><span class="st">&#39;e1000e&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x01&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/interface&gt;</span>
+    <span class="kw">&lt;serial</span><span class="ot"> type=</span><span class="st">&#39;pty&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> type=</span><span class="st">&#39;isa-serial&#39;</span><span class="ot"> port=</span><span class="st">&#39;0&#39;</span><span class="kw">&gt;</span>
+        <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;isa-serial&#39;</span><span class="kw">/&gt;</span>
+<span class="kw">&lt;/target&gt;</span>
+    <span class="kw">&lt;/serial&gt;</span>
+    <span class="kw">&lt;console</span><span class="ot"> type=</span><span class="st">&#39;pty&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;target</span><span class="ot"> type=</span><span class="st">&#39;serial&#39;</span><span class="ot"> port=</span><span class="st">&#39;0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/console&gt;</span>
+    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;tablet&#39;</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;2&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/input&gt;</span>
+    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;mouse&#39;</span><span class="ot"> bus=</span><span class="st">&#39;ps2&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;keyboard&#39;</span><span class="ot"> bus=</span><span class="st">&#39;ps2&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;sound</span><span class="ot"> model=</span><span class="st">&#39;ich9&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x1b&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/sound&gt;</span>
+    <span class="kw">&lt;hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;source&gt;</span>
+        <span class="kw">&lt;address</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x1e&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;/source&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x03&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/hostdev&gt;</span>
+    <span class="kw">&lt;hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;source&gt;</span>
+        <span class="kw">&lt;address</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x1e&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x1&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;/source&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x04&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/hostdev&gt;</span>
+    <span class="kw">&lt;hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;source&gt;</span>
+        <span class="kw">&lt;vendor</span><span class="ot"> id=</span><span class="st">&#39;0x046d&#39;</span><span class="kw">/&gt;</span>
+        <span class="kw">&lt;product</span><span class="ot"> id=</span><span class="st">&#39;0xc07e&#39;</span><span class="kw">/&gt;</span>
+      <span class="kw">&lt;/source&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;5&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/hostdev&gt;</span>
+    <span class="kw">&lt;redirdev</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="ot"> type=</span><span class="st">&#39;spicevmc&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;3&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/redirdev&gt;</span>
+    <span class="kw">&lt;redirdev</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="ot"> type=</span><span class="st">&#39;spicevmc&#39;</span><span class="kw">&gt;</span>
+<span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;4&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/redirdev&gt;</span>
+    <span class="kw">&lt;memballoon</span><span class="ot"> model=</span><span class="st">&#39;virtio&#39;</span><span class="kw">&gt;</span>
+      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x05&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span>
+<span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span>
+    <span class="kw">&lt;/memballoon&gt;</span>
+  <span class="kw">&lt;/devices&gt;</span>
+<span class="kw">&lt;/domain&gt;</span></code></pre></div>
+<p>And thats it! You are done!</p>
+<h2 id="sources">Sources</h2>
+<p>The guide that I mainly followed is this: * (http://mathiashueber.com/windows-virtual-machine-gpu-passthrough-ubuntu/)</p>
+<p>A major part pf my guide has been taken from this guide, but as you know, all systems are not the same, and so to get my setupo working , I had to follow somw other resources as well. You must watch the level1tech videos on this topic. They also got an article on this. The resources I used are:</p>
+<ul>
+<li>(https://level1techs.com/article/ryzen-gpu-passthrough-setup-guide-fedora-26-windows-gaming-linux)</li>
+<li>(https://heiko-sieger.info/running-windows-10-on-linux-using-kvm-with-vga-passthrough/)</li>
+<li>(https://scottlinux.com/2016/08/28/gpu-passthrough-with-kvm-and-debian-linux/)</li>
+<li>(https://www.reddit.com/r/VFIO/comments/af71pf/kernel_driver_in_use_amdgpu_instead_of_vfiopci/ee0emkf/)</li>
+</ul>
+<p>Videos to watch: <a href="http://www.youtube.com/watch?v=aLeWg11ZBn0" title="GPU Passthrough for Virtualization with Ryzen: Now Working"><img src="http://img.youtube.com/vi/aLeWg11ZBn0/0.jpg" alt="IMAGE ALTTEXT" /></a></p>
+<meta property="og:title" content="Ryzen Gpu passthrough guide on debian" />
+      <meta property="og:description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10" />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="" />
+
+</article>
+
+<footer>
+  <p> By fmash16 </p>
+</footer>
+</body>
