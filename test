@@ -1,0 +1,13 @@
+const methods = {
+    foo() {
+        // contents
+    },
+
+    bar() {
+        // contents
+    },
+
+    baz() {
+        // contents
+    }
+};
