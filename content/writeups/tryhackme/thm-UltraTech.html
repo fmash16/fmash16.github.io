@@ -41,12 +41,6 @@
 <p>nmap -sC -sV -sS -oN nmap.out 10.10.138.104</p>
 <blockquote>
 <p>21/tcp open ftp vsftpd 3.0.3 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 dc:66:89:85:e7:05:c2:a5:da:7f:01:20:3a:13:fc:27 (RSA) | 256 c3:67:dd:26:fa:0c:56:92:f3:5b:a0:b3:8d:6d:20:ab (ECDSA) |_ 256 11:9b:5a:d6:ff:2f:e4:49:d2:b5:17:36:0e:2f:1d:2f (ED25519) 8081/tcp open http Node.js Express framework |_http-cors: HEAD GET POST PUT DELETE PATCH |_http-title: Site doesn't have a title (text/html; charset=utf-8). Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel 2002/tcp filtered globe</p>
-<meta property="og:title" content="TryHackMe - UltraTech Writeup" />
-      <meta property="og:description" content="topics" />
-      <meta property="og:type" content="article" />
-      <meta property="og:url" content="github" />
-      <meta property="og:image" content="/img/tryhackme_ultratech/card.png" />
-
 </blockquote>
 <h2 id="gobuster-fuzzing">Gobuster fuzzing</h2>
 <p>gobuster shows us a directory /auth in the site that contains a login with password script but doesn't have any inputs in the page.</p>
@@ -191,6 +185,7 @@ utility that we find installed on the target with the following url.
 </article>
 
 <footer>
-  <p> By fmash16 </p>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2020 </p>
 </footer>
 </body>

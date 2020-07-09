@@ -51,12 +51,6 @@
 &gt; http-generator: Blunder<br />
 &gt; http-server-header: Apache/2.4.41 (Ubuntu)<br />
 &gt; http-title: Blunder | A blunder of interesting facts</p>
-<meta property="og:title" content="Hackthebox - Blunder Writeup" />
-      <meta property="og:description" content="An easy difficulty linux box" />
-      <meta property="og:type" content="article" />
-      <meta property="og:url" content="github" />
-      <meta property="og:image" content="/img/htb_blunder/card.png" />
-
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="ffuf-fuzzing">ffuf fuzzing</h2>
 <div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ffuf</span> -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ</code></pre></div>
@@ -220,6 +214,7 @@ Password: Password120</p>
 </article>
 
 <footer>
-  <p> By fmash16 </p>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2020 </p>
 </footer>
 </body>

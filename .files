@@ -108,6 +108,7 @@
 ./img/tryhackme_yearoftherabbit/card.png
 ./img/tryhackme_yearoftherabbit/18.png
 ./img/tryhackme_yearoftherabbit/3.png
+./img/site.png
 ./img/virt13.png
 ./img/virt8.png
 ./img/virt5.png
@@ -246,16 +247,7 @@
 ./img/htb_resolute/3.png
 ./img/logo.svg
 ./img/virt4.png
-./dist.zip
 ./index.html
-./dist/jquery.mark.js
-./dist/mark.min.js
-./dist/jquery.mark.es6.js
-./dist/mark.js
-./dist/jquery.mark.es6.min.js
-./dist/mark.es6.min.js
-./dist/jquery.mark.min.js
-./dist/mark.es6.js
 ./content/writeups/hackthebox/htb-Blunder.md
 ./content/writeups/hackthebox/htb-challenges-web.md
 ./content/writeups/hackthebox/htb-Obscurity.md
@@ -273,4 +265,5 @@
 ./content/writeups/tryhackme/thm-Wonderland.md
 ./content/posts/sites.md
 ./content/posts/gpu_passthrough.md
+./content/posts/ssg5_site.md
 ./avatar.png

@@ -235,16 +235,18 @@ td {
   vertical-align: top;
 }
 
-@media only screen and (min-width: 400px) {
+@media only screen and (min-width: 480px) {
   body {
     font-size: 14px;
+    margin-left: none;
+    max-width: auto;
   }
   .logo {
       max-height: 100px
   }
 }
 
-@media only screen and (min-width: 700px) {
+@media only screen and (min-width: 768px) {
   body {
     font-size: 16px;
   }
@@ -446,7 +448,9 @@ ul.articles {
     margin-top: 2em;
 }
 footer {
-    font-size: 13px;
+  font-size: 13px;
+  text-align: center;
+	padding-top: 1.5em;
 }
 
 mark{

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Generate a static site with posix compliable shell script, using find, grep, sed, pandoc and vim &mdash; fmash16's blog</title>
+<meta property="og:title" content="Generate a static site with posix compliable shell script, using find, grep, sed, pandoc and vim" />
+      <meta property="og:description" content="Create your personal blogsite using a posix compliable shell script that uses pandoc to convert your markdown files to html. This generates a very minimal static site with just what you need." />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="/img/site.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="generate-a-static-site-with-posix-compliable-shell-script-using-find-grep-sed-pandoc-and-vim">Generate a static site with posix compliable shell script, using find, grep, sed, pandoc and vim</h1>
+<p>After going through statice site generators like jekyll and hugo. I was always looking for something that is very simple and minimal, that would just generate a static site from markdown files. Hugo, Jekyll, Hexo and other site generators like these are really good and very user friendly. If all you want is a functioning website, those are your go to. But they have a lot of added functionalities that I did not have any use for. Then I came to know of this script called <a href="https://www.romanzolotarev.com/ssg.html">SSG5</a> written by <a href="https://twitter.com/romanzolotarev">Roman Zolotarev</a>. And this is what I used to build this blogsite of mine. You can also get my modified version of the script from my <a href="https://github.com/fmash16/ssg5">github</a>.</p>
+<h1 id="ssg5---the-minimal-cooler-site-generator">SSG5 - the minimal &quot;cooler&quot; site generator</h1>
+<p>SSG5 is a posix compliable shell script that simply generates html files from markdown, wraps them with the <code>_header.html</code> and <code>_footer.html</code> file provided. And thus you get your site. So simple, right?</p>
+<p>All your posts and contents in markdown should be stored in a directory named &quot;src&quot;. You can write a home page for the site by putting in an index.md or index.html file in the src directory.</p>
+<h2 id="installation">Installation</h2>
+<p>You can install ssg5 on your machine doing the following:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">mkdir</span> -p bin
+<span class="fu">ftp</span> -Vo bin/ssg5 https://rgz.ee/bin/ssg5
+<span class="fu">chmod</span> +x bin/ssg5</code></pre></div>
+<p>And you got your ssg5! You can copy the executable over to the <code>/usr/local/bin</code> directory to directly use the command <code>ssg5</code>.</p>
+<p>Now ssg5 uses lowdown or markdown.pl by default to convert markdown files to html files. For that you can install <a href="https://kristaps.bsd.lv/lowdown/">lowdown</a>. But I am a pandoc user already, so I modified the script to use pandoc, more on it later.</p>
+<h2 id="usage">Usage</h2>
+<p>In order to generate your site, run the following</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="va">PATH=</span><span class="st">&quot;</span><span class="va">$HOME</span><span class="st">/bin:</span><span class="va">$PATH</span><span class="st">&quot;</span>
+<span class="fu">mkdir</span> src dst
+<span class="bu">echo</span> <span class="st">&#39;# Hello, World!&#39;</span> <span class="op">&gt;</span> src/index.md
+<span class="bu">echo</span> <span class="st">&#39;&lt;html&gt;&lt;title&gt;&lt;/title&gt;&#39;</span> <span class="op">&gt;</span> src/_header.html
+<span class="ex">bin/ssg5</span> src dst <span class="st">&#39;Test&#39;</span> <span class="st">&#39;http://www&#39;</span>
+<span class="ex">firefox</span> dst/index.html</code></pre></div>
+<p>And you got your simple site!</p>
+<h2 id="styling">Styling</h2>
+<p>Well a site without css doesn't look that good right? It's 2020! Definitely it does not look cool. So for styling, you can define your styles in a style.css file in the root directory or a seperate css folder and link the file in your <code>_header.html</code> by adding the following line</p>
+<div class="sourceCode"><pre class="sourceCode html"><code class="sourceCode html"><span class="kw">&lt;link</span><span class="ot"> rel=</span><span class="st">&quot;stylesheet&quot;</span><span class="ot"> type=</span><span class="st">&quot;text/css&quot;</span><span class="ot"> href=</span><span class="st">&quot;/css/style.css&quot;</span><span class="kw">&gt;</span></code></pre></div>
+<h1 id="my-customizations">My customizations</h1>
+<h2 id="pandoc">Pandoc</h2>
+<p>I have been using pandoc for quite a while in order to make notes from markdown. So I modified the ssg5 script to use pandoc instead of lowdown or markdown.pl to generate html from md files. It is very simple actually. The pandoc command is basically</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">pandoc</span> <span class="op">&lt;</span>filename<span class="op">&gt;</span></code></pre></div>
+<h2 id="reducing-build-time-using-bash-multithreading">Reducing build time using bash multithreading</h2>
+<p>Some degree of &quot;threading&quot; can be implemented in bash script by backgrounding the pandoc command. This enables multiple pandoc conversions to run simultaneously and save a considerable amount of time. This will be very effective if you have a large blogsite with a lot of markdown files for example. Let's have a demostration of how much time we can save implementing this.</p>
+<ul>
+<li>Without threading:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">34026</span> blocks
+[<span class="ex">ssg</span>] 269 files, 20 urls
+<span class="ex">../ssg5</span> src dst <span class="st">&quot;fmash16&#39;s blog&quot;</span> <span class="st">&quot;https://fmash16.github.io&quot;</span>  3.08s user 0.59s
+<span class="ex">system</span> 66% cpu 5.518 total</code></pre></div>
+<ul>
+<li>WIth threading:</li>
+</ul>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">34026</span> blocks
+[<span class="ex">ssg</span>] 269 files, 20 urls
+<span class="ex">../ssg5</span> src dst <span class="st">&quot;fmash16&#39;s blog&quot;</span> <span class="st">&quot;https://fmash16.github.io&quot;</span>  1.76s user 0.67s
+<span class="ex">system</span> 85% cpu 2.825 total</code></pre></div>
+<p>From 5.5s to 2.8s, that's quite an improvement, right? The time got almost halved. It will be much more helpful for large sites.</p>
+<h2 id="generate-a-home-page-with-post-list-sorted-by-date">Generate a home page with post list sorted by date</h2>
+<p>I also needed a good home page that will list all my posts sorted by date with their description and image. I added a function <code>generate_post_list</code> to the script that does just that.</p>
+<p>The function simply pulls the title, date, description, tags and title image from the header part of the markdown file using grep and awk. And then it puts them into <code>index.html</code> file in the src directory with links to the posts that is rendered as the home page. For that the header of the md should be in the following format:</p>
+<pre class="text"><code>Title:
+Date: YYYY-MM-DD(this format is preferred for sorting by date)
+Description:
+Tags:
+Image:</code></pre>
+<p>In order to sort the posts by date, I used vim. The following vim command simply sorts the post block in the home page by the date</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">vim</span> -N -u NONE -n \
+  -c <span class="st">&quot;set nomore&quot;</span> \
+  -c <span class="st">&quot;:g/SortByDate:/,/SortByDate/ s/$\n/@@@&quot;</span> \
+
+  <span class="ex">-c</span> <span class="st">&quot;:sort!&quot;</span> -c <span class="st">&quot;:%s/@@@/\r/g&quot;</span> -c <span class="st">&quot;:g/SortByDate/d&quot;</span> \
+  -c <span class="st">&quot;:wq&quot;</span> <span class="va">$src</span>/index.html</code></pre></div>
+<p>And the generate post list function that I added is simple as follows:</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">generate_post_list()</span> <span class="kw">{</span>
+  <span class="kw">if</span><span class="bu"> [</span> <span class="ot">-f</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">/index.html&quot;</span><span class="bu"> ]</span>; <span class="kw">then</span>
+    <span class="fu">rm</span> <span class="va">$1</span>/index.html
+  <span class="kw">fi</span>
+  <span class="kw">while</span> <span class="bu">read</span> -r <span class="va">f</span>
+  <span class="kw">do</span>
+    <span class="kw">if</span><span class="bu"> [</span> <span class="st">&quot;</span><span class="va">$f</span><span class="st">&quot;</span> <span class="ot">==</span> <span class="st">&quot;./index.html&quot;</span><span class="bu"> ]</span> <span class="kw">||</span><span class="bu"> [</span> <span class="st">&quot;</span><span class="va">$f</span><span class="st">&quot;</span> <span class="ot">==</span> <span class="st">&quot;./about.md&quot;</span><span class="bu"> ]</span>; <span class="kw">then</span>
+      <span class="bu">continue</span>
+    <span class="kw">fi</span>
+    <span class="va">TITLE=$(</span><span class="fu">grep</span> -i title <span class="st">&quot;</span><span class="va">$1</span><span class="st">/</span><span class="va">$f</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> -n1 <span class="kw">|</span> <span class="fu">awk</span> -F <span class="st">&quot;: &quot;</span> <span class="st">&#39;{ print $2 }&#39;</span><span class="va">)</span>
+    <span class="va">DATE=$(</span><span class="fu">grep</span> -i date <span class="st">&quot;</span><span class="va">$1</span><span class="st">/</span><span class="va">$f</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> -n1 <span class="kw">|</span> <span class="fu">awk</span> -F <span class="st">&quot;: &quot;</span> <span class="st">&#39;{ print $2 }&#39;</span><span class="va">)</span>
+    <span class="va">DESC=$(</span><span class="fu">grep</span> -i description <span class="st">&quot;</span><span class="va">$1</span><span class="st">/</span><span class="va">$f</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> -n1 <span class="kw">|</span> <span class="fu">awk</span> -F <span class="st">&quot;: &quot;</span> <span class="st">&#39;{ print $2 }&#39;</span><span class="va">)</span>
+    <span class="va">TAGS=$(</span><span class="fu">grep</span> -i tags <span class="st">&quot;</span><span class="va">$1</span><span class="st">/</span><span class="va">$f</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> -n1 <span class="kw">|</span> <span class="fu">awk</span> -F <span class="st">&quot;: &quot;</span> <span class="st">&#39;{ print $2 }&#39;</span><span class="va">)</span>
+    <span class="va">IMAGE=$(</span><span class="fu">grep</span> -i image <span class="st">&quot;</span><span class="va">$1</span><span class="st">/</span><span class="va">$f</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> -n1 <span class="kw">|</span> <span class="fu">awk</span> -F <span class="st">&quot;: &quot;</span> <span class="st">&#39;{ print $2 }&#39;</span><span class="va">)</span>
+    <span class="bu">printf</span> <span class="st">&quot;\</span>
+<span class="st">SortByDate:</span><span class="va">$DATE</span>
+<span class="st">&lt;h1 id=</span><span class="dt">\&quot;</span><span class="va">$TITLE</span><span class="dt">\&quot;</span><span class="st"> style=</span><span class="dt">\&quot;</span><span class="st">border-bottom: 0px; padding-bottom: 0em;</span><span class="dt">\&quot;</span><span class="st">&gt;\n\</span>
+<span class="st">  &lt;a href=</span><span class="dt">\&quot;</span><span class="st">/</span><span class="va">${f%</span>\.md<span class="va">}</span><span class="st">.html</span><span class="dt">\&quot;</span><span class="st"> style=&quot;</span>color:#111<span class="st">&quot; &gt;</span><span class="va">$TITLE</span><span class="st">&lt;/a&gt;\n\</span>
+<span class="st">&lt;/h1&gt;\n\</span>
+<span class="st">&lt;p class=&quot;</span>date<span class="st">&quot;&gt;</span><span class="va">$DATE</span><span class="st">&lt;/p&gt;\n\</span>
+<span class="st">&lt;p&gt;</span><span class="va">$DESC</span><span class="st">&lt;br/&gt;\n\</span>
+<span class="st">&lt;strong&gt;Tags:&lt;/strong&gt;</span><span class="va">$TAGS</span><span class="st">&lt;/p&gt;\n\</span>
+<span class="st">&lt;div style=</span><span class="dt">\&quot;</span><span class="st">text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 0.5em;</span><span class="dt">\&quot;</span><span class="st">&gt;\n\</span>
+<span class="st">&lt;a href=</span><span class="dt">\&quot;</span><span class="st">/</span><span class="va">${f%</span>\.md<span class="va">}</span><span class="st">.html</span><span class="dt">\&quot;</span><span class="st">&gt;&lt;img src=</span><span class="dt">\&quot;</span><span class="va">$IMAGE</span><span class="dt">\&quot;</span><span class="st"> style=</span><span class="dt">\&quot;</span><span class="st">max-width:55vw; max-height:40vh;</span><span class="dt">\&quot;</span><span class="st">/&gt;&lt;/a&gt;\n\</span>
+<span class="st">&lt;/div&gt;\n\</span>
+
+<span class="st">SortByDate\n\n&quot;</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">/index.html&quot;</span>
+  <span class="kw">done</span>
+<span class="kw">}</span></code></pre></div>
+<h2 id="my-modified-version-of-ssg5">My modified version of ssg5</h2>
+<p>If you want your site to use pandoc and have a custom home page with a post list sorted by date like mine, you can have a copy of the modified ssg5 script I use on my <a href="https://github.com/fmash16/ssg5">github</a>.</p>
+<p>And finally, Happy blogging!</p>
+</article>
+
+<footer>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2020 </p>
+</footer>
+</body>
