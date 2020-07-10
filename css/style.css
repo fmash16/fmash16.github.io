@@ -12,7 +12,9 @@ body {
   line-height: 1.5em;
   padding: 1em;
   margin-left: 30%;
-  max-width: 52em;
+  margin-right: auto;
+  max-width: 63%;
+  align: center;
   background: #fefefe;
 }
 
@@ -239,7 +241,7 @@ td {
   body {
     font-size: 14px;
     margin-left: 0%;
-    max-width: auto;
+    max-width: 100%;
   }
   .logo {
       max-height: 100px
@@ -374,7 +376,7 @@ nav > div > ul > li > a:hover {
  /* The side navigation menu */
 .sidebar {
   height: 100%; /* Full-height: remove this if you want "auto" height */
-  width: 320px; /* Set the width of the sidebar */
+  width: 25%; /* Set the width of the sidebar */
   position: fixed; /* Fixed Sidebar (stay in place on scroll) */
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
