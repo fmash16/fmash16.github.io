@@ -6,8 +6,8 @@ html {
 }
 
 body {
-  color: #444;
-  font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
+  color:#adadad;
   font-size: 12px;
   line-height: 1.5em;
   padding: 1em;
@@ -15,20 +15,20 @@ body {
   margin-right: auto;
   max-width: 63%;
   align: center;
-  background: #fefefe;
+  background-color:#222;
 }
 
 a {
-  color: #0645ad;
+  color:#007053;
   text-decoration: none;
 }
 
 a:visited {
-  color: #0b0080;
+  color: #007053;
 }
 
 a:hover {
-  color: #06e;
+  color:#79d2a6;
   cursor:pointer;
 }
 
@@ -66,6 +66,7 @@ a::selection {
 }
 
 p {
+  font-size: 1.1em;
   margin: 1em 0;
   text-align: justify;
 }
@@ -78,9 +79,9 @@ p {
 img {
   max-width: 100%;
 	border:2px solid #fff;
-  box-shadow: 10px 10px 5px #ccc;
-  -moz-box-shadow: 10px 10px 5px #ccc;
-  -webkit-box-shadow: 10px 10px 5px #ccc;
+  /* box-shadow: 10px 10px 5px #ccc; */
+  /* -moz-box-shadow: 10px 10px 5px #ccc; */
+  /* -webkit-box-shadow: 10px 10px 5px #ccc; */
   border-radius:7px;
 }
 
@@ -91,8 +92,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-weight: 600;
-  color: #111;
+  font-family: 'Kanit', sans-serif;
+  /* font-weight: 00; */
+  color: #66ff99;
   line-height: 1em;
 }
 
@@ -103,25 +105,25 @@ h6 {
 }
 
 h1 {
-  font-size: 1.7em;
+  font-size: 2.2em;
 	padding-top: 1em;
 	padding-bottom: 0.5em;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #333;
 }
 
 h2 {
-  font-size: 1.4em;
+  font-size: 1.9em;
 	padding-top: 0.5em;
 	padding-bottom: 0.3em;
-	border-bottom: 1px solid #ddd;
+	border-bottom: 1px solid #333;
 }
 
 h3 {
-  font-size: 1.2em;
+  font-size: 1.6em;
 }
 
 h4 {
-  font-size: 0.9em;
+  font-size: 1em;
 }
 
 h5 {
@@ -133,7 +135,8 @@ h6 {
 }
 
 blockquote {
-  color: #666666;
+  color: #ccc;
+  background-color: #242424;
   margin: 0;
   padding-left: 3em;
   border-left: 0.3em #3399ff solid;
@@ -152,11 +155,11 @@ pre,
 code,
 kbd,
 samp {
-  font-family: 'Fira Code', monospace;
-  font-size: 0.98em;
+  font-family: 'Inconsolata', monospace;
+  font-size: 1.05em;
   padding: 5px 5px;
   border-radius: 5px;
-  background-color: #eee;
+  background-color: #272822;
 	white-space : pre-wrap !important;
 }
 
@@ -164,9 +167,9 @@ pre {
   white-space: pre;
   white-space: pre-wrap;
   word-wrap: break-word;
-  background-color: #eee;
+  background-color: #272822;
   padding: 10px 15px;
-  border-left: 0.3em #00ff00 solid;
+  border-left: 0.2em #00b300 solid;
   border-radius: 0px;
 }
 
@@ -223,7 +226,7 @@ dd {
 }
 
 img {
-  border: 0;
+	border:1px solid #333;
   -ms-interpolation-mode: bicubic;
   vertical-align: middle;
 }
@@ -381,7 +384,7 @@ nav > div > ul > li > a:hover {
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
   left: 0;
-  background-color: #000; /* Black */
+  background-color: #131516; /* Black */
   overflow-x: hidden; /* Disable horizontal scroll */
   /* padding-top: 20px; */
 }

