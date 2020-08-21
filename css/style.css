@@ -123,7 +123,7 @@ h3 {
 }
 
 h4 {
-  font-size: 1em;
+  font-size: 1.3em;
 }
 
 h5 {
@@ -414,8 +414,8 @@ nav > div > ul > li > a:hover {
     height: auto;
     position: relative;
   }
-  .sidebar a {float: left;}
-  div.content {margin-left: 0;}
+  /* .sidebar a {float: right;} */
+  /* div.content {margin-left: 0;} */
 }
 
 /* On screens that are less than 400px, display the bar vertically, instead of horizontally */
