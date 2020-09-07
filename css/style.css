@@ -160,18 +160,16 @@ samp {
   padding: 5px 5px;
   border-radius: 5px;
   background-color: #272822;
-	white-space : nowrap !important;
+	white-space : pre !important;
 }
 
 pre {
-  white-space: pre;
-  white-space: pre-wrap;
   word-wrap: break-word;
   background-color: #272822;
   padding: 10px 15px;
   border-left: 0.2em #00b300 solid;
   border-radius: 0px;
-  overflow-x: auto;
+  overflow: auto;
 }
 
 b,
