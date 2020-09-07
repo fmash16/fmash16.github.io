@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap"
+  rel="stylesheet"> 
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Passage Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="Hackthebox - Passage Writeup" />
+      <meta property="og:description" content="A medium difficulty hackthebox machine with some pretty basic enumeration, exploitation and privesc and finally a cool D-Bus vulnerability used for privilege escalation to root." />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="https://fmash16.github.io/img/htb_passage/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-family: 'Electrolize',sans-serif;font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="hackthebox---passage-writeup">Hackthebox - Passage Writeup</h1>
+<p><img src="/img/htb_passage/card.png" /></p>
+<p>We add the IP address of the machine to our /etc/hosts file.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;10.10.10.206  passage.htb&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<p>Open ports:</p>
+<ul>
+<li>22/tcp open ssh OpenSSH 7.2p2 Ubuntu 4 (Ubuntu Linux; protocol 2.0)</li>
+<li>80/tcp open http Apache httpd 2.4.18 ((Ubuntu))</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="port-80---http">Port 80 - HTTP</h2>
+<p>Going over to the URL http://passage.htb, we find the following webpage.</p>
+<p><img src="/img/htb_passage/1.png" /></p>
+<p>We see that <a href="www.fail2ban.org">Fail2ban</a> has been implemented in the site which bans as IP for 2 mins due to excessive requests.</p>
+<p><img src="/img/htb_passage/2.png" /></p>
+<p>So, we cant fuzz the site for URLs. Looking around, we see that the site is powered by <a href="https://cutephp.com/">CuteNews</a> which is a PHP news managemente system.</p>
+<p><img src="/img/htb_passage/3.png" /></p>
+<h2 id="cutenews-cms">CuteNews CMS</h2>
+<p>Looking around we find the login page for the CuteNews CMS at the URL http://passage.htb/CuteNews</p>
+<p><img src="/img/htb_passage/4.png" /></p>
+<p>We register a new user and login. We don’te get much, a simple dashboard and an option to change personal info, where we can upload an avatar, that seems interesting</p>
+<p><img src="/img/htb_passage/7.png" /></p>
+<p><img src="/img/htb_passage/8.png" /></p>
+<p>We find that the site is running CuteNews version <strong>2.1.2</strong></p>
+<h2 id="cutenews-exploit---rce">CuteNews exploit - RCE</h2>
+<p>Now we look for some exploits for the CuteNews version using searchsploit</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">searchsploit</span> cutenews</span></code></pre></div>
+<p><img src="/img/htb_passage/6.png" /></p>
+<p>We find an RCE exploit for the exact version we have. And it is a metasploit module. The module is not availabe by default in metasploit. So we mirror the exploit in the directory for custom metasploit modules <code>~/.msf4/modules</code>. I used the directory <code>~/.msf4/modules/cgi/webapps</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">searchsploit</span> -m 46698.rb</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true"></a><span class="ex">msfconsole</span></span></code></pre></div>
+<p>The module has some errors and cannot be loaded. I checked the logfile at <code>~/.msf4/logs/framework.log</code> and it shows the errors.</p>
+<p>Remove the following lines from the module under <code>def initialize</code> to make the module work.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="st">&#39;References&#39;</span> =<span class="op">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a>        [</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a>          [<span class="st">&#39;URL&#39;</span>, <span class="st">&#39;http://pentest.com.tr/exploits/CuteNews-2-1-2-Remote-Code-Execution-Metasploit.html&#39;</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a>          [<span class="st">&#39;URL&#39;</span>, <span class="st">&#39;http://cutephp.com&#39;</span>] # <span class="ex">Official</span> Website</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>        ],</span></code></pre></div>
+<p>Now, we restart metasploit and find the module loaded.</p>
+<p><img src="/img/htb_passage/6.png" /></p>
+<p>We use the module and set all the required parameters. For the username and password, we those of the new user that we registered.</p>
+<p>We run the exploit and get a meterpreter shell, from which we can get a shell as user <code>www-data</code>. we start a bash shell and stabilize it using python.</p>
+<p><img src="/img/htb_passage/9.png" /></p>
+<h1 id="privilege-escalation---user-1">Privilege Escalation - User 1</h1>
+<h2 id="finding-user-hash">Finding user hash</h2>
+<p>Looking around, we see that the box has two users under the /home directory:</p>
+<ol type="1">
+<li>Nadav</li>
+<li>Paul</li>
+</ol>
+<p>We can list the directory of Paul that contains our user.txt file, but directory listing of Nadav is not allowed.</p>
+<p>We look around and find a folder named users under the directory <code>/var/www/html/CuteNews/cdata/users</code>. This seems interesting. Catting out the contents of the file <code>lines</code>, we find many hashes that seems to be base64 encoded.</p>
+<p><img src="/img/htb_passage/10.png" /></p>
+<p>Trying base64 decoding different hashes, we find the marked one containing the password hash for the user paul.</p>
+<p><img src="/img/htb_passage/11.png" /></p>
+<p>Passing the hash to the analyse hash function of <a href="https://gchq.github.io/CyberChef/">Cyberchef</a> we find that the hash might use SHA-256.</p>
+<h2 id="cracking-hash-using-hashcat">Cracking hash using hashcat</h2>
+<pre><code>hashcat -m 1400 paul.hash -w rockyou.txt</code></pre>
+<p>We get the cracked password <strong>atlanta1</strong></p>
+<p>Creds found:</p>
+<blockquote>
+<p>paul:atlanta1</p>
+</blockquote>
+<p>We use the creds to <code>su</code> as user paul</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="fu">su</span> paul</span></code></pre></div>
+<p>Now we can read the user.txt file.</p>
+<h1 id="privilege-escalation---user-2">Privilege Escalation - User 2</h1>
+<p>Next we try getting the user Nadav. The user paul doesn’t have much permissions to do anything. nadav on the outher hand belongs to the sudo group, as we find running the privesc script linpeas.sh.</p>
+<p>Firstly, in order to get a stable ssh session, we get the id_rsa of the user paul. Then we ssh as user paul</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">chmod</span> 600 paul_id_rsa</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="fu">ssh</span> -i paul_id_rsa paul@passage.htb</span></code></pre></div>
+<p>We find a lot of files under the home directory of the user paul. We cat out all the contents of the files recursively</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="fu">cat</span> .*/*</span></code></pre></div>
+<p>We find the user nadav in the authorized_keys under the .ssh folder. So nadav can ssh into user paul without password. So maybe paul can do that too? Paul and Nadav seems close friends, huh?</p>
+<p>We try ssh ing into nadav from paul and succeed!</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="fu">ssh</span> nadav@passage.htb</span></code></pre></div>
+<p>And we are in as nadav!</p>
+<h1 id="privilege-escalation---root">Privilege escalation - root</h1>
+<p>This is the part I was stuck for a long time. Normal privesc scripts didn’t show anything interesting. The only thing I found interesting was the CUPS service running on port 631, which is a service for printing. But that’s a rabbit hole.</p>
+<p>Finally looking at the running processes on the system using <code>ps aux</code>, we find the following process running with root privileges.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">root</span>       2388  0.0  0.4 235548 20020 ?        Sl   00:25   0:00 /usr/bin/python3 /usr/share/usb-creator/usb-creator-helper</span></code></pre></div>
+<p>A program called usb-creator-helper. Googling it, we see that it is used by the in built live usb creator for ubuntu. It is called “Startup Disk Creator”. As per wikipedia,</p>
+<p>Startup Disk Creator is an official tool to create Live USBs of Ubuntu from the Live CD or from an ISO image. The tool is included by default in all releases after Ubuntu 8.04, and can be installed on Ubuntu 8.04.</p>
+<p>We try looking for some vulnerabilities related to this, and we find this awesome article on privilege escalation using this USBCreator dbus by, who else, other than Navas Markus? The article link is:</p>
+<p><a href="">https://unit42.paloaltonetworks.com/usbcreator-d-bus-privilege-escalation-in-ubuntu-desktop/</a></p>
+<p>The vulnerability is discussed in details in the post. What happens here is that the USBCreator implements the popular unix tool <code>dd</code> used for writing to disks using python. But it does not perform any sanitation checks on which files are being written to which location, neither does it prompt for the user password for the users belonging to the sudo group. And our user nadav does in fact belong to the sudo group as we can verify using the <code>id</code> command.</p>
+<p>So using this vulnerability, we can get sensitive contents owned by root, like the root.txt, shadow file with passwords, or the id_rsa of the root.</p>
+<p>Following the post, we use the following command to get the id_rsa of the root from the root home directory, to /tmp folder.</p>
+<pre><code>gdbus call --system --dest com.ubuntu.USBCreator --object-path /com/ubuntu/USBCreator --method com.ubuntu.USBCreator.Image /root/.ssh/id_rsa /tmp/pwn true</code></pre>
+<p>Using the id_rsa, we ssh into the box as root.</p>
+<p><img src="/img/htb_passage/12.png" /></p>
+<p><img src="/img/htb_passage/13.png" /></p>
+<p>And we finally get our root.txt file.</p>
+<h1 id="cups-rabbit-hole">CUPS rabbit hole</h1>
+<p>Having a look at the open ports using the following command, we find the port 631 open</p>
+<pre><code>netstat -tulnap</code></pre>
+<p>Googling a bit, we find that this port is used by the <code>cupsd</code> service used by CUPS. CUPS is a modular printing system for Unix-like computer operating systems which allows a computer to act as a print server. A computer running CUPS is a host that can accept print jobs from client computers, process them, and send them to the appropriate printer.(source: Wikipedia)</p>
+<p>But the port accepts connections only from 127.0.0.1 or the localhost. To bypass this firewall, we port forward the port 631 to the port 1337 on our local machine. Now, any request we make to the port 1337 on our local machine will be forwarded to the port 631 on the target machine and it will appear as if the request is coming from the localhost. We forward the port over ssh issuing the following command</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="fu">ssh</span> -R 10.10.16.2:1337:127.0.0.1:631 root@10.10.16.2</span></code></pre></div>
+<p>Now, we can visit the URL <code>http://127.0.0.1:1337</code> to access the CUPS web administration page.</p>
+<p><img src="/img/htb_passage/14.png" /></p>
+<p><img src="/img/htb_passage/15.png" /></p>
+<p>Editing the conf files requires passwords. Though the user nadav is a member of the group lpadmin, we didn’t have the password for the user. Moreover, could not find any other ways to exploit this service.</p>
+</article>
+
+<footer>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2020 </p>
+</footer>
+</body>

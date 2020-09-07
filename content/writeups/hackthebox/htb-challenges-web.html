@@ -41,72 +41,66 @@
 <h2 id="em-dee-five-for-life">## Em Dee Five for Life</h2>
 <p>We start the instance</p>
 <p>The page gives us a string and asks for the md5sum as the input, after we inpput the md5sum of the string got from our terminal, we get a response of too slow.</p>
-<div class="figure">
-<img src="/img/htb_challenges/md51.png" />
-
-</div>
+<p><img src="/img/htb_challenges/md51.png" /></p>
 <p>So to make the response fast, we can write a simple python script. First, we intercept the post request to the page in burpsuite to chech how the md5 hash is passed and find that it is passed as raw data.</p>
-<div class="figure">
-<img src="/img/htb_challenges/md52.png" />
-
-</div>
+<p><img src="/img/htb_challenges/md52.png" /></p>
 <p>Now, we write our script.</p>
-<div class="sourceCode"><pre class="sourceCode solution.py"><code class="sourceCode python"><span class="co">#! /usr/bin/env python</span>
-
-<span class="im">from</span> __future__ <span class="im">import</span> print_function
-<span class="im">import</span> requests
-<span class="im">import</span> re
-<span class="im">import</span> hashlib
-<span class="im">import</span> os
-
-<span class="co"># We setup our proxy here to pass our requests through burpsuite for checking</span>
-<span class="co">#---------------------------------------------------------------------------------</span>
-proxy <span class="op">=</span> <span class="st">&#39;127.0.0.1:8080&#39;</span>
-
-<span class="co">#  os.environ[&#39;http_proxy&#39;] = proxy</span>
-<span class="co">#  os.environ[&#39;HTTP_PROXY&#39;] = proxy</span>
-<span class="co">#  os.environ[&#39;https_proxy&#39;] = proxy</span>
-<span class="co">#  os.environ[&#39;HTTPS_PROXY&#39;] = proxy</span>
-
-
-<span class="co"># Here, we make the get request to get our initial page requesting for the md5</span>
-by creating a session, <span class="im">as</span> we need to post our response to the same session
-<span class="co">#---------------------------------------------------------------------------------</span>
-url <span class="op">=</span> <span class="st">&quot;http://docker.hackthebox.eu:31405&quot;</span>
-
-req <span class="op">=</span> requests.Session()
-page <span class="op">=</span> req.get(url)
-text <span class="op">=</span> page.content
-<span class="bu">print</span>(text)
-
-
-<span class="co"># We use python regex to find seperate our hash out of the html file, we can</span>
-find the regex by analyzing the whole html <span class="bu">file</span> first.
-<span class="co">#---------------------------------------------------------------------------------</span>
-x <span class="op">=</span> re.findall(<span class="st">&quot;&lt;h3 align=&#39;center&#39;&gt;(.*)&lt;/h3&gt;&quot;</span>, text)[<span class="dv">0</span>]
-x <span class="op">=</span> x.rstrip()
-
-<span class="co"># print(&quot;hash: &quot; + x)</span>
-<span class="co"># print(s)</span>
-
-
-<span class="co"># We find the md5sum of the supplied string and pass it as data to a post</span>
-request made to the session
-<span class="co">#---------------------------------------------------------------------------------</span>
-emd5 <span class="op">=</span> hashlib.md5(x).hexdigest()
-
-<span class="co"># print(&quot;md5sum: &quot; + emd5)</span>
-
-payload <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">hash</span><span class="op">=</span>emd5)
-
-response <span class="op">=</span> req.post(url, data <span class="op">=</span> payload)
-
-<span class="co"># And here we get the response back and get the flag out</span>
-<span class="co">#---------------------------------------------------------------------------------</span>
-<span class="co"># print(response.text)</span>
-
-flag <span class="op">=</span> re.findall(<span class="st">&quot;&lt;p align=&#39;center&#39;&gt;(.*)&lt;/p&gt;&quot;</span>, response.content)[<span class="dv">0</span>]
-<span class="bu">print</span>(<span class="st">&quot;flag: &quot;</span> <span class="op">+</span> flag)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode solution.py"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="co">#! /usr/bin/env python</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true"></a><span class="im">from</span> __future__ <span class="im">import</span> print_function</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true"></a><span class="im">import</span> requests</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true"></a><span class="im">import</span> re</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true"></a><span class="im">import</span> hashlib</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true"></a><span class="im">import</span> os</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true"></a><span class="co"># We setup our proxy here to pass our requests through burpsuite for checking</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true"></a><span class="co">#---------------------------------------------------------------------------------</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true"></a>proxy <span class="op">=</span> <span class="st">&#39;127.0.0.1:8080&#39;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true"></a><span class="co">#  os.environ[&#39;http_proxy&#39;] = proxy</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true"></a><span class="co">#  os.environ[&#39;HTTP_PROXY&#39;] = proxy</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true"></a><span class="co">#  os.environ[&#39;https_proxy&#39;] = proxy</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true"></a><span class="co">#  os.environ[&#39;HTTPS_PROXY&#39;] = proxy</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true"></a><span class="co"># Here, we make the get request to get our initial page requesting for the md5</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true"></a>by creating a session, <span class="im">as</span> we need to post our response to the same session</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true"></a><span class="co">#---------------------------------------------------------------------------------</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true"></a>url <span class="op">=</span> <span class="st">&quot;http://docker.hackthebox.eu:31405&quot;</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true"></a></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true"></a>req <span class="op">=</span> requests.Session()</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true"></a>page <span class="op">=</span> req.get(url)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true"></a>text <span class="op">=</span> page.content</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true"></a><span class="bu">print</span>(text)</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true"></a></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true"></a><span class="co"># We use python regex to find seperate our hash out of the html file, we can</span></span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true"></a>find the regex by analyzing the whole html <span class="bu">file</span> first.</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true"></a><span class="co">#---------------------------------------------------------------------------------</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true"></a>x <span class="op">=</span> re.findall(<span class="st">&quot;&lt;h3 align=&#39;center&#39;&gt;(.*)&lt;/h3&gt;&quot;</span>, text)[<span class="dv">0</span>]</span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true"></a>x <span class="op">=</span> x.rstrip()</span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true"></a></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true"></a><span class="co"># print(&quot;hash: &quot; + x)</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true"></a><span class="co"># print(s)</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true"></a></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true"></a><span class="co"># We find the md5sum of the supplied string and pass it as data to a post</span></span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true"></a>request made to the session</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true"></a><span class="co">#---------------------------------------------------------------------------------</span></span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true"></a>emd5 <span class="op">=</span> hashlib.md5(x).hexdigest()</span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true"></a></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true"></a><span class="co"># print(&quot;md5sum: &quot; + emd5)</span></span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true"></a></span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true"></a>payload <span class="op">=</span> <span class="bu">dict</span>(<span class="bu">hash</span><span class="op">=</span>emd5)</span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true"></a></span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true"></a>response <span class="op">=</span> req.post(url, data <span class="op">=</span> payload)</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true"></a></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true"></a><span class="co"># And here we get the response back and get the flag out</span></span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true"></a><span class="co">#---------------------------------------------------------------------------------</span></span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true"></a><span class="co"># print(response.text)</span></span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true"></a></span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true"></a>flag <span class="op">=</span> re.findall(<span class="st">&quot;&lt;p align=&#39;center&#39;&gt;(.*)&lt;/p&gt;&quot;</span>, response.content)[<span class="dv">0</span>]</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true"></a><span class="bu">print</span>(<span class="st">&quot;flag: &quot;</span> <span class="op">+</span> flag)</span></code></pre></div>
 <p>And we get our flag.</p>
 </article>
 
