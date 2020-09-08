@@ -142,6 +142,16 @@
 ./img/tryhackme_wonderland/9.png
 ./img/tryhackme_wonderland/card.png
 ./img/tryhackme_wonderland/3.png
+./img/htb_cache/7.png
+./img/htb_cache/8.png
+./img/htb_cache/1.png
+./img/htb_cache/2.png
+./img/htb_cache/5.png
+./img/htb_cache/6.png
+./img/htb_cache/4.png
+./img/htb_cache/card.png
+./img/htb_cache/3.png
+./img/htb_cache/final.png
 ./img/htb_montevarde/7.png
 ./img/htb_montevarde/8.png
 ./img/htb_montevarde/1.png
@@ -291,6 +301,7 @@
 ./content/writeups/hackthebox/htb-Montevarde.md
 ./content/writeups/hackthebox/htb-Nest.md
 ./content/writeups/hackthebox/htb-OpenAdmin.md
+./content/writeups/hackthebox/htb-Cache.md
 ./content/writeups/hackthebox/htb-Resolute.md
 ./content/writeups/hackthebox/htb-Admirer.md
 ./content/writeups/hackthebox/htb-Passage.md
