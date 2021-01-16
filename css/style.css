@@ -15,7 +15,7 @@ body {
   margin-right: auto;
   max-width: 63%;
   align: center;
-  background-color:#222;
+  background-color: #0f1419;
 }
 
 a {
@@ -78,11 +78,11 @@ p {
 
 img {
   max-width: 100%;
-	border:2px solid #fff;
+	border:5px solid #fff;
   /* box-shadow: 10px 10px 5px #ccc; */
   /* -moz-box-shadow: 10px 10px 5px #ccc; */
   /* -webkit-box-shadow: 10px 10px 5px #ccc; */
-  border-radius:7px;
+  /* border-radius:7px; */
 }
 
 
@@ -159,8 +159,8 @@ samp {
   font-size: 1.05em;
   padding: 5px 5px;
   border-radius: 5px;
-  background-color: #131516;
-	white-space : pre !important;
+  background-color: #1d2630;
+white-space : pre !important;
 
 }
 
@@ -170,9 +170,9 @@ samp {
 
 pre {
   word-wrap: break-word;
-  background-color: #131516;
+  background-color: #1d2630;
   padding: 10px 15px;
-  border-left: 0.2em #00b300 solid;
+  /* border-left: 0.2em #00b300 solid; */
   border-radius: 0px;
   overflow: auto;
 }
@@ -391,7 +391,7 @@ nav > div > ul > li > a:hover {
   z-index: 1; /* Stay on top */
   top: 0; /* Stay at the top */
   left: 0;
-  background-color: #131516; /* Black */
+  background-color: #131a20; /* Black */
   overflow-x: hidden; /* Disable horizontal scroll */
   /* padding-top: 20px; */
 }
