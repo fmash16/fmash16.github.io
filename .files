@@ -4,6 +4,7 @@
 ./content/writeups/hackthebox/htb-challenges-web.md
 ./content/writeups/hackthebox/htb-OpenAdmin.md
 ./content/writeups/hackthebox/htb-Book.md
+./content/writeups/hackthebox/htb-Tenet.md
 ./content/writeups/hackthebox/htb-Passage.md
 ./content/writeups/hackthebox/htb-Node.md
 ./content/writeups/hackthebox/htb-Nest.md
@@ -49,6 +50,8 @@
 ./img/htb_passage/7.png
 ./img/htb_passage/11.png
 ./img/htb_passage/9.png
+./img/htb_tenet/card.png
+./img/htb_tenet/1.png
 ./img/virt6.png
 ./img/tryhackme_wonderland/6.png
 ./img/tryhackme_wonderland/3.png
