@@ -54,6 +54,25 @@
 <!-- </nav> -->
 
 <article>
+<table>
+<tbody>
+<tr class="odd">
+<td>title: TryHackMe - Year of the Rabbit - Writeup</td>
+</tr>
+<tr class="even">
+<td>date: 2020-05-21</td>
+</tr>
+<tr class="odd">
+<td>description: topics: sudo CVE-2019-14287 privesc, ftp, hydra, brainfuck, stego, pt_chown</td>
+</tr>
+<tr class="even">
+<td>tags: sudo, CVE-2019-14287, privesc, ftp, hydra, brainfuck, stego, pt_chown</td>
+</tr>
+<tr class="odd">
+<td>image: /img/tryhackme_yearoftherabbit/card.png</td>
+</tr>
+</tbody>
+</table>
 <h1 id="tryhackme---year-of-the-rabbit---writeup">TryHackMe - Year of the Rabbit - Writeup</h1>
 <h2 id="initial-foothold">Initial Foothold</h2>
 <h3 id="nmap-scan">Nmap scan</h3>
@@ -122,42 +141,42 @@
 <p><img src="/img/tryhackme_yearoftherabbit/19.png" /></p>
 <h3 id="extra-findings">Extra findings</h3>
 <p>suid3num.py found us some interesting SUID files:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a>[<span class="ex">~</span>] <span class="ex">Custom</span> SUID Binaries (Interesting Stuff)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="ex">------------------------------</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a><span class="ex">/usr/bin/X</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a><span class="ex">/usr/bin/procmail</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a><span class="ex">/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a><span class="ex">/usr/lib/pt_chown</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a><span class="ex">------------------------------</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[~]</span> Custom SUID Binaries <span class="er">(</span><span class="ex">Interesting</span> Stuff<span class="kw">)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">------------------------------</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/X</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/procmail</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/pt_chown</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="ex">------------------------------</span></span></code></pre></div>
 <p>Looking for suid files, we got:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="co"># find / -perm -u=s -type f 2&gt;/dev/null</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="ex">/bin/mount</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="ex">/bin/umount</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a><span class="ex">/bin/su</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a><span class="ex">/bin/fusermount</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true"></a><span class="ex">/bin/ntfs-3g</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true"></a><span class="ex">/usr/bin/vmware-user-suid-wrapper</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true"></a><span class="ex">/usr/bin/X</span></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true"></a><span class="ex">/usr/bin/procmail</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true"></a><span class="ex">/usr/bin/pkexec</span></span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true"></a><span class="ex">/usr/bin/gpasswd</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true"></a><span class="ex">/usr/bin/newgrp</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true"></a><span class="ex">/usr/bin/sudo</span></span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true"></a><span class="ex">/usr/bin/chsh</span></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true"></a><span class="ex">/usr/bin/chfn</span></span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true"></a><span class="ex">/usr/bin/at</span></span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true"></a><span class="ex">/usr/sbin/exim4</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true"></a><span class="ex">/usr/sbin/pppd</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true"></a><span class="ex">/usr/lib/policykit-1/polkit-agent-helper-1</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true"></a><span class="ex">/usr/lib/dbus-1.0/dbus-daemon-launch-helper</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true"></a><span class="ex">/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true"></a><span class="ex">/usr/lib/openssh/ssh-keysign</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true"></a><span class="ex">/usr/lib/pt_chown</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true"></a><span class="ex">/usr/lib/eject/dmcrypt-get-device</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find / -perm -u=s -type f 2&gt;/dev/null</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/mount</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/umount</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/su</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/fusermount</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">/bin/ntfs-3g</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/vmware-user-suid-wrapper</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/X</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/procmail</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/pkexec</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/gpasswd</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/newgrp</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/sudo</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/chsh</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/chfn</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/at</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/sbin/exim4</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/sbin/pppd</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/policykit-1/polkit-agent-helper-1</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/dbus-1.0/dbus-daemon-launch-helper</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/spice-gtk/spice-client-glib-usb-acl-helper</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/openssh/ssh-keysign</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/pt_chown</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/lib/eject/dmcrypt-get-device</span></span></code></pre></div>
 <ul>
 <li><p>We find a vulnerability for pt_chown which allowd privesc to root <a href="ihttps://www.exploit-db.com/exploits/19467">here</a> pt_chown is a program included with glibc 2.1.x that exists to aid the proper allocation of terminals for non-suid programs that don’t have devpts support. It is installed setuid root. We download the exploit to our local machine and transfer it to our target. Compiling the exploit with gcc, we run it with /dev/ptyxx as arg. But get a permission denied.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="fu">gcc</span> exploit.c -o exploit</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="ex">./exploit</span> /dev/pty12</span></code></pre></div></li>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">gcc</span> exploit.c <span class="at">-o</span> exploit</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./exploit</span> /dev/pty12</span></code></pre></div></li>
 <li><p>Exim is vunerable as well. It is a mail server. We find it running on a port internally on the target. We can connect to it using nc. There is an rce <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-10149">here</a> but we failed to exploit it.</p></li>
 </ul>
 </article>

@@ -54,6 +54,25 @@
 <!-- </nav> -->
 
 <article>
+<table>
+<tbody>
+<tr class="odd">
+<td>title: TryHackMe - UltraTech Writeup</td>
+</tr>
+<tr class="even">
+<td>date: 2020-05-16</td>
+</tr>
+<tr class="odd">
+<td>description: topics: php, command injection, gtfobins, docker</td>
+</tr>
+<tr class="even">
+<td>tags: php, command injection, docker, gtfobins, rce</td>
+</tr>
+<tr class="odd">
+<td>image: /img/tryhackme_ultratech/card.png</td>
+</tr>
+</tbody>
+</table>
 <p>#TryHackMe - UltraTech Writeup</p>
 <h1 id="initial-foothold">Initial Foothold</h1>
 <h2 id="nmap-scan">Nmap scan</h2>
@@ -193,7 +212,7 @@ hashcat -m 0 -o r00t.pass r00t.hash /usr/share/wordlists/rockyou.txt</code></pre
 <p><img src="/img/tryhackme_ultratech/20.png" /></p>
 <p>Going over to <a href="https://gtfobins.github.io/gtfobins/docker/#shell">gtfobins</a>, we find the command for privesc.</p>
 <p>We list the docker images and find that we have one name bash. We craft our command accordingly to get a root shell</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a> <span class="ex">docker</span> run -v /:/mnt --rm -it bash chroot /mnt sh</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> <span class="ex">docker</span> run <span class="at">-v</span> /:/mnt <span class="at">--rm</span> <span class="at">-it</span> bash chroot /mnt sh</span></code></pre></div>
 <p><img src="/img/tryhackme_ultratech/21.png" /></p>
 <p>Now we can read our required private rsa key from the /root/.ssh/ directory</p>
 <p><img src="/img/tryhackme_ultratech/22.png" /></p>

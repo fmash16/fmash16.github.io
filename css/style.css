@@ -54,22 +54,22 @@ a:active {
 }
 
 ::-moz-selection {
-  background: rgba(255, 255, 0, 0.3);
+  background: #ffa86a;
   color: #000;
 }
 
 ::selection {
-  background: rgba(255, 255, 0, 0.3);
+  background: #ffa86a;
   color: #000;
 }
 
 a::-moz-selection {
-  background: rgba(255, 255, 0, 0.3);
+  background: #ffa86a;
   color: #0645ad;
 }
 
 a::selection {
-  background: rgba(255, 255, 0, 0.3);
+  background: #ffa86a;
   color: #0645ad;
 }
 
@@ -453,10 +453,17 @@ nav > div > ul > li > a:hover {
 }
 
 .logo {
-  max-height: 100px;
-	border: None;
-  box-shadow: None;
-  /* border-radius:50px; */
+    max-height: 100px;
+    border: None;
+    box-shadow: None;
+    /* border-radius:50px; */
+    -webkit-transition: -webkit-transform .5s ease-in-out;
+    transition:         transform .5s ease-in-out;
+}
+
+.logo:hover {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
 }
 article img {
     margin: 1em 0;
@@ -473,8 +480,8 @@ ul.articles {
     margin-top: 2em;
 }
 footer {
-  font-size: 13px;
-  text-align: center;
+    font-size: 13px;
+    text-align: center;
 	padding-top: 1.5em;
 }
 

