@@ -6,6 +6,7 @@
 ./content/writeups/hackthebox/htb-Book.md
 ./content/writeups/hackthebox/htb-Tenet.md
 ./content/writeups/hackthebox/htb-Passage.md
+./content/writeups/hackthebox/htb-Ophiuchi.md
 ./content/writeups/hackthebox/htb-Node.md
 ./content/writeups/hackthebox/htb-Nest.md
 ./content/writeups/hackthebox/htb-Resolute.md
@@ -129,6 +130,7 @@
 ./img/htb_book/7.png
 ./img/htb_book/11.png
 ./img/htb_book/9.png
+./img/htb_ophiuchi/card.png
 ./img/tryhackme_djinn/6.png
 ./img/tryhackme_djinn/3.png
 ./img/tryhackme_djinn/card.png
