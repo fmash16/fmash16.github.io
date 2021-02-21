@@ -75,7 +75,7 @@ a::selection {
 
 p {
   /* letter-spacing:-.03em; */
-  font-size: 1em;
+  font-size: 0.98em;
   margin: 1em 0;
   text-align: left;
 }

