@@ -1,39 +1,30 @@
-@font-face {
-  font-family: 'Iosevka Web';
-  font-weight: 400;
-  font-style: normal;
-  src: url("iosevka-regular.woff2") format("woff2"), url("iosevka-regular.woff") format("woff"), url("iosevka-regular.ttf") format("truetype");
-}
-
 html {
   font-size: 100%;
   overflow-y: scroll;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
-  width: 100%;
 }
 
 body {
-  font-family: 'Iosevka Web', sans-serif;
-  color: #ebdbb2;
-  background-color: #0e0f0f;
+  font-family: 'IBM Plex Mono', sans-serif;
+  color: #e5d09a;
+  background-color: #191a1a;
   font-size: 12px;
   line-height: 1.5em;
   padding: 1em;
-  margin-left: 33%;
+  margin-left: auto;
   margin-right: auto;
-  max-width: 55%;
+  max-width: 60%;
   align: center;
 }
 
 a {
   color:#98971a;
-  text-decoration: none;
 }
 
-a:visited {
-  color: #b8bb26;
-}
+/* a:visited { */
+/*   color: #b8bb26; */
+/* } */
 
 a:hover {
   color:#8ec07c;
@@ -74,10 +65,15 @@ a::selection {
 }
 
 p {
-  /* letter-spacing:-.03em; */
-  font-size: 0.98em;
+  font-size: 0.9em;
   margin: 1em 0;
   text-align: left;
+}
+
+p > img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .figure {
@@ -88,10 +84,7 @@ p {
 img {
   max-width: 100%;
 	border:5px solid #fff;
-  /* box-shadow: 10px 10px 5px #ccc; */
-  /* -moz-box-shadow: 10px 10px 5px #ccc; */
-  /* -webkit-box-shadow: 10px 10px 5px #ccc; */
-  /* border-radius:7px; */
+    align: center;
 }
 
 
@@ -101,11 +94,18 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Kanit', sans-serif;
-  /* font-weight: 00; */
-  /* color: #66ff99; */
-  color: #ffa86a;
+  font-family: 'Courier Prime', monospace, sans-serif;
+  color: #ff6666;
   line-height: 1em;
+}
+
+h2 > a {
+    all: unset;
+    color: inherit;
+}
+
+h1::before,h2::before {
+    content: "# "
 }
 
 h4,
@@ -115,25 +115,25 @@ h6 {
 }
 
 h1 {
-  font-size: 2.2em;
+    font-size: 1.5em;
 	padding-top: 1em;
 	padding-bottom: 0.5em;
-	border-bottom: 1px solid #ffa86a;
+	border-bottom: 1px solid #282828;
 }
 
 h2 {
-  font-size: 1.9em;
+  font-size: 1.3em;
 	padding-top: 0.5em;
 	padding-bottom: 0.3em;
 	border-bottom: 1px solid #282828;
 }
 
 h3 {
-  font-size: 1.6em;
+  font-size: 1em;
 }
 
 h4 {
-  font-size: 1.3em;
+  font-size: 1em;
 }
 
 h5 {
@@ -145,8 +145,8 @@ h6 {
 }
 
 blockquote {
-    color: #b16286;
-    border-left: 3px solid #b16286;
+    color: #ffa64d;
+    border-left: 3px solid #ffa64d;
     padding-left: 20px;
 }
 
@@ -162,11 +162,11 @@ hr {
 code,
 kbd,
 samp {
-    font-family: "Inconsolata", monospace;
-    font-size: 0.98em;
+    font-family: Cousine, monospace;
+    font-size: 0.95em;
     white-space : pre !important;
-    background:#1c1b19;
-    color:#fb4934;
+    background:#252727;
+    color:#ffa64d;
     margin:0 2px;
     border-radius: 5px;
     padding: 3px;
@@ -174,44 +174,12 @@ samp {
 }
 
 .sourceCode {
-    font-size: 0.96em;
-    font-family: 'Fira Mono';
-    background: #1c1b19;
-    color: #fce8c3;
+    font-size: 0.95em;
+    font-family: Fira Mono;
+    /* background: #1c1b19; */
+    background: #202222;
+    color: #e5d09a;
 }
-
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
-}
-code span.al { color: #ffcfaf; } /* Alert */
-code span.an { color: #7f9f7f; font-weight: bold; } /* Annotation */
-code span.at { } /* Attribute */
-code span.bn { color: #dca3a3; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #fabd2f; } /* ControlFlow */
-code span.ch { color: #dca3a3; } /* Char */
-code span.cn { color: #dca3a3; font-weight: bold; } /* Constant */
-code span.co { color: #7f9f7f; } /* Comment */
-code span.cv { color: #7f9f7f; font-weight: bold; } /* CommentVar */
-code span.do { color: #7f9f7f; } /* Documentation */
-code span.dt { color: #dfdfbf; } /* DataType */
-code span.dv { color: #dcdccc; } /* DecVal */
-code span.er { color: #c3bf9f; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #c0bed1; } /* Float */
-code span.fu { color: #b8bb26; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #7f9f7f; font-weight: bold; } /* Information */
-code span.kw { color: #fabd2f; } /* Keyword */
-code span.op { color: #f0efd0; } /* Operator */
-code span.ot { color: #b8bb26; } /* Other */
-code span.pp { color: #ffcfaf; font-weight: bold; } /* Preprocessor */
-code span.sc { color: #dca3a3; } /* SpecialChar */
-code span.ss { color: #d3869b; } /* SpecialString */
-code span.st { color: #d3869b; } /* String */
-code span.va { } /* Variable */
-code span.vs { color: #d3869b; } /* VerbatimString */
-code span.wa { color: #7f9f7f; font-weight: bold; } /* Warning */
 
 .sourceCode pre {
     padding: 20px 20px 20px 20px;
@@ -282,6 +250,7 @@ img {
 	border:1px solid #333;
   -ms-interpolation-mode: bicubic;
   vertical-align: middle;
+  align: center;
 }
 
 table {
@@ -390,99 +359,60 @@ td {
     page-break-after: avoid;
   }
 }
-nav ul {
-    margin: 0;
-    padding: 0;
-    list-style-type: none;
-    overflow: hidden;
-}
-nav ul li {
-    /* This allow us to arrange list items in a row, without using float */
-    display: inline-block;
-    list-style-type: none;
-}
-/* Create a style for the first level items */
-nav > div > ul > li > a {
-    color: #333 !important;
-    display: block;
-    line-height: 2em;
-    padding: 0.5em 0em;
-    text-decoration: none;
-}
 
-nav > div.nav-right > ul > li > a {
-    padding: 0.5em 0.5em;
-}
-
-nav > div > ul > li > a:hover {
-    color: #aaa !important;
-}
-.nav-left {
-    float: left;
-}
-
-.nav-left ul li {
-    float: left;
-}
-
-.nav-right ul li {
-    float: right;
-}
-
- /* The side navigation menu */
-.sidebar {
-  height: 100%; /* Full-height: remove this if you want "auto" height */
-  width: 25%; /* Set the width of the sidebar */
-  position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-  z-index: 1; /* Stay on top */
-  top: 0; /* Stay at the top */
-  left: 0;
-  background-color: #1c1b19; !important
-  overflow-x: hidden; /* Disable horizontal scroll */
-  /* padding-top: 20px; */
-}
-
-/* Sidebar links */
-.sidebar a {
-  display: block;
-  color: #fce8c3;
-  /* padding: 16px; */
-  text-decoration: none;
-}
-
-/* Active/current link */
-.sidebar a.active {
-  color: white;
-}
-
-/* Links on mouse-over */
-.sidebar a:hover:not(.active) {
-  color: #b8bb26;
-}
-
-/* On screens that are less than 700px wide, make the sidebar into a topbar */
-@media screen and (max-width: 1020px) {
-  .sidebar {
-    width: 100%;
-    height: 300px;
-    position: relative;
-  }
-  /* .sidebar a {float: right;} */
-  /* div.content {margin-left: 0;} */
-}
-
-/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
-@media screen and (max-width: 400px) {
-  .sidebar a {
+nav {
+    position: sticky;
+    top: 0;
+    background-color: #191a1a;
     text-align: center;
-    float: none;
-  }
-} 
+    color: #e5d09a;
+    border-bottom: 1px solid #444;
+    padding-bottom: 1em;
+    font-size: 0.8em;
+}
 
-.vertical-center {
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%); /* or try 50% */
+nav > a {
+    all: unset;
+    color: #e5d09a;
+    text-decoration: underline;
+}
+
+nav>a::before {
+    content: "/"
+}
+
+.blogtitle {
+    max-width: 70%;
+	text-align: center;
+	margin-left: auto;
+	margin-right: auto;
+    font-size: 1.5em;
+    padding-top: 0em;
+    padding-bottom: 0.3em;
+	border-bottom: 2px solid;
+}
+
+.blogtitle::before{
+    content: none;
+}
+
+.blogtitle:after {
+  content: '';
+  width: 0.4em;
+  height: 0.7em;
+  background: #ff6666;
+  opacity: 0;
+  display: inline-block;
+  animation: blink 1s infinite step-end;
+}
+
+@keyframes blink {
+  from,to {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
 }
 
 .logo {
@@ -500,6 +430,7 @@ nav > div > ul > li > a:hover {
 }
 article img {
     margin: 1em 0;
+    text-align: center;
 }
 p.date {
     font-size: 13px;
@@ -528,11 +459,3 @@ vbar {
   background-color: #333;
 }
 
-.sticky {
-    display: block;
-    color: #fff;
-    background-color: #bb0000;
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
-}
