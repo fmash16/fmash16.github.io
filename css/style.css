@@ -99,13 +99,16 @@ h6 {
   line-height: 1em;
 }
 
-h2 > a {
+h1 > a {
     all: unset;
     color: inherit;
 }
 
-h1::before,h2::before {
+h1::before {
     content: "# "
+}
+h2::before {
+    content: "## "
 }
 
 h4,
