@@ -459,3 +459,6 @@ vbar {
   background-color: #333;
 }
 
+hr {
+    border: 1px solid #333;
+}

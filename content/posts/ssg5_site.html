@@ -82,11 +82,11 @@
 <h2 id="generate-a-home-page-with-post-list-sorted-by-date">Generate a home page with post list sorted by date</h2>
 <p>I also needed a good home page that will list all my posts sorted by date with their description and image. I added a function <code>generate_post_list</code> to the script that does just that.</p>
 <p>The function simply pulls the title, date, description, tags and title image from the header part of the markdown file using grep and awk. And then it puts them into <code>index.html</code> file in the src directory with links to the posts that is rendered as the home page. For that the header of the md should be in the following format:</p>
-<pre class="text"><code>Title:
-Date: YYYY-MM-DD(this format is preferred for sorting by date)
-Description:
-Tags:
-Image:</code></pre>
+<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Title:</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Date:</span> YYYY-MM-DD<span class="er">(</span><span class="ex">this</span> format is preferred for sorting by date<span class="kw">)</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Description:</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Tags:</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ex">Image:</span></span></code></pre></div>
 <p>In order to sort the posts by date, I used vim. The following vim command simply sorts the post block in the home page by the date</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span> <span class="at">-N</span> <span class="at">-u</span> NONE <span class="at">-n</span> <span class="dt">\</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">-c</span> <span class="st">&quot;set nomore&quot;</span> <span class="dt">\</span></span>
@@ -124,13 +124,41 @@ Image:</code></pre>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="st">SortByDate\n\n&quot;</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">/index.html&quot;</span></span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
 <span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<h2 id="generate-a-post-archive">Generate a post archive</h2>
+<p>A new feature added recently is generating a post archive sorted by date. It follows similar technique used to geenrate the post list. The archive is stored in the file <code>archive.html</code>, which can be linked to from the home page using the _header.html file.</p>
+<h2 id="pagination">Pagination</h2>
+<p>This is a feature that I felt was very necessary as my blogsite grew in size and the homepage was getting cluttered with lots of posts. Paginating the home page would make it more organized with only a fixed number of posts in a single page. This meant the post list had to be distributed over a number of index pages.</p>
+<p>I integrated a very simple script in the ssg5 script in order to implement the pagination feature. The post list was generated and sorted by vim as discussed above. Then using simple bash commands like <code>awk</code>, <code>head</code> and <code>cat</code>, The index page was divided with a specified number of posts per page. The code used is</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Pagination</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> <span class="fu">true</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">do</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">line=$(</span><span class="fu">awk</span> <span class="st">&#39;/&lt;h2 id/ &amp;&amp; ++n==13 {print NR}&#39;</span> <span class="va">$src</span>/index.html<span class="va">)</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$line</span><span class="st">&quot;</span> <span class="ot">==</span> <span class="st">&quot;&quot;</span> <span class="bu">]</span><span class="kw">;</span><span class="cf">then</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>            <span class="bu">break</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">fi</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">(</span><span class="fu">head</span> <span class="at">-</span><span class="va">$(($line</span><span class="op">-</span><span class="dv">1</span><span class="va">))</span> <span class="op">&gt;</span> <span class="va">$src</span>/index<span class="va">$index_file</span>.html<span class="kw">;</span> <span class="fu">cat</span> <span class="op">&gt;</span> <span class="va">$src</span>/index<span class="va">$((index_file</span><span class="op">+</span><span class="dv">1</span><span class="va">))</span>.html<span class="kw">)</span> <span class="op">&lt;</span> <span class="va">$src</span>/index.html</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">cp</span> <span class="va">$src</span>/index<span class="va">$(($index_file</span><span class="op">+</span><span class="dv">1</span><span class="va">))</span>.html <span class="va">$src</span>/index.html</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">printf</span> <span class="st">&quot;</span><span class="dt">\</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="st">&lt;center&gt;&lt;a href=</span><span class="dt">\&quot;</span><span class="st">index</span><span class="va">$((index_file</span><span class="op">+</span><span class="dv">1</span><span class="va">))</span><span class="st">.html</span><span class="dt">\&quot;</span><span class="st">&gt;Next&gt;&gt;&lt;/a&gt;&lt;/center&gt;\n&quot;</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$src</span><span class="st">/index</span><span class="va">$index_file</span><span class="st">.html&quot;</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="va">index_file=$(($index_file</span><span class="op">+</span><span class="dv">1</span><span class="va">))</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">done</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mv</span> <span class="va">$src</span>/index0.html <span class="va">$src</span>/index.html</span></code></pre></div>
+<p>What I did here:</p>
+<ol type="1">
+<li><p>Used awk to get the line number of the 13th post by wild character matching for the sequence <code>&lt;h2 id</code> as that is what I used to generate the heading for each post in the index.</p></li>
+<li><p>Used <code>head</code> command to select text upto that line number and put that into a new index file by the name <code>index{%d}.html</code>. And put the rest into the <code>index.html</code> file and repeated the process until no post was left.</p></li>
+<li><p>Added a link to go to the next page at the end of each index page.</p></li>
+</ol>
+<p>And that’s it. I am not very proud of the code :). And I admit that the code is very clumsy. But it just works for me. It does what I want. Anyone else is free to jump in and edit it according to their needs.</p>
 <h2 id="my-modified-version-of-ssg5">My modified version of ssg5</h2>
 <p>If you want your site to use pandoc and have a custom home page with a post list sorted by date like mine, you can have a copy of the modified ssg5 script I use on my <a href="https://github.com/fmash16/ssg5">github</a>.</p>
 <p>And finally, Happy blogging!</p>
 </article>
 
 <footer>
+  <hr>
   <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2020 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>
