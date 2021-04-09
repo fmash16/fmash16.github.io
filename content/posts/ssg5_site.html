@@ -48,7 +48,7 @@
 <h2 id="installation">Installation</h2>
 <p>You can install ssg5 on your machine doing the following:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> bin</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ftp</span> <span class="at">-Vo</span> bin/ssg5 https://rgz.ee/bin/ssg5</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ftp</span> <span class="at">-vo</span> bin/ssg5 https://rgz.ee/bin/ssg5</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x bin/ssg5</span></code></pre></div>
 <p>And you got your ssg5! You can copy the executable over to the <code>/usr/local/bin</code> directory to directly use the command <code>ssg5</code>.</p>
 <p>Now ssg5 uses lowdown or markdown.pl by default to convert markdown files to html files. For that you can install <a href="https://kristaps.bsd.lv/lowdown/">lowdown</a>. But I am a pandoc user already, so I modified the script to use pandoc, more on it later.</p>
