@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,20 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox-tenet---writeup">Hackthebox Tenet - Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#port-80---wordpress-blogsite">Port 80 - wordpress blogsite</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation - Root</a></li>
+    </ul>
+</nav>
 <h1 id="hackthebox-tenet---writeup">Hackthebox Tenet - Writeup</h1>
 <h1 id="nmap-scan">Nmap Scan</h1>
 <ul>

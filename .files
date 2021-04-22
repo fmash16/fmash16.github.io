@@ -2,6 +2,7 @@
 ./content/writeups/hackthebox/htb-Blunder.md
 ./content/writeups/hackthebox/htb-Admirer.md
 ./content/writeups/hackthebox/htb-challenges-web.md
+./content/writeups/hackthebox/htb-Schooled.md
 ./content/writeups/hackthebox/htb-OpenAdmin.md
 ./content/writeups/hackthebox/htb-Book.md
 ./content/writeups/hackthebox/htb-Tenet.md
@@ -224,6 +225,8 @@
 ./img/htb_node/16.png
 ./img/htb_node/11.png
 ./img/htb_node/9.png
+./img/htb_schooled/card.png
+./img/htb_schooled/1.png
 ./img/tryhackme_ultratech/6.png
 ./img/tryhackme_ultratech/17.png
 ./img/tryhackme_ultratech/19.png
@@ -323,5 +326,6 @@
 ./css/style.css
 ./css/iosevka-regular.woff2
 ./archive.html
+./index1.html
 ./about.md
 ./avatar.png

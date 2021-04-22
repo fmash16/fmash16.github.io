@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,28 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---passage-writeup">Hackthebox - Passage Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#port-80---http">Port 80 - HTTP</a></li>
+    <li><a href="#cutenews-cms">CuteNews CMS</a></li>
+    <li><a href="#cutenews-exploit---rce">CuteNews exploit - RCE</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user-1">Privilege Escalation - User 1</a>
+    <ul>
+    <li><a href="#finding-user-hash">Finding user hash</a></li>
+    <li><a href="#cracking-hash-using-hashcat">Cracking hash using hashcat</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user-2">Privilege Escalation - User 2</a></li>
+    <li><a href="#privilege-escalation---root">Privilege escalation - root</a></li>
+    <li><a href="#cups-rabbit-hole">CUPS rabbit hole</a></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---passage-writeup">Hackthebox - Passage Writeup</h1>
 <p>We add the IP address of the machine to our /etc/hosts file.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;10.10.10.206  passage.htb&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>

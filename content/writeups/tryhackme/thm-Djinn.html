@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,34 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#tryhackme---djinn-writeup">TryHackMe - Djinn writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#ftp--port-21">ftp -port 21</a></li>
+    <li><a href="#port-1337">Port 1337</a></li>
+    </ul></li>
+    <li><a href="#winning-the-game">Winning the game</a></li>
+    <li><a href="#port-knock">Port knock</a></li>
+    <li><a href="#port-7331-enum">Port 7331 enum</a>
+    <ul>
+    <li><a href="#ffuf-fuzzing">ffuf fuzzing</a></li>
+    <li><a href="#remote-code-executeion">Remote Code Executeion</a></li>
+    <li><a href="#reverse-shell-www-data">Reverse shell (www-data)</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation-user-nitish">Privilege escalation : User nitish</a></li>
+    <li><a href="#privilege-escalation-user-sam">Privilege Escalation : User sam</a></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation - Root</a>
+    <ul>
+    <li><a href="#first-way---sudo-permissions">First way - sudo permissions</a></li>
+    <li><a href="#second-cooler-way-lxc-container">Second (Cooler) way : lxc container</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="tryhackme---djinn-writeup">TryHackMe - Djinn writeup</h1>
 <p>We add the machine IP to out /etc/hosts file</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;10.10.248.62 djinn.thm&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>

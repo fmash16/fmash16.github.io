@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,28 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#generate-a-static-site-with-posix-compliable-shell-script-using-find-grep-sed-pandoc-and-vim">Generate a static site with posix compliable shell script, using find, grep, sed, pandoc and vim</a></li>
+    <li><a href="#ssg5---the-minimal-cooler-site-generator">SSG5 - the minimal “cooler” site generator</a>
+    <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#styling">Styling</a></li>
+    </ul></li>
+    <li><a href="#my-customizations">My customizations</a>
+    <ul>
+    <li><a href="#pandoc">Pandoc</a></li>
+    <li><a href="#reducing-build-time-using-bash-multithreading">Reducing build time using bash multithreading</a></li>
+    <li><a href="#generate-a-home-page-with-post-list-sorted-by-date">Generate a home page with post list sorted by date</a></li>
+    <li><a href="#generate-a-post-archive">Generate a post archive</a></li>
+    <li><a href="#pagination">Pagination</a></li>
+    <li><a href="#my-modified-version-of-ssg5">My modified version of ssg5</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="generate-a-static-site-with-posix-compliable-shell-script-using-find-grep-sed-pandoc-and-vim">Generate a static site with posix compliable shell script, using find, grep, sed, pandoc and vim</h1>
 <p>After going through statice site generators like jekyll and hugo. I was always looking for something that is very simple and minimal, that would just generate a static site from markdown files. Hugo, Jekyll, Hexo and other site generators like these are really good and very user friendly. If all you want is a functioning website, those are your go to. But they have a lot of added functionalities that I did not have any use for. Then I came to know of this script called <a href="https://www.romanzolotarev.com/ssg.html">SSG5</a> written by <a href="https://twitter.com/romanzolotarev">Roman Zolotarev</a>. And this is what I used to build this blogsite of mine. You can also get my modified version of the script from my <a href="https://github.com/fmash16/ssg5">github</a>.</p>
 <h1 id="ssg5---the-minimal-cooler-site-generator">SSG5 - the minimal “cooler” site generator</h1>

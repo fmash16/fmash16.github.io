@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,31 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---montevarde-writeup">Hackthebox - Montevarde Writeup</a>
+    <ul>
+    <li><a href="#nmap-scan">## Nmap Scan</a></li>
+    <li><a href="#enum4linux">enum4linux:</a></li>
+    <li><a href="#ldapsearch">ldapsearch</a></li>
+    <li><a href="#rpcclient">rpcclient</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
+    <ul>
+    <li><a href="#smbclient-bruteforce">smbclient bruteforce</a></li>
+    <li><a href="#azure.xml">azure.xml</a></li>
+    <li><a href="#evil-winrm-shell">Evil-winrm shell</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---administrator">Privilege Escalation - Administrator</a>
+    <ul>
+    <li><a href="#azure-ad-connect-exploit">Azure AD Connect Exploit</a></li>
+    <li><a href="#administrator-shell">Administrator shell</a></li>
+    </ul></li>
+    <li><a href="#resources">Resources:</a></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---montevarde-writeup">Hackthebox - Montevarde Writeup</h1>
 <p><img src="/img/htb_montevarde/card.png" /></p>
 <h2 id="nmap-scan">## Nmap Scan</h2>

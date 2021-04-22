@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,30 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---node-tryhackme---node-1-writeup">Hackthebox - Node / TryHackMe - Node 1 Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#port-3000">Port 3000</a></li>
+    <li><a href="#ffuf-fuzzing">ffuf fuzzing</a></li>
+    <li><a href="#looking-at-the-source">Looking at the source</a></li>
+    <li><a href="#admin-login">Admin login</a></li>
+    <li><a href="#backup-file">Backup file</a></li>
+    <li><a href="#zip-file-password-crack-with-john">Zip file password crack with John</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user-mark">Privilege Escalation - User mark</a></li>
+    <li><a href="#privilege-escalation---user-mark-1">Privilege Escalation - User mark</a></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation - root</a>
+    <ul>
+    <li><a href="#method-1---exploiting-the-backup-program">Method 1 - exploiting the backup program</a></li>
+    <li><a href="#method-2--kernel-privesc">Method 2- kernel privesc</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---node-tryhackme---node-1-writeup">Hackthebox - Node / TryHackMe - Node 1 Writeup</h1>
 <p>This machine was originally released on hackthebox back in 2018. It is now on tryhackme as well as “Node 1”.</p>
 <p>As usual we add the machine IP to our /etc/hosts file as “node1.thm”</p>

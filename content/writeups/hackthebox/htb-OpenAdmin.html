@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,17 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---openadmin-writeup">Hackthebox - OpenAdmin Writeup</a>
+    <ul>
+    <li><a href="#directory-searching-with-gobuster">## Directory searching with Gobuster:</a></li>
+    <li><a href="#enumeration">## Enumeration</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---openadmin-writeup">Hackthebox - OpenAdmin Writeup</h1>
 <p><img src="/img/htb_openadmin/card.png" /> # Initial Foothold - Getting www-data shell using exploit — ## Nmap scan — Interesting ports:</p>
 <ul>

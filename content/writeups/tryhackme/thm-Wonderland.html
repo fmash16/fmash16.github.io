@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,30 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#tryhackme---wonderland-writeup">TryHackMe - Wonderland Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#http-web-page">HTTP web page</a></li>
+    <li><a href="#gobuster-fuzzing">Gobuster Fuzzing</a></li>
+    <li><a href="#img">/img</a></li>
+    <li><a href="#r">/r</a>
+    <ul>
+    <li><a href="#fuzzing-r">Fuzzing /r</a></li>
+    </ul></li>
+    </ul></li>
+    <li><a href="#privilege-escalation">Privilege Escalation</a>
+    <ul>
+    <li><a href="#user---rabbit">User - rabbit</a></li>
+    <li><a href="#user---hatter">User - hatter</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation - root</a></li>
+    </ul>
+</nav>
 <h1 id="tryhackme---wonderland-writeup">TryHackMe - Wonderland Writeup</h1>
 <p><img src="/img/tryhackme_wonderland/card.png" /></p>
 <p>As usual, we add the machine IP to our /etc/hosts file</p>

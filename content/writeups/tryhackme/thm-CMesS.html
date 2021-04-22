@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,34 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#tryhackme---cmess-writeup">TryHackMe - CMesS Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
+    <li><a href="#fuzzing-for-subdomains">Fuzzing for subdomains</a></li>
+    <li><a href="#subdomain-contents">Subdomain Contents:</a></li>
+    <li><a href="#gila-admin-login">Gila Admin Login</a></li>
+    <li><a href="#www-data-shell">www-data shell</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
+    <ul>
+    <li><a href="#gila-config.php">gila config.php</a></li>
+    <li><a href="#mysql-database-dump">MySQL database dump</a></li>
+    <li><a href="#user-andre-backup">User andre backup</a></li>
+    <li><a href="#ssh-login">SSH login</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation - root</a>
+    <ul>
+    <li><a href="#enumeration-1">Enumeration</a></li>
+    <li><a href="#crontab-tar-exploit">Crontab tar exploit</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="tryhackme---cmess-writeup">TryHackMe - CMesS Writeup</h1>
 <h1 id="nmap-scan">Nmap Scan</h1>
 <div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out cmess.thm </span></code></pre></div>

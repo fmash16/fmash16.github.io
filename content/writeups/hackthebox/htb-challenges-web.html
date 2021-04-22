@@ -15,7 +15,7 @@
   <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>fmash16's blog</title>
 <meta property="og:title" content="Hackthebox[Web-Challenge] Writeups" />
-      <meta property="og:description" content="topics" />
+      <meta property="og:description" content="topics web, python, proxy, requests, session, md5, regex" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
       <meta property="og:image" content="https://fmash16.github.io" />
@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,22 +40,13 @@
 </nav>
 
 <article>
-<table>
-<tbody>
-<tr class="odd">
-<td>title: Hackthebox[Web-Challenge] Writeups</td>
-</tr>
-<tr class="even">
-<td>date: 2020-05-06</td>
-</tr>
-<tr class="odd">
-<td>description: topics: web, python, proxy, requests, session, md5, regex</td>
-</tr>
-<tr class="even">
-<td>tags: python, web</td>
-</tr>
-</tbody>
-</table>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#em-dee-five-for-life">## Em Dee Five for Life</a></li>
+    </ul>
+</nav>
 <h2 id="em-dee-five-for-life">## Em Dee Five for Life</h2>
 <p>We start the instance</p>
 <p>The page gives us a string and asks for the md5sum as the input, after we inpput the md5sum of the string got from our terminal, we get a response of too slow.</p>

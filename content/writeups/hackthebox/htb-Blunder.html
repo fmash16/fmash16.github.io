@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,31 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---blunder-writeup">Hackthebox - Blunder Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#ffuf-fuzzing">ffuf fuzzing</a></li>
+    </ul></li>
+    <li><a href="#exploit">Exploit</a>
+    <ul>
+    <li><a href="#bruteforce">Bruteforce</a></li>
+    <li><a href="#bludit---directory-traversal-image-file-upload-metasploit">Bludit - Directory Traversal Image File Upload (Metasploit)</a></li>
+    <li><a href="#www-data-shell">www-data shell</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
+    <ul>
+    <li><a href="#enumeration-1">Enumeration</a></li>
+    <li><a href="#user-password-hash-crack">User password hash crack</a></li>
+    <li><a href="#user-shell">User shell</a></li>
+    </ul></li>
+    <li><a href="#privilege-esccalation---root">Privilege Esccalation - Root</a></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---blunder-writeup">Hackthebox - Blunder Writeup</h1>
 <p><img src="/img/htb_blunder/card.png" /></p>
 <h1 id="nmap-scan">Nmap Scan</h1>

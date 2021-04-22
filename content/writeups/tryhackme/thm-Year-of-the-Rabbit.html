@@ -15,7 +15,7 @@
   <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>TryHackMe - Year of the Rabbit - Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="TryHackMe - Year of the Rabbit - Writeup" />
-      <meta property="og:description" content="topics" />
+      <meta property="og:description" content="" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
       <meta property="og:image" content="https://fmash16.github.io/img/tryhackme_yearoftherabbit/card.png" />
@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,29 +40,35 @@
 </nav>
 
 <article>
-<table>
-<tbody>
-<tr class="odd">
-<td>title: TryHackMe - Year of the Rabbit - Writeup</td>
-</tr>
-<tr class="even">
-<td>date: 2020-05-21</td>
-</tr>
-<tr class="odd">
-<td>description: topics: sudo CVE-2019-14287 privesc, ftp, hydra, brainfuck, stego, pt_chown</td>
-</tr>
-<tr class="even">
-<td>tags: sudo, CVE-2019-14287, privesc, ftp, hydra, brainfuck, stego, pt_chown</td>
-</tr>
-<tr class="odd">
-<td>image: /img/tryhackme_yearoftherabbit/card.png</td>
-</tr>
-</tbody>
-</table>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#tryhackme---year-of-the-rabbit---writeup">TryHackMe - Year of the Rabbit - Writeup</a>
+    <ul>
+    <li><a href="#initial-foothold">Initial Foothold</a>
+    <ul>
+    <li><a href="#nmap-scan">Nmap scan</a></li>
+    <li><a href="#port-80">Port 80</a></li>
+    <li><a href="#steg-image">Steg image</a></li>
+    <li><a href="#ftp-login-bruteforce-with-hydra">ftp login bruteforce with hydra</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation-user-eli">## Privilege Escalation : User-eli</a>
+    <ul>
+    <li><a href="#brainfuck-programming-language">Brainfuck programming language</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation-user-gwandoline">Privilege Escalation : User-gwandoline</a></li>
+    <li><a href="#privilege-escalation-root">Privilege Escalation : Root</a>
+    <ul>
+    <li><a href="#extra-findings">Extra findings</a></li>
+    </ul></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="tryhackme---year-of-the-rabbit---writeup">TryHackMe - Year of the Rabbit - Writeup</h1>
 <h2 id="initial-foothold">Initial Foothold</h2>
 <h3 id="nmap-scan">Nmap scan</h3>
-<pre class="shell"><code>nmap -sC -sV -sS -oN nmap.out 10.10.104.143</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out 10.10.104.143</span></code></pre></div>
 <p>Open ports: &gt; 21 - vsftpd 3.0.2 &gt; 22 - ssh &gt; 80 - httpd</p>
 <h3 id="port-80">Port 80</h3>
 <p>We got a default apache2 webpage at port 80</p>
@@ -82,15 +88,15 @@
 <p><img src="/img/tryhackme_yearoftherabbit/7.png" /></p>
 <h3 id="steg-image">Steg image</h3>
 <p>We download the picture to our local machine and take a look at it using exiftool</p>
-<pre class="shell"><code>exiftool Hot_Babe.png</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">exiftool</span> Hot_Babe.png</span></code></pre></div>
 <p><img src="/img/tryhackme_yearoftherabbit/8.png" /></p>
 <p>It shows us that the picture has some trailing data after PNG IEND chunk. We have a look at the data using</p>
-<pre class="shell"><code>strings Hot_Babe.png</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">strings</span> Hot_Babe.png</span></code></pre></div>
 <p><img src="/img/tryhackme_yearoftherabbit/9.png" /></p>
 <p>So the ftp username is “ftpuser”</p>
 <h3 id="ftp-login-bruteforce-with-hydra">ftp login bruteforce with hydra</h3>
 <p>And we get a list of possible passwords. So we can bruteforce the password using hydra.</p>
-<pre class="shell"><code>hydra -l ftpuser -P wordlist.txt ftp://$ip</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">hydra</span> <span class="at">-l</span> ftpuser <span class="at">-P</span> wordlist.txt ftp://<span class="va">$ip</span></span></code></pre></div>
 <p>And we get a hit. <img src="/img/tryhackme_yearoftherabbit/10.png" /></p>
 <p>Creds found: &gt; ftpuser : 5iez1wGXKfPKQ</p>
 <p>We login to the ftp using the obtained creds.</p>
@@ -119,11 +125,11 @@
 <p><img src="/img/tryhackme_yearoftherabbit/18.png" /></p>
 <p>So, we can run <code>sudo /usr/bin/vi /home/gwendoline/user.txt</code> as ALL users but not root. This <code>(ALL, !root)</code> sudo permission is a known sudo vulnerability with <a href="https://nvd.nist.gov/vuln/detail/CVE-2019-14287">CVE-2019-14287</a>. The exploit is found <a href="https://www.exploit-db.com/exploits/47502">here</a>.</p>
 <p>So we run the following command:</p>
-<pre class="shell"><code>sudo -u#-1 /usr/bin/vi /home/gwendoline/user.txt</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u#-1</span> /usr/bin/vi /home/gwendoline/user.txt</span></code></pre></div>
 <p>And we get our vim editor running as root. Now to get a root shell, we go over to <a href="https://gtfobins.github.io/gtfobins/vim/#shell">gtfobins</a> and follow the instructions to get a root shell and read our flag from root.txt file.</p>
-<pre class="vim"><code>vim
-:set shell=/bin/sh
-:shell</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">vim</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">:set</span> shell=/bin/sh</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="ex">:shell</span></span></code></pre></div>
 <p><img src="/img/tryhackme_yearoftherabbit/19.png" /></p>
 <h3 id="extra-findings">Extra findings</h3>
 <p>suid3num.py found us some interesting SUID files:</p>

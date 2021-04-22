@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,31 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---resolute-writeup">Hackthebox - Resolute Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#active-directory---enum4linux">Active Directory - enum4linux</a></li>
+    <li><a href="#active-directory---ldapsearch">Active directory - ldapsearch</a></li>
+    <li><a href="#active-directory---rpcclient">Active directory - rpcclient</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user-melanie">Privilege Escalation - User Melanie</a>
+    <ul>
+    <li><a href="#login-using-found-creds">Login using found creds</a></li>
+    <li><a href="#hydra-user-bruteforce">Hydra user bruteforce</a></li>
+    <li><a href="#getting-a-shell-with-evil-winrm">Getting a shell with evil-winrm</a></li>
+    </ul></li>
+    <li><a href="#privilege-escaltion---user-ryan">Privilege Escaltion - User ryan</a></li>
+    <li><a href="#privilege-escalation---administrator">Privilege escalation - Administrator</a>
+    <ul>
+    <li><a href="#dll-injection-in-dns-service">DLL injection in DNS service</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---resolute-writeup">Hackthebox - Resolute Writeup</h1>
 <p><img src="/img/htb_resolute/card.png" /></p>
 <h1 id="nmap-scan">Nmap Scan</h1>

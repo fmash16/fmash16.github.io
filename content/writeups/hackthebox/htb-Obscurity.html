@@ -15,7 +15,7 @@
   <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>Hackthebox - Obscurity Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Obscurity Writeup" />
-      <meta property="og:description" content="Difficulty " />
+      <meta property="og:description" content="Difficulty  easy, topics python, fuzzing, john, crypto" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
       <meta property="og:image" content="https://fmash16.github.io/img/htb_obscurity/card.png" />
@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,25 +40,22 @@
 </nav>
 
 <article>
-<table>
-<tbody>
-<tr class="odd">
-<td>title: Hackthebox - Obscurity Writeup</td>
-</tr>
-<tr class="even">
-<td>date: 2020-05-03</td>
-</tr>
-<tr class="odd">
-<td>description: Difficulty : easy, topics: python, fuzzing, john, crypto</td>
-</tr>
-<tr class="even">
-<td>tags: python, fuzzingk, john</td>
-</tr>
-<tr class="odd">
-<td>image: /img/htb_obscurity/card.png</td>
-</tr>
-</tbody>
-</table>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---obscurity-writeup">Hackthebox - Obscurity Writeup</a></li>
+    <li><a href="#initial-foothold">Initial Foothold</a>
+    <ul>
+    <li><a href="#nmap-scan">Nmap scan:</a></li>
+    <li><a href="#website-at-port-8080">Website at port 8080:</a></li>
+    <li><a href="#fuzzing-the-site-to-find-the-server-source-code-using-wfuzz">Fuzzing the site to find the server source code using wfuzz:</a></li>
+    <li><a href="#analyze-the-custom-server-source-file">Analyze the custom server source file:</a></li>
+    <li><a href="#privilege-escalation---user">Privilege escalation - User:</a></li>
+    <li><a href="#privilege-escalation---root">Privilege escalation - Root:</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---obscurity-writeup">Hackthebox - Obscurity Writeup</h1>
 <p><img src="/img/htb_obscurity/card.png" /></p>
 <h1 id="initial-foothold">Initial Foothold</h1>

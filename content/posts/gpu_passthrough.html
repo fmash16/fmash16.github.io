@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,27 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#preamble">Preamble</a></li>
+    <li><a href="#introduction-to-vfio-and-pci-passthrough">Introduction to VFIO and PCI passthrough:</a></li>
+    <li><a href="#requirements">Requirements:</a></li>
+    <li><a href="#hardware">Hardware:</a></li>
+    <li><a href="#software">Software:</a></li>
+    <li><a href="#setting-up-the-vfio-ryzen-passthrough">Setting up the vfio ryzen passthrough:</a></li>
+    <li><a href="#enabling-the-iommu-feature">Enabling the IOMMU feature:</a></li>
+    <li><a href="#finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the iommu group of the guest gpu to isolate:</a></li>
+    <li><a href="#isolation-of-guest-gpu">Isolation of guest gpu</a></li>
+    <li><a href="#verify-the-isolation">Verify the isolation</a></li>
+    <li><a href="#creating-the-windows-virtual-machine">Creating the windows virtual machine</a></li>
+    <li><a href="#install-windows">Install windows:</a></li>
+    <li><a href="#install-necessary-drivers">Install necessary drivers</a></li>
+    <li><a href="#editing-configurations-using-virsh">Editing configurations using virsh</a></li>
+    <li><a href="#sources">Sources</a></li>
+    </ul>
+</nav>
 <h2 id="preamble">Preamble</h2>
 <p>This guide shows how to passthrough a gpu to a vm running on QEMU/KVM on linux for improved graphical performance. In my case, I did it to run windows and play games while I can still work on my linux machine. Dual booting is not a good solution in this case as rebooting into windows just for the purpose of gaming is a pain. Passing through my gpu, I can switch between games and work with muxh ease. This is a guide of how I set it up on my machine running Debian 10.</p>
 <h2 id="introduction-to-vfio-and-pci-passthrough">Introduction to VFIO and PCI passthrough:</h2>

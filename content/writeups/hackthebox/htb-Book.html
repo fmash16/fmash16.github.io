@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,35 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---book-writeup">Hackthebox - Book Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#web">Web</a></li>
+    <li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
+    <li><a href="#doc">/doc</a></li>
+    <li><a href="#admin-login">/admin login</a></li>
+    <li><a href="#admin-account---sql-truncation-attack">admin account - SQL truncation attack</a></li>
+    <li><a href="#file-upload">File upload</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
+    <ul>
+    <li><a href="#getting-id_rsa-of-user">Getting id_rsa of user</a></li>
+    <li><a href="#pdf2txt-conversion">pdf2txt conversion</a></li>
+    <li><a href="#ssh-login-with-id_rsa">SSH login with id_rsa</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation - root</a>
+    <ul>
+    <li><a href="#enumeration-1">Enumeration</a></li>
+    <li><a href="#logrotate-race-condition-exploit">logrotate race condition exploit</a></li>
+    </ul></li>
+    <li><a href="#resources">Resources</a></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---book-writeup">Hackthebox - Book Writeup</h1>
 <p><img src="/img/htb_book/card.png" /></p>
 <h1 id="nmap-scan">Nmap Scan</h1>

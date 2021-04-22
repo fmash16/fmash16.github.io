@@ -15,7 +15,7 @@
   <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>Initial Foothold &mdash; fmash16's blog</title>
 <meta property="og:title" content="TryHackMe - UltraTech Writeup" />
-      <meta property="og:description" content="topics" />
+      <meta property="og:description" content="php, command injection, gtfobins, docker" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
       <meta property="og:image" content="https://fmash16.github.io/img/tryhackme_ultratech/card.png" />
@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,25 +40,23 @@
 </nav>
 
 <article>
-<table>
-<tbody>
-<tr class="odd">
-<td>title: TryHackMe - UltraTech Writeup</td>
-</tr>
-<tr class="even">
-<td>date: 2020-05-16</td>
-</tr>
-<tr class="odd">
-<td>description: topics: php, command injection, gtfobins, docker</td>
-</tr>
-<tr class="even">
-<td>tags: php, command injection, docker, gtfobins, rce</td>
-</tr>
-<tr class="odd">
-<td>image: /img/tryhackme_ultratech/card.png</td>
-</tr>
-</tbody>
-</table>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#initial-foothold">Initial Foothold</a>
+    <ul>
+    <li><a href="#nmap-scan">Nmap scan</a></li>
+    <li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
+    <li><a href="#auth-page-found">/auth page found</a></li>
+    <li><a href="#user-ssh">User ssh</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation-root">Privilege escalation : Root</a>
+    <ul>
+    <li><a href="#gtfobins">GTFObins</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <p>#TryHackMe - UltraTech Writeup</p>
 <h1 id="initial-foothold">Initial Foothold</h1>
 <h2 id="nmap-scan">Nmap scan</h2>

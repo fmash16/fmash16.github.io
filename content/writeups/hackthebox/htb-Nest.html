@@ -23,7 +23,7 @@
 </head>
 
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:#f66;text-align:center;font-weight:1000">
+<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
@@ -40,6 +40,30 @@
 </nav>
 
 <article>
+<input id="toggle" type="checkbox" checked>
+<label for="toggle">TOC</label>
+<nav class='toc'>
+    <ul>
+    <li><a href="#hackthebox---nest-writeup">Hackthebox - Nest Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#smbclient">smbclient</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
+    <ul>
+    <li><a href="#encrypted-password-find">Encrypted password find</a></li>
+    <li><a href="#vb-script-encryption-debug">VB script encryption debug</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---administrator">Privilege Escalation - Administrator</a>
+    <ul>
+    <li><a href="#hqk-reporting-service---port-4386">HQK reporting service - Port 4386</a></li>
+    <li><a href="#debug-mode-password---ntfs-ads">DEBUG mode password - ntfs ADS</a></li>
+    <li><a href="#ldap-creds-found">LDAP creds found</a></li>
+    <li><a href="#decryting-encrypted-pass-debugging-hqkldap.exednspy">Decryting encrypted pass debugging HqkLdap.exe(dnSpy)</a></li>
+    </ul></li>
+    </ul>
+</nav>
 <h1 id="hackthebox---nest-writeup">Hackthebox - Nest Writeup</h1>
 <p><img src="/img/htb_nest/card.png" /></p>
 <h1 id="nmap-scan">Nmap scan</h1>
