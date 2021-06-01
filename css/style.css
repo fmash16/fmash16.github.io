@@ -14,7 +14,7 @@ html {
 }
 
 body {
-  font-family: "Roboto Mono", monospace;
+  font-family: 'Roboto', monospace;
   line-height: 1.5em;
   padding: 1em;
   margin-left: auto;
@@ -71,7 +71,8 @@ a::selection {
 }
 
 p {
-  font-size: 0.96em;
+  font-size: 1em;
+  letter-spacing: 0.02em;
   margin: 1em 0;
   text-align: left;
 }
