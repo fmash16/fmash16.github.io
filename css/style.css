@@ -14,7 +14,7 @@ html {
 }
 
 body {
-  font-family: 'Roboto', monospace;
+  font-family: 'Open Sans', monospace;
   line-height: 1.5em;
   padding: 1em;
   margin-left: auto;
@@ -175,7 +175,7 @@ code,
 kbd,
 samp {
     font-family: Inconsolata, monospace;
-    font-size: 1.1em;
+    font-size: 1.05em;
     white-space : pre !important;
     background:#252727;
     color:#ffa64d;
