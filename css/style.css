@@ -14,7 +14,7 @@ html {
 }
 
 body {
-  font-family: 'Poppins', monospace;
+  font-family: 'Inconsolata', monospace;
   line-height: 1.5em;
   padding: 1em;
   margin-left: auto;
@@ -71,8 +71,9 @@ a::selection {
 }
 
 p {
-  font-size: 0.95em;
-  letter-spacing: 0.02em;
+  font-size: 1em;
+  letter-spacing: 0.01em;
+  word-spacing: -0.2em;
   margin: 1em 0;
   text-align: left;
 }
@@ -174,8 +175,7 @@ hr {
 code,
 kbd,
 samp {
-    font-family: Inconsolata, monospace;
-    font-size: 1.05em;
+    font-family: 'Inconsolata', monospace;
     white-space : pre !important;
     background:#252727;
     color:#ffa64d;
@@ -185,8 +185,7 @@ samp {
 }
 
 .sourceCode {
-    font-size: 1em;
-    font-family: Inconsolata;
+    font-family: 'Inconsolata';
     margin-top: 2em;
     margin-bottom: 2em;
     background: #202222;
@@ -406,9 +405,9 @@ nav {
     background-color: var(--background);
     text-align: center;
     color: var(--foreground);
-    border-bottom: 1px solid #444;
+    border-bottom: 1px dashed #666;
     padding-bottom: 1em;
-    font-size: 0.9em;
+    font-size: 0.95em;
 }
 
 nav > a {
@@ -458,7 +457,7 @@ label {
 .toc {
     display: block;
     position: fixed;
-    font-size: 0.85em;
+    font-size: 0.9em;
     left: 81%;
     top: 4em;
     padding: 1em;
@@ -543,7 +542,7 @@ ul.articles {
     margin-top: 2em;
 }
 footer {
-    font-size: 13px;
+    font-size: 0.85em;
     text-align: center;
 	padding-top: 1.5em;
 }
