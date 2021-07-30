@@ -19,6 +19,7 @@
 ./content/writeups/tryhackme/thm-Djinn.md
 ./content/writeups/tryhackme/thm-Year-of-the-Rabbit.md
 ./content/writeups/tryhackme/thm-DogCat.md
+./content/posts/riscv-emulator-in-c.md
 ./content/posts/ssg5_site.md
 ./content/posts/gpu_passthrough.md
 ./content/posts/sites.md
@@ -36,6 +37,7 @@
 ./img/neverlanctf.png
 ./img/virt9.png
 ./img/virt8.png
+./img/riscv-decode.png
 ./img/htb_passage/6.png
 ./img/htb_passage/3.png
 ./img/htb_passage/card.png
@@ -164,6 +166,8 @@
 ./img/htb_openadmin/7.png
 ./img/htb_openadmin/11.png
 ./img/htb_openadmin/9.png
+./img/org.png
+./img/riscv-i.png
 ./img/tryhackme_cmess/6.png
 ./img/tryhackme_cmess/100.png
 ./img/tryhackme_cmess/3.png
@@ -180,6 +184,7 @@
 ./img/tryhackme_cmess/11.png
 ./img/tryhackme_cmess/9.png
 ./img/virt11.png
+./img/riscv-registers.png
 ./img/virt5.png
 ./img/virt-manager.png
 ./img/tryhackme_dogcat/6.png
@@ -297,6 +302,7 @@
 ./img/htb_obscurity/16.png
 ./img/htb_obscurity/11.png
 ./img/htb_obscurity/9.png
+./img/riscv-addi.png
 ./img/i3/i3-gaps.png
 ./img/htb_admirer/6.png
 ./img/htb_admirer/17.png
@@ -325,6 +331,7 @@
 ./css/iosevka-regular.woff
 ./css/style.css
 ./css/iosevka-regular.woff2
+./index2.html
 ./archive.html
 ./index1.html
 ./about.md
