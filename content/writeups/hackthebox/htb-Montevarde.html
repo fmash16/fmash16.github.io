@@ -154,21 +154,21 @@ Machine Name : MONTEVARDE</p>
 <p><img src="/img/htb_montevarde/8.png" /></p>
 <h2 id="azure.xml">azure.xml</h2>
 <p>Having a look at the file, we get</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="ot">Objs</span> <span class="er">Version</span><span class="ot">=</span><span class="st">&quot;1.1.0.1&quot;</span><span class="ot"> xmlns=</span><span class="st">&quot;http://schemas.microsoft.com/powershell/2004/04&quot;</span>&gt;</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="ot">Obj</span> <span class="er">RefId</span><span class="ot">=</span><span class="st">&quot;0&quot;</span>&gt;</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="ot">TN</span> <span class="er">RefId</span><span class="ot">=</span><span class="st">&quot;0&quot;</span>&gt;</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="ot">T</span><span class="er">&gt;Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential&lt;/T&gt;</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="er">&lt;T&gt;System.Object&lt;/T&gt;</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="er">&lt;/TN&gt;</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="er">&lt;ToString&gt;Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential&lt;/ToString&gt;</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="er">&lt;Props&gt;</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      <span class="er">&lt;DT</span> <span class="er">N</span><span class="ot">=</span><span class="st">&quot;StartDate&quot;</span>&gt;2020-01-03T05:35:00.7562298-08:00&lt;/<span class="er">DT</span>&gt;</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="ot">DT</span> <span class="er">N</span><span class="ot">=</span><span class="st">&quot;EndDate&quot;</span>&gt;2054-01-03T05:35:00.7562298-08:00&lt;/<span class="er">DT</span>&gt;</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="ot">G</span> <span class="er">N</span><span class="ot">=</span><span class="st">&quot;KeyId&quot;</span>&gt;00000000-0000-0000-0000-000000000000&lt;/<span class="er">G</span>&gt;</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="ot">S</span> <span class="er">N</span><span class="ot">=</span><span class="st">&quot;Password&quot;</span>&gt;4n0therD4y@n0th3r$&lt;/<span class="er">S</span>&gt;</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="er">Props</span>&gt;</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="er">Obj</span>&gt;</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="er">Objs</span>&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;Objs</span><span class="ot"> Version=</span><span class="st">&quot;1.1.0.1&quot;</span><span class="ot"> xmlns=</span><span class="st">&quot;http://schemas.microsoft.com/powershell/2004/04&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;Obj</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;TN</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;T&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="kw">&lt;/T&gt;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;T&gt;</span>System.Object<span class="kw">&lt;/T&gt;</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/TN&gt;</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;ToString&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="kw">&lt;/ToString&gt;</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;Props&gt;</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;DT</span><span class="ot"> N=</span><span class="st">&quot;StartDate&quot;</span><span class="kw">&gt;</span>2020-01-03T05:35:00.7562298-08:00<span class="kw">&lt;/DT&gt;</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;DT</span><span class="ot"> N=</span><span class="st">&quot;EndDate&quot;</span><span class="kw">&gt;</span>2054-01-03T05:35:00.7562298-08:00<span class="kw">&lt;/DT&gt;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;G</span><span class="ot"> N=</span><span class="st">&quot;KeyId&quot;</span><span class="kw">&gt;</span>00000000-0000-0000-0000-000000000000<span class="kw">&lt;/G&gt;</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;S</span><span class="ot"> N=</span><span class="st">&quot;Password&quot;</span><span class="kw">&gt;</span>4n0therD4y@n0th3r$<span class="kw">&lt;/S&gt;</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/Props&gt;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/Obj&gt;</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/Objs&gt;</span></span></code></pre></div>
 <p>Here we get a password. Since the file was in the directory of user mhope, it should be the password for mhope</p>
 <p>Creds found:</p>
 <blockquote>

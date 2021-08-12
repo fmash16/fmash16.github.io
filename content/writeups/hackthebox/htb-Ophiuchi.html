@@ -112,7 +112,7 @@
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <p>Going to the <code>home</code> directory, we find a user named <code>admin</code>.</p>
 <p>Browsing around, we find the user creds in the file <code>/opt/tomcat/conf/tomcat-users.xsd</code>. We find the following in the file</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode xsd"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="ot">user</span> <span class="er">username</span><span class="ot">=</span><span class="st">&quot;admin&quot;</span><span class="ot"> password=</span><span class="st">&quot;whythereisalimit&quot;</span><span class="ot"> roles=</span><span class="st">&quot;manager-gui,admin-gui&quot;</span>/&gt;</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode xsd"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;user</span><span class="ot"> username=</span><span class="st">&quot;admin&quot;</span><span class="ot"> password=</span><span class="st">&quot;whythereisalimit&quot;</span><span class="ot"> roles=</span><span class="st">&quot;manager-gui,admin-gui&quot;</span><span class="kw">/&gt;</span></span></code></pre></div>
 <p>Creds found:</p>
 <blockquote>
 <p>User: admin<br />

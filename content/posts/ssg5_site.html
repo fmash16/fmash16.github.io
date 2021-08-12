@@ -84,7 +84,7 @@
 <p>And you got your simple site!</p>
 <h2 id="styling">Styling</h2>
 <p>Well a site without css doesn’t look that good right? It’s 2020! Definitely it does not look cool. So for styling, you can define your styles in a style.css file in the root directory or a seperate css folder and link the file in your <code>_header.html</code> by adding the following line</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;link</span> <span class="er">rel</span><span class="ot">=</span><span class="st">&quot;stylesheet&quot;</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text/css&quot;</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;/css/style.css&quot;</span><span class="kw">&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;link</span><span class="ot"> rel=</span><span class="st">&quot;stylesheet&quot;</span><span class="ot"> type=</span><span class="st">&quot;text/css&quot;</span><span class="ot"> href=</span><span class="st">&quot;/css/style.css&quot;</span><span class="kw">&gt;</span></span></code></pre></div>
 <h1 id="my-customizations">My customizations</h1>
 <h2 id="pandoc">Pandoc</h2>
 <p>I have been using pandoc for quite a while in order to make notes from markdown. So I modified the ssg5 script to use pandoc instead of lowdown or markdown.pl to generate html from md files. It is very simple actually. The pandoc command is basically</p>
@@ -150,7 +150,7 @@
 <span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a><span class="st">SortByDate\n\n&quot;</span> <span class="op">&gt;&gt;</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">/index.html&quot;</span></span>
 <span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
-<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
 <h2 id="generate-a-post-archive">Generate a post archive</h2>
 <p>A new feature added recently is generating a post archive sorted by date. It follows similar technique used to geenrate the post list. The archive is stored in the file <code>archive.html</code>, which can be linked to from the home page using the _header.html file.</p>
 <h2 id="pagination">Pagination</h2>

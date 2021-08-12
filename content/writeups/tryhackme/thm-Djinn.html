@@ -314,7 +314,7 @@ And don&#39;t mess up anything.</code></pre></li>
 <p>Now let’s add this image to the lxd list</p>
 <div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image import ./alpine-v3.12-x86_64-20200706_0859.tar.gz <span class="at">--alias</span> pwn</span></code></pre></div>
 <p>We got a permission denied saying that we cannot write to /home/nitish/.config. So our home directory is not right. So we run the following</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HOME</span><span class="op">=</span>/home/sam</span>
+<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HOME=</span>/home/sam</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image import ./alpine-v3.12-x86_64-20200706_0859.tar.gz <span class="at">--alias</span> pwn</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image list</span></code></pre></div>
 <p>And now we succeed.</p>
