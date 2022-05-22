@@ -6,30 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>fmash16's blog</title>
 <meta property="og:title" content="Ryzen Gpu passthrough guide on debian" />
       <meta property="og:description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io" />
+      <meta property="og:image" content="https://fmash16.github.io/" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,51 +40,88 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#preamble">Preamble</a></li>
-    <li><a href="#introduction-to-vfio-and-pci-passthrough">Introduction to VFIO and PCI passthrough:</a></li>
-    <li><a href="#requirements">Requirements:</a></li>
-    <li><a href="#hardware">Hardware:</a></li>
-    <li><a href="#software">Software:</a></li>
-    <li><a href="#setting-up-the-vfio-ryzen-passthrough">Setting up the vfio ryzen passthrough:</a></li>
-    <li><a href="#enabling-the-iommu-feature">Enabling the IOMMU feature:</a></li>
-    <li><a href="#finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the iommu group of the guest gpu to isolate:</a></li>
-    <li><a href="#isolation-of-guest-gpu">Isolation of guest gpu</a></li>
-    <li><a href="#verify-the-isolation">Verify the isolation</a></li>
-    <li><a href="#creating-the-windows-virtual-machine">Creating the windows virtual machine</a></li>
-    <li><a href="#install-windows">Install windows:</a></li>
-    <li><a href="#install-necessary-drivers">Install necessary drivers</a></li>
-    <li><a href="#editing-configurations-using-virsh">Editing configurations using virsh</a></li>
-    <li><a href="#sources">Sources</a></li>
-    </ul>
-</nav>
+<ul>
+<li><a href="#preamble">Preamble</a></li>
+<li><a href="#introduction-to-vfio-and-pci-passthrough">Introduction to
+VFIO and PCI passthrough:</a></li>
+<li><a href="#requirements">Requirements:</a></li>
+<li><a href="#hardware">Hardware:</a></li>
+<li><a href="#software">Software:</a></li>
+<li><a href="#setting-up-the-vfio-ryzen-passthrough">Setting up the vfio
+ryzen passthrough:</a></li>
+<li><a href="#enabling-the-iommu-feature">Enabling the IOMMU
+feature:</a></li>
+<li><a
+href="#finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the
+iommu group of the guest gpu to isolate:</a></li>
+<li><a href="#isolation-of-guest-gpu">Isolation of guest gpu</a></li>
+<li><a href="#verify-the-isolation">Verify the isolation</a></li>
+<li><a href="#creating-the-windows-virtual-machine">Creating the windows
+virtual machine</a></li>
+<li><a href="#install-windows">Install windows:</a></li>
+<li><a href="#install-necessary-drivers">Install necessary
+drivers</a></li>
+<li><a href="#editing-configurations-using-virsh">Editing configurations
+using virsh</a></li>
+<li><a href="#sources">Sources</a></li>
+</ul>
 <h2 id="preamble">Preamble</h2>
-<p>This guide shows how to passthrough a gpu to a vm running on QEMU/KVM on linux for improved graphical performance. In my case, I did it to run windows and play games while I can still work on my linux machine. Dual booting is not a good solution in this case as rebooting into windows just for the purpose of gaming is a pain. Passing through my gpu, I can switch between games and work with muxh ease. This is a guide of how I set it up on my machine running Debian 10.</p>
-<h2 id="introduction-to-vfio-and-pci-passthrough">Introduction to VFIO and PCI passthrough:</h2>
-<p><a href="https://www.kernel.org/doc/Documentation/vfio.txt">Virtual Function IO</a> (or VFIO) allows a virtual machine (VM) direct access to a pci hardware resource, such as a graphics processing unit (GPU). Virtual machines with set up GPU passthrough can gain close to bare metal performance, which makes running games in a Windows virtual machine possible.</p>
-<p>Unfortunately, the setup process can be pretty complex. It consists of fixed base settings, some variable settings and several optional (mostly performance) settings. In order to sustain readability of this post, and because I aim to use the virtual machine for gaming only, I minimized the variable parts for latency optimization. The variable topics itself are linked in articles – I hope this makes sense. 🙂</p>
+<p>This guide shows how to passthrough a gpu to a vm running on QEMU/KVM
+on linux for improved graphical performance. In my case, I did it to run
+windows and play games while I can still work on my linux machine. Dual
+booting is not a good solution in this case as rebooting into windows
+just for the purpose of gaming is a pain. Passing through my gpu, I can
+switch between games and work with muxh ease. This is a guide of how I
+set it up on my machine running Debian 10.</p>
+<h2 id="introduction-to-vfio-and-pci-passthrough">Introduction to VFIO
+and PCI passthrough:</h2>
+<p><a href="https://www.kernel.org/doc/Documentation/vfio.txt">Virtual
+Function IO</a> (or VFIO) allows a virtual machine (VM) direct access to
+a pci hardware resource, such as a graphics processing unit (GPU).
+Virtual machines with set up GPU passthrough can gain close to bare
+metal performance, which makes running games in a Windows virtual
+machine possible.</p>
+<p>Unfortunately, the setup process can be pretty complex. It consists
+of fixed base settings, some variable settings and several optional
+(mostly performance) settings. In order to sustain readability of this
+post, and because I aim to use the virtual machine for gaming only, I
+minimized the variable parts for latency optimization. The variable
+topics itself are linked in articles – I hope this makes sense. 🙂</p>
 <h2 id="requirements">Requirements:</h2>
 <h2 id="hardware">Hardware:</h2>
-<p>In order to successfully follow this guide, it is mandatory that the used hardware supports virtualization and IOMMU groups.</p>
-<p>The hardware I use is as follows: * Ryzen 6 2600 @ 4.00Ghz * MSI X470 Gaming Plus * 24gb corsair vengeance 3200Mhz cl16 RAM * 240GB WD Green SSD for vm * NVIDIA GT710 (host gpu) * AMD Radeon RX580 (passthrough gpu)</p>
+<p>In order to successfully follow this guide, it is mandatory that the
+used hardware supports virtualization and IOMMU groups.</p>
+<p>The hardware I use is as follows: * Ryzen 6 2600 @ 4.00Ghz * MSI X470
+Gaming Plus * 24gb corsair vengeance 3200Mhz cl16 RAM * 240GB WD Green
+SSD for vm * NVIDIA GT710 (host gpu) * AMD Radeon RX580 (passthrough
+gpu)</p>
 <h2 id="software">Software:</h2>
-<p>Before we start, install the virtualization manager and related software via:</p>
+<p>Before we start, install the virtualization manager and related
+software via:</p>
 <pre class="shell"><code>sudo apt-get install libvirt-bin bridge-utils virt-manager qemu-kvm ovmf</code></pre>
-<h2 id="setting-up-the-vfio-ryzen-passthrough">Setting up the vfio ryzen passthrough:</h2>
-<p>Devices connected to the mainboard, are members of (IOMMU) groups – depending on where and how they are connected. It is possible to pass devices into a virtual machine. Passed through devices have nearly bare metal performance when used inside the VM.</p>
-<p>On the downside, passed through devices are isolated and thus no longer available to the host system. Furthermore it is only possible to isolate all devices of one IOMMU group at the same time. This means, even when not used in the VM if a devices is IOMMU-group sibling of a passed through device, it can not be used on the host system.</p>
+<h2 id="setting-up-the-vfio-ryzen-passthrough">Setting up the vfio ryzen
+passthrough:</h2>
+<p>Devices connected to the mainboard, are members of (IOMMU) groups –
+depending on where and how they are connected. It is possible to pass
+devices into a virtual machine. Passed through devices have nearly bare
+metal performance when used inside the VM.</p>
+<p>On the downside, passed through devices are isolated and thus no
+longer available to the host system. Furthermore it is only possible to
+isolate all devices of one IOMMU group at the same time. This means,
+even when not used in the VM if a devices is IOMMU-group sibling of a
+passed through device, it can not be used on the host system.</p>
 <h2 id="enabling-the-iommu-feature">Enabling the IOMMU feature:</h2>
-<p>To enable the IOMMU feature on an AMD Ryzen system, modify your grub config. Run <code>sudo nano /etc/default/grub</code> and edit the line which starts with <code>GRUB_CMDLINE_LINUX_DEFAULT</code>, to match:</p>
+<p>To enable the IOMMU feature on an AMD Ryzen system, modify your grub
+config. Run <code>sudo nano /etc/default/grub</code> and edit the line
+which starts with <code>GRUB_CMDLINE_LINUX_DEFAULT</code>, to match:</p>
 <pre class="shell"><code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;amd_iommu=on iommu=pt kvm_amd.npt=1 kvm_amd.avic=1&quot;</code></pre>
 <p>in case you are using an Intel CPU the line should read:</p>
 <pre class="shell"><code>GRUB_CMDLINE_LINUX_DEFAULT=&quot;intel_iommu=on&quot;</code></pre>
 <p>Save the changes and update grub.</p>
 <pre class="shell"><code>sudo update-grub</code></pre>
 <p>Reboot your system when the command has finished.</p>
-<p>One can verify after a system start if IOMMU is enabled by running:</p>
+<p>One can verify after a system start if IOMMU is enabled by
+running:</p>
 <pre class="shell"><code>dmesg |grep AMD-Vi</code></pre>
 <p>My output:</p>
 <pre class="shell"><code>[    0.758804] AMD-Vi: IOMMU performance counters supported                             
@@ -92,17 +130,24 @@
 [    0.760741] AMD-Vi: Interrupt remapping enabled  
 [    0.760742] AMD-Vi: virtual APIC enabled         
 [    0.760832] AMD-Vi: Lazy IO/TLB flushing enabled </code></pre>
-<h2 id="finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the iommu group of the guest gpu to isolate:</h2>
-<p>In order to activate the hardware passthrough for virtual machines, we have to make sure the nvidia/amd driver is not taking ownership of the PCIe devices; isolate it before we can hand it over.</p>
-<p>This is done by applying the vfio-pci to the guest GPU, during the system startup.</p>
-<p>Depending on the PCIe slot installed, the hardware has different IOMMU group affilation. One can use a bash script like this in order to determine devices and their grouping:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<h2 id="finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the
+iommu group of the guest gpu to isolate:</h2>
+<p>In order to activate the hardware passthrough for virtual machines,
+we have to make sure the nvidia/amd driver is not taking ownership of
+the PCIe devices; isolate it before we can hand it over.</p>
+<p>This is done by applying the vfio-pci to the guest GPU, during the
+system startup.</p>
+<p>Depending on the PCIe slot installed, the hardware has different
+IOMMU group affilation. One can use a bash script like this in order to
+determine devices and their grouping:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">shopt</span> <span class="at">-s</span> nullglob</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> d <span class="kw">in</span> /sys/kernel/iommu_groups/<span class="pp">*</span>/devices/<span class="pp">*</span><span class="kw">;</span> <span class="cf">do</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">n</span><span class="op">=</span><span class="va">${d</span><span class="op">#</span><span class="pp">*</span>/iommu_groups/<span class="pp">*</span><span class="va">}</span><span class="kw">;</span> <span class="va">n</span><span class="op">=</span><span class="va">${n</span><span class="op">%%</span>/<span class="pp">*</span><span class="va">}</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">printf</span> <span class="st">&#39;IOMMU Group %s &#39;</span> <span class="st">&quot;</span><span class="va">$n</span><span class="st">&quot;</span></span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="ex">lspci</span> <span class="at">-nns</span> <span class="st">&quot;</span><span class="va">${d</span><span class="op">##</span><span class="pp">*</span>/<span class="va">}</span><span class="st">&quot;</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span><span class="kw">;</span></span></code></pre></div>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="st">done;</span></span></code></pre></div>
 <p>Output:</p>
 <pre class="shell"><code>IOMMU Group 0 00:01.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
 Family 17h PCIe Dummy Host Bridge [1022:1452]                  
@@ -188,33 +233,55 @@ IOMMU Group 8 00:07.1 PCI bridge [0604]: Advanced Micro Devices, Inc. [AMD]
 Family 17h (nternal PCIe GPP Bridge 0 to Bus B [1022:1454]      
 IOMMU Group 9 00:08.0 Host bridge [0600]: Advanced Micro Devices, Inc. [AMD]
 Family 17h PCIe Dummy Host Bridge [1022:1452]</code></pre>
-<p>We are looking for the device id of the guest GPU (in my case, Radeon RX 470/480) for isolation. Keep in mind that the GPU usually comes combined with an audio device.</p>
-<p>We will isolate the GPU in PCIe slot 2, with host gpu in PCIe slot 1.</p>
-<p>For the next step only the GPU-Id is needed. We have to isolate <code>1002:67df</code> and <code>1002:aaf0</code></p>
+<p>We are looking for the device id of the guest GPU (in my case, Radeon
+RX 470/480) for isolation. Keep in mind that the GPU usually comes
+combined with an audio device.</p>
+<p>We will isolate the GPU in PCIe slot 2, with host gpu in PCIe slot
+1.</p>
+<p>For the next step only the GPU-Id is needed. We have to isolate
+<code>1002:67df</code> and <code>1002:aaf0</code></p>
 <h2 id="isolation-of-guest-gpu">Isolation of guest gpu</h2>
-<p>In order to isolate the gfx card modify <code>/etc/initramfs-tools/modules</code> via: <code>sudo nano /etc/initramfs-tools/modules</code> and add:</p>
+<p>In order to isolate the gfx card modify
+<code>/etc/initramfs-tools/modules</code> via:
+<code>sudo nano /etc/initramfs-tools/modules</code> and add:</p>
 <pre class="shell"><code>softdep amdgpu pre: vfio vfio_pci
 vfio vfio_iommu_type1 vfio_virqfd vfio_pci ids=1002:67df,1002:aaf0</code></pre>
-<p>modify <code>/etc/modules</code> aswell via: <code>sudo nano /etc/modules</code> and add:</p>
+<p>modify <code>/etc/modules</code> aswell via:
+<code>sudo nano /etc/modules</code> and add:</p>
 <pre class="shell"><code>vfio
 vfio_iommu_type1
 vfio_pci ids=1002:67df,1002:aaf0</code></pre>
-<p>These changes will pass device-ids to the vfio_pci module, in order to reserve these devices for the passthrough. It is crucial that the vfio_pci module claims the GPU before the actual driver (in this case the nvidia graphic-cards driver) loads, otherwise it is not possible to isolate the GPU. Make sure your cards are using the Nvidia driver (not nouvea one).</p>
-<p>In order to alter the load sequence in favour to vfio_pci before the nvidia driver, create a file in the <code>modprobe.d</code> folder via <code>sudo nano /etc/modprobe.d/nvidia.conf</code> and add the the following line:</p>
+<p>These changes will pass device-ids to the vfio_pci module, in order
+to reserve these devices for the passthrough. It is crucial that the
+vfio_pci module claims the GPU before the actual driver (in this case
+the nvidia graphic-cards driver) loads, otherwise it is not possible to
+isolate the GPU. Make sure your cards are using the Nvidia driver (not
+nouvea one).</p>
+<p>In order to alter the load sequence in favour to vfio_pci before the
+nvidia driver, create a file in the <code>modprobe.d</code> folder via
+<code>sudo nano /etc/modprobe.d/nvidia.conf</code> and add the the
+following line:</p>
 <pre class="shell"><code>softdep nouveau pre: vfio-pci 
 softdep nvidia pre: vfio-pci 
 softdep nvidia* pre: vfio-pci</code></pre>
-<p>Create another file via <code>sudo nano /etc/modprobe.d/vfio.conf</code> to add the the following line:</p>
+<p>Create another file via
+<code>sudo nano /etc/modprobe.d/vfio.conf</code> to add the the
+following line:</p>
 <pre class="shell"><code>options vfio-pci ids=1002:67df,1002:aaf0</code></pre>
-<p>Obviously, the ids have to be the same we have added before to the modules file. Now save and close the file.</p>
-<p>Since the Windows 10 update 1803 the following additional entry needs to be set (otherwise BSOD) create the kvm.conf file via<code>sudo nano /etc/modprobe.d/kvm.conf</code> to add the the following line:</p>
+<p>Obviously, the ids have to be the same we have added before to the
+modules file. Now save and close the file.</p>
+<p>Since the Windows 10 update 1803 the following additional entry needs
+to be set (otherwise BSOD) create the kvm.conf file
+via<code>sudo nano /etc/modprobe.d/kvm.conf</code> to add the the
+following line:</p>
 <pre class="shell"><code>options kvm ignore_msrs=1</code></pre>
 <p>Save and close the file.</p>
 <pre class="shell"><code>when all is done run: sudo update-initramfs -u -k all</code></pre>
 <h2 id="verify-the-isolation">Verify the isolation</h2>
 <p>In order to verify a proper isolation of the device, run:</p>
 <pre class="shell"><code>lspci -nnv</code></pre>
-<p>find the line <code>"Kernel driver in use"</code> for the GPU and its audio part. It should state <code>vfio-pci</code>.</p>
+<p>find the line <code>"Kernel driver in use"</code> for the GPU and its
+audio part. It should state <code>vfio-pci</code>.</p>
 <p>My output:</p>
 <pre class="shell"><code>1e:00.0 VGA compatible controller [0300]: Advanced Micro Devices, Inc.
 [AMD/ATI] Ellesmere [Radeon RX 470/480] [1002:67df] (rev e7) (prog-if 00 [VGA
@@ -240,254 +307,319 @@ HDMI Audio [Radeon RX 470/480 / 570/580/590] [1002:aaf0]
         Capabilities: &lt;access denied&gt;       
         Kernel driver in use: vfio-pci      
         Kernel modules: snd_hda_intel       </code></pre>
-<h2 id="creating-the-windows-virtual-machine">Creating the windows virtual machine</h2>
-<p>The virtualization is done via an open source machine emulator and virtualizer called QEMU. One can either run qemu directly, or use a GUI called virt-manager in order setup, and run a virtual machine. I prefer using the GUI. Unfortunately not every settings is supported in the Virtual Manager. Thus, I define the basic settings in the UI do a quick VM start and force stop it right after I see the GPU is passed-over correctly. Afterwards one can edit the missing bits into the VM config via virsh.</p>
+<h2 id="creating-the-windows-virtual-machine">Creating the windows
+virtual machine</h2>
+<p>The virtualization is done via an open source machine emulator and
+virtualizer called QEMU. One can either run qemu directly, or use a GUI
+called virt-manager in order setup, and run a virtual machine. I prefer
+using the GUI. Unfortunately not every settings is supported in the
+Virtual Manager. Thus, I define the basic settings in the UI do a quick
+VM start and force stop it right after I see the GPU is passed-over
+correctly. Afterwards one can edit the missing bits into the VM config
+via virsh.</p>
 <ol type="1">
 <li><p>Open <code>virt-manager</code></p>
 <figure>
-<img src="/img/virt-manager.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt-manager.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
 <li><p>Create a new windows virtual machine</p>
 <figure>
-<img src="/img/virt1.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt1.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
 <li><p>Select the iso file of windows10</p>
 <figure>
-<img src="/img/virt2.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt2.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
 <li><p>Choose the desired amount of RAM and CPU cores</p>
 <figure>
-<img src="/img/virt3.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt3.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
-<li><p>Create a custom storage(since we are using a wholess SSD for this vm)</p>
+<li><p>Create a custom storage(since we are using a wholess SSD for this
+vm)</p>
 <figure>
-<img src="/img/virt4.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt4.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
 <li><p>Add a new pool</p>
 <figure>
-<img src="/img/virt5.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt5.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
-<li><p>First, find the dev name of your ssd for vm using the command <code>lsblk</code> in terminal. In my case, it was /dev/sdc. You must select physical disk drive as we are using a seperate disk.</p>
+<li><p>First, find the dev name of your ssd for vm using the command
+<code>lsblk</code> in terminal. In my case, it was /dev/sdc. You must
+select physical disk drive as we are using a seperate disk.</p>
 <figure>
-<img src="/img/virt6.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt6.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
 <li><p>Build the pool</p>
 <figure>
-<img src="/img/virt7.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt7.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
-<li><p>Next create a new volume in the pool by the name <code>win10</code>(or whatever you like). and select this voilume as the storage.</p></li>
+<li><p>Next create a new volume in the pool by the name
+<code>win10</code>(or whatever you like). and select this voilume as the
+storage.</p></li>
 <li><p>You must check the box</p>
 <figure>
-<img src="/img/virt8.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt8.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
-<li><p>After finishing, the following box will appear. Select chipset <code>Q35</code> and firmware <code>uefi</code> and apply.</p>
+<li><p>After finishing, the following box will appear. Select chipset
+<code>Q35</code> and firmware <code>uefi</code> and apply.</p>
 <figure>
-<img src="/img/virt9.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt9.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
-<li><p>In the CPUs, manually set the cpu topology with 1 socket and cores and threads as your choice, better follow usual configurations of cores/threads</p>
+<li><p>In the CPUs, manually set the cpu topology with 1 socket and
+cores and threads as your choice, better follow usual configurations of
+cores/threads</p>
 <figure>
-<img src="/img/virt10.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt10.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
-<li><p>Remove the <code>Display spice</code> and <code>Video QXL</code> from the hardwares.</p></li>
-<li><p>Go to <code>Add hardware</code>, there yoiu will find your passthrough gpu and sound in the <code>pci host device</code> section. Add those.</p>
+<li><p>Remove the <code>Display spice</code> and <code>Video QXL</code>
+from the hardwares.</p></li>
+<li><p>Go to <code>Add hardware</code>, there yoiu will find your
+passthrough gpu and sound in the <code>pci host device</code> section.
+Add those.</p>
 <figure>
-<img src="/img/virt11.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt11.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
 <li><blockquote>
-<p>A problem that I faced during installing windows is that I couldn’t boot into the iso file inserted as cd rom and got stuck on the UEFI shell. Going into the bios, I still couldn’t boot from the iso. But when I used BIOS instead of UEFI, it booted into windows installation alright, but going to install windows, it shows that my disk is GPT instead of MBR required for BIOS, and so cannot install windows to that disk.</p>
+<p>A problem that I faced during installing windows is that I couldn’t
+boot into the iso file inserted as cd rom and got stuck on the UEFI
+shell. Going into the bios, I still couldn’t boot from the iso. But when
+I used BIOS instead of UEFI, it booted into windows installation
+alright, but going to install windows, it shows that my disk is GPT
+instead of MBR required for BIOS, and so cannot install windows to that
+disk.</p>
 </blockquote>
-<p>So, what you have to do is create a windows bootable drive with GPT. You can do this in many ways, either in linux or using a sofware like rufus on windows. Create a bootable pendrive and attach it. Now in the <code>add hardware</code> section, under the <code>USB Host Device</code>, you will find your pendrive. Add it.</p>
+<p>So, what you have to do is create a windows bootable drive with GPT.
+You can do this in many ways, either in linux or using a sofware like
+rufus on windows. Create a bootable pendrive and attach it. Now in the
+<code>add hardware</code> section, under the
+<code>USB Host Device</code>, you will find your pendrive. Add it.</p>
 <figure>
-<img src="/img/virt12.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt12.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
-<li><p>Go to boot options, check <code>Enable boot menu</code> and in the serial, check and move the USB device(your bootable drive), to the top.</p>
+<li><p>Go to boot options, check <code>Enable boot menu</code> and in
+the serial, check and move the USB device(your bootable drive), to the
+top.</p>
 <figure>
-<img src="/img/virt13.png" alt="image" /><figcaption aria-hidden="true">image</figcaption>
+<img src="/img/virt13.png" alt="image" />
+<figcaption aria-hidden="true">image</figcaption>
 </figure></li>
 <li><p>Next, start installation.</p></li>
 </ol>
 <h2 id="install-windows">Install windows:</h2>
-<p>Connect a second monitor to you host gpu, or you can connect to the monnitor you already have and can switch the inputs between your host and guest gpu.</p>
-<p>The windows installation should come up, install windows and voila! you are done, almost</p>
+<p>Connect a second monitor to you host gpu, or you can connect to the
+monnitor you already have and can switch the inputs between your host
+and guest gpu.</p>
+<p>The windows installation should come up, install windows and voila!
+you are done, almost</p>
 <h2 id="install-necessary-drivers">Install necessary drivers</h2>
-<p>Performance is supposed to get better if you use virtio drivers on windows, Download the virtio drivers and attack them to the vm as a cdrom device and install the drivers from there.</p>
-<p>You must also install the required graphics drivers(Radeon/NVIDIA) to eliminate display issues (in my case , I was not gettint the 1080p resolution).</p>
-<h2 id="editing-configurations-using-virsh">Editing configurations using virsh</h2>
-<p>You can edit the config of your vm from terminal by editing the xml file generate, To edit the xml file, in the termial, type <code>virsh edit win10</code> In place if win10, place the name of your windows vm.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;domain</span><span class="ot"> type=</span><span class="st">&#39;kvm&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;name&gt;</span>win10<span class="kw">&lt;/name&gt;</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;uuid&gt;</span>ba67aec1-75a4-4639-b905-2e9c444aef85<span class="kw">&lt;/uuid&gt;</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;metadata&gt;</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;libosinfo:libosinfo</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="ot">xmlns:libosinfo=</span><span class="st">&quot;http://libosinfo.org/xmlns/libvirt/domain/1.0&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;libosinfo:os</span><span class="ot"> id=</span><span class="st">&quot;http://microsoft.com/win/10&quot;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/libosinfo:libosinfo&gt;</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/metadata&gt;</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;memory</span><span class="ot"> unit=</span><span class="st">&#39;KiB&#39;</span><span class="kw">&gt;</span>8388608<span class="kw">&lt;/memory&gt;</span></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;currentMemory</span><span class="ot"> unit=</span><span class="st">&#39;KiB&#39;</span><span class="kw">&gt;</span>8388608<span class="kw">&lt;/currentMemory&gt;</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;vcpu</span><span class="ot"> placement=</span><span class="st">&#39;static&#39;</span><span class="kw">&gt;</span>6<span class="kw">&lt;/vcpu&gt;</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;os&gt;</span></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;type</span><span class="ot"> arch=</span><span class="st">&#39;x86_64&#39;</span><span class="ot"> machine=</span><span class="st">&#39;pc-q35-3.1&#39;</span><span class="kw">&gt;</span>hvm<span class="kw">&lt;/type&gt;</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;loader</span><span class="ot"> readonly=</span><span class="st">&#39;yes&#39;</span><span class="ot"> type=</span><span class="st">&#39;pflash&#39;</span><span class="kw">&gt;</span>/usr/share/OVMF/OVMF_CODE.fd<span class="kw">&lt;/loader&gt;</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;nvram&gt;</span>/var/lib/libvirt/qemu/nvram/win10_VARS.fd<span class="kw">&lt;/nvram&gt;</span></span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;bootmenu</span><span class="ot"> enable=</span><span class="st">&#39;yes&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/os&gt;</span></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;features&gt;</span></span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;acpi/&gt;</span></span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;apic/&gt;</span></span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;hyperv&gt;</span></span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;relaxed</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;vapic</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;spinlocks</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span><span class="ot"> retries=</span><span class="st">&#39;8191&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/hyperv&gt;</span></span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;vmport</span><span class="ot"> state=</span><span class="st">&#39;off&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/features&gt;</span></span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;cpu</span><span class="ot"> mode=</span><span class="st">&#39;host-model&#39;</span><span class="ot"> check=</span><span class="st">&#39;partial&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;model</span><span class="ot"> fallback=</span><span class="st">&#39;allow&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;topology</span><span class="ot"> sockets=</span><span class="st">&#39;1&#39;</span><span class="ot"> cores=</span><span class="st">&#39;6&#39;</span><span class="ot"> threads=</span><span class="st">&#39;1&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/cpu&gt;</span></span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;clock</span><span class="ot"> offset=</span><span class="st">&#39;localtime&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;rtc&#39;</span><span class="ot"> tickpolicy=</span><span class="st">&#39;catchup&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;pit&#39;</span><span class="ot"> tickpolicy=</span><span class="st">&#39;delay&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;hpet&#39;</span><span class="ot"> present=</span><span class="st">&#39;no&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;timer</span><span class="ot"> name=</span><span class="st">&#39;hypervclock&#39;</span><span class="ot"> present=</span><span class="st">&#39;yes&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/clock&gt;</span></span>
-<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;on_poweroff&gt;</span>destroy<span class="kw">&lt;/on_poweroff&gt;</span></span>
-<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;on_reboot&gt;</span>restart<span class="kw">&lt;/on_reboot&gt;</span></span>
-<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;on_crash&gt;</span>destroy<span class="kw">&lt;/on_crash&gt;</span></span>
-<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;pm&gt;</span></span>
-<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;suspend-to-mem</span><span class="ot"> enabled=</span><span class="st">&#39;no&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;suspend-to-disk</span><span class="ot"> enabled=</span><span class="st">&#39;no&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/pm&gt;</span></span>
-<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;devices&gt;</span></span>
-<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;emulator&gt;</span>/usr/bin/qemu-system-x86_64<span class="kw">&lt;/emulator&gt;</span></span>
-<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;disk</span><span class="ot"> type=</span><span class="st">&#39;block&#39;</span><span class="ot"> device=</span><span class="st">&#39;disk&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;driver</span><span class="ot"> name=</span><span class="st">&#39;qemu&#39;</span><span class="ot"> type=</span><span class="st">&#39;raw&#39;</span><span class="ot"> cache=</span><span class="st">&#39;none&#39;</span><span class="ot"> io=</span><span class="st">&#39;native&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;source</span><span class="ot"> dev=</span><span class="st">&#39;/dev/sdc1&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> dev=</span><span class="st">&#39;sda&#39;</span><span class="ot"> bus=</span><span class="st">&#39;sata&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;boot</span><span class="ot"> order=</span><span class="st">&#39;2&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;drive&#39;</span><span class="ot"> controller=</span><span class="st">&#39;0&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> target=</span><span class="st">&#39;0&#39;</span><span class="ot"> unit=</span><span class="st">&#39;0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/disk&gt;</span></span>
-<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;disk</span><span class="ot"> type=</span><span class="st">&#39;file&#39;</span><span class="ot"> device=</span><span class="st">&#39;cdrom&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;driver</span><span class="ot"> name=</span><span class="st">&#39;qemu&#39;</span><span class="ot"> type=</span><span class="st">&#39;raw&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;source</span><span class="ot"> file=</span><span class="st">&#39;/home/fmash/gpu_passthru/virtio-win-0.1.141.iso&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> dev=</span><span class="st">&#39;sdb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;sata&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;readonly/&gt;</span></span>
-<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;drive&#39;</span><span class="ot"> controller=</span><span class="st">&#39;0&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> target=</span><span class="st">&#39;0&#39;</span><span class="ot"> unit=</span><span class="st">&#39;1&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/disk&gt;</span></span>
-<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="ot"> model=</span><span class="st">&#39;qemu-xhci&#39;</span><span class="ot"> ports=</span><span class="st">&#39;15&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x02&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
-<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;sata&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x1f&#39;</span></span>
-<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x2&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;1&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;1&#39;</span><span class="ot"> port=</span><span class="st">&#39;0x8&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x0&#39;</span></span>
-<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a><span class="ot">multifunction=</span><span class="st">&#39;on&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;2&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;2&#39;</span><span class="ot"> port=</span><span class="st">&#39;0x9&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
-<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x1&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-82"><a href="#cb17-82" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-83"><a href="#cb17-83" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;3&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;3&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xa&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
-<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x2&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;4&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;4&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xb&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
-<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x3&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;5&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-97"><a href="#cb17-97" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;5&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xc&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-98"><a href="#cb17-98" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
-<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x4&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;6&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> chassis=</span><span class="st">&#39;6&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xd&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-104"><a href="#cb17-104" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
-<span id="cb17-105"><a href="#cb17-105" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x5&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/controller&gt;</span></span>
-<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;interface</span><span class="ot"> type=</span><span class="st">&#39;network&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;mac</span><span class="ot"> address=</span><span class="st">&#39;52:54:00:e4:b0:ef&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;source</span><span class="ot"> network=</span><span class="st">&#39;default&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;model</span><span class="ot"> type=</span><span class="st">&#39;e1000e&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x01&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
-<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/interface&gt;</span></span>
-<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;serial</span><span class="ot"> type=</span><span class="st">&#39;pty&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-115"><a href="#cb17-115" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> type=</span><span class="st">&#39;isa-serial&#39;</span><span class="ot"> port=</span><span class="st">&#39;0&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-116"><a href="#cb17-116" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;model</span><span class="ot"> name=</span><span class="st">&#39;isa-serial&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-117"><a href="#cb17-117" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/target&gt;</span></span>
-<span id="cb17-118"><a href="#cb17-118" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/serial&gt;</span></span>
-<span id="cb17-119"><a href="#cb17-119" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;console</span><span class="ot"> type=</span><span class="st">&#39;pty&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-120"><a href="#cb17-120" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;target</span><span class="ot"> type=</span><span class="st">&#39;serial&#39;</span><span class="ot"> port=</span><span class="st">&#39;0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-121"><a href="#cb17-121" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/console&gt;</span></span>
-<span id="cb17-122"><a href="#cb17-122" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;tablet&#39;</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-123"><a href="#cb17-123" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;2&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-124"><a href="#cb17-124" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/input&gt;</span></span>
-<span id="cb17-125"><a href="#cb17-125" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;mouse&#39;</span><span class="ot"> bus=</span><span class="st">&#39;ps2&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-126"><a href="#cb17-126" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;input</span><span class="ot"> type=</span><span class="st">&#39;keyboard&#39;</span><span class="ot"> bus=</span><span class="st">&#39;ps2&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-127"><a href="#cb17-127" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;sound</span><span class="ot"> model=</span><span class="st">&#39;ich9&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-128"><a href="#cb17-128" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x1b&#39;</span></span>
-<span id="cb17-129"><a href="#cb17-129" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-130"><a href="#cb17-130" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/sound&gt;</span></span>
-<span id="cb17-131"><a href="#cb17-131" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-132"><a href="#cb17-132" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;source&gt;</span></span>
-<span id="cb17-133"><a href="#cb17-133" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;address</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x1e&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-134"><a href="#cb17-134" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;/source&gt;</span></span>
-<span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x03&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
-<span id="cb17-136"><a href="#cb17-136" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-137"><a href="#cb17-137" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/hostdev&gt;</span></span>
-<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-139"><a href="#cb17-139" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;source&gt;</span></span>
-<span id="cb17-140"><a href="#cb17-140" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;address</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x1e&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x1&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-141"><a href="#cb17-141" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;/source&gt;</span></span>
-<span id="cb17-142"><a href="#cb17-142" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x04&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
-<span id="cb17-143"><a href="#cb17-143" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-144"><a href="#cb17-144" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/hostdev&gt;</span></span>
-<span id="cb17-145"><a href="#cb17-145" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-146"><a href="#cb17-146" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;source&gt;</span></span>
-<span id="cb17-147"><a href="#cb17-147" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;vendor</span><span class="ot"> id=</span><span class="st">&#39;0x046d&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-148"><a href="#cb17-148" aria-hidden="true" tabindex="-1"></a>        <span class="kw">&lt;product</span><span class="ot"> id=</span><span class="st">&#39;0xc07e&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-149"><a href="#cb17-149" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;/source&gt;</span></span>
-<span id="cb17-150"><a href="#cb17-150" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;5&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-151"><a href="#cb17-151" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/hostdev&gt;</span></span>
-<span id="cb17-152"><a href="#cb17-152" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;redirdev</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="ot"> type=</span><span class="st">&#39;spicevmc&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-153"><a href="#cb17-153" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;3&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/redirdev&gt;</span></span>
-<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;redirdev</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="ot"> type=</span><span class="st">&#39;spicevmc&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-156"><a href="#cb17-156" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;4&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-157"><a href="#cb17-157" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/redirdev&gt;</span></span>
-<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;memballoon</span><span class="ot"> model=</span><span class="st">&#39;virtio&#39;</span><span class="kw">&gt;</span></span>
-<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x05&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
-<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span><span class="kw">/&gt;</span></span>
-<span id="cb17-161"><a href="#cb17-161" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/memballoon&gt;</span></span>
-<span id="cb17-162"><a href="#cb17-162" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/devices&gt;</span></span>
-<span id="cb17-163"><a href="#cb17-163" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/domain&gt;</span></span></code></pre></div>
+<p>Performance is supposed to get better if you use virtio drivers on
+windows, Download the virtio drivers and attack them to the vm as a
+cdrom device and install the drivers from there.</p>
+<p>You must also install the required graphics drivers(Radeon/NVIDIA) to
+eliminate display issues (in my case , I was not gettint the 1080p
+resolution).</p>
+<h2 id="editing-configurations-using-virsh">Editing configurations using
+virsh</h2>
+<p>You can edit the config of your vm from terminal by editing the xml
+file generate, To edit the xml file, in the termial, type
+<code>virsh edit win10</code> In place if win10, place the name of your
+windows vm.</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">domain</span><span class="ot"> type=</span><span class="st">&#39;kvm&#39;</span>&gt;</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">name</span>&gt;win10&lt;/<span class="kw">name</span>&gt;</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">uuid</span>&gt;ba67aec1-75a4-4639-b905-2e9c444aef85&lt;/<span class="kw">uuid</span>&gt;</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">metadata</span>&gt;</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">libosinfo:libosinfo</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="ot">xmlns:libosinfo=</span><span class="st">&quot;http://libosinfo.org/xmlns/libvirt/domain/1.0&quot;</span>&gt;</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">libosinfo:os</span><span class="ot"> id=</span><span class="st">&quot;http://microsoft.com/win/10&quot;</span>/&gt;</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">libosinfo:libosinfo</span>&gt;</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">metadata</span>&gt;</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">memory</span><span class="ot"> unit=</span><span class="st">&#39;KiB&#39;</span>&gt;8388608&lt;/<span class="kw">memory</span>&gt;</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">currentMemory</span><span class="ot"> unit=</span><span class="st">&#39;KiB&#39;</span>&gt;8388608&lt;/<span class="kw">currentMemory</span>&gt;</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">vcpu</span><span class="ot"> placement=</span><span class="st">&#39;static&#39;</span>&gt;6&lt;/<span class="kw">vcpu</span>&gt;</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">os</span>&gt;</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">type</span><span class="ot"> arch=</span><span class="st">&#39;x86_64&#39;</span><span class="ot"> machine=</span><span class="st">&#39;pc-q35-3.1&#39;</span>&gt;hvm&lt;/<span class="kw">type</span>&gt;</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">loader</span><span class="ot"> readonly=</span><span class="st">&#39;yes&#39;</span><span class="ot"> type=</span><span class="st">&#39;pflash&#39;</span>&gt;/usr/share/OVMF/OVMF_CODE.fd&lt;/<span class="kw">loader</span>&gt;</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">nvram</span>&gt;/var/lib/libvirt/qemu/nvram/win10_VARS.fd&lt;/<span class="kw">nvram</span>&gt;</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">bootmenu</span><span class="ot"> enable=</span><span class="st">&#39;yes&#39;</span>/&gt;</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">os</span>&gt;</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">features</span>&gt;</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">acpi</span>/&gt;</span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">apic</span>/&gt;</span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">hyperv</span>&gt;</span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">relaxed</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span>/&gt;</span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">vapic</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span>/&gt;</span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">spinlocks</span><span class="ot"> state=</span><span class="st">&#39;on&#39;</span><span class="ot"> retries=</span><span class="st">&#39;8191&#39;</span>/&gt;</span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">hyperv</span>&gt;</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">vmport</span><span class="ot"> state=</span><span class="st">&#39;off&#39;</span>/&gt;</span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">features</span>&gt;</span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">cpu</span><span class="ot"> mode=</span><span class="st">&#39;host-model&#39;</span><span class="ot"> check=</span><span class="st">&#39;partial&#39;</span>&gt;</span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">model</span><span class="ot"> fallback=</span><span class="st">&#39;allow&#39;</span>/&gt;</span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">topology</span><span class="ot"> sockets=</span><span class="st">&#39;1&#39;</span><span class="ot"> cores=</span><span class="st">&#39;6&#39;</span><span class="ot"> threads=</span><span class="st">&#39;1&#39;</span>/&gt;</span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">cpu</span>&gt;</span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">clock</span><span class="ot"> offset=</span><span class="st">&#39;localtime&#39;</span>&gt;</span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">timer</span><span class="ot"> name=</span><span class="st">&#39;rtc&#39;</span><span class="ot"> tickpolicy=</span><span class="st">&#39;catchup&#39;</span>/&gt;</span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">timer</span><span class="ot"> name=</span><span class="st">&#39;pit&#39;</span><span class="ot"> tickpolicy=</span><span class="st">&#39;delay&#39;</span>/&gt;</span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">timer</span><span class="ot"> name=</span><span class="st">&#39;hpet&#39;</span><span class="ot"> present=</span><span class="st">&#39;no&#39;</span>/&gt;</span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">timer</span><span class="ot"> name=</span><span class="st">&#39;hypervclock&#39;</span><span class="ot"> present=</span><span class="st">&#39;yes&#39;</span>/&gt;</span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">clock</span>&gt;</span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">on_poweroff</span>&gt;destroy&lt;/<span class="kw">on_poweroff</span>&gt;</span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">on_reboot</span>&gt;restart&lt;/<span class="kw">on_reboot</span>&gt;</span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">on_crash</span>&gt;destroy&lt;/<span class="kw">on_crash</span>&gt;</span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">pm</span>&gt;</span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">suspend-to-mem</span><span class="ot"> enabled=</span><span class="st">&#39;no&#39;</span>/&gt;</span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">suspend-to-disk</span><span class="ot"> enabled=</span><span class="st">&#39;no&#39;</span>/&gt;</span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">pm</span>&gt;</span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">devices</span>&gt;</span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">emulator</span>&gt;/usr/bin/qemu-system-x86_64&lt;/<span class="kw">emulator</span>&gt;</span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">disk</span><span class="ot"> type=</span><span class="st">&#39;block&#39;</span><span class="ot"> device=</span><span class="st">&#39;disk&#39;</span>&gt;</span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">driver</span><span class="ot"> name=</span><span class="st">&#39;qemu&#39;</span><span class="ot"> type=</span><span class="st">&#39;raw&#39;</span><span class="ot"> cache=</span><span class="st">&#39;none&#39;</span><span class="ot"> io=</span><span class="st">&#39;native&#39;</span>/&gt;</span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">source</span><span class="ot"> dev=</span><span class="st">&#39;/dev/sdc1&#39;</span>/&gt;</span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> dev=</span><span class="st">&#39;sda&#39;</span><span class="ot"> bus=</span><span class="st">&#39;sata&#39;</span>/&gt;</span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">boot</span><span class="ot"> order=</span><span class="st">&#39;2&#39;</span>/&gt;</span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;drive&#39;</span><span class="ot"> controller=</span><span class="st">&#39;0&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> target=</span><span class="st">&#39;0&#39;</span><span class="ot"> unit=</span><span class="st">&#39;0&#39;</span>/&gt;</span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">disk</span>&gt;</span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">disk</span><span class="ot"> type=</span><span class="st">&#39;file&#39;</span><span class="ot"> device=</span><span class="st">&#39;cdrom&#39;</span>&gt;</span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">driver</span><span class="ot"> name=</span><span class="st">&#39;qemu&#39;</span><span class="ot"> type=</span><span class="st">&#39;raw&#39;</span>/&gt;</span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">source</span><span class="ot"> file=</span><span class="st">&#39;/home/fmash/gpu_passthru/virtio-win-0.1.141.iso&#39;</span>/&gt;</span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> dev=</span><span class="st">&#39;sdb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;sata&#39;</span>/&gt;</span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">readonly</span>/&gt;</span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;drive&#39;</span><span class="ot"> controller=</span><span class="st">&#39;0&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> target=</span><span class="st">&#39;0&#39;</span><span class="ot"> unit=</span><span class="st">&#39;1&#39;</span>/&gt;</span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">disk</span>&gt;</span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="ot"> model=</span><span class="st">&#39;qemu-xhci&#39;</span><span class="ot"> ports=</span><span class="st">&#39;15&#39;</span>&gt;</span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x02&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span>/&gt;</span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;sata&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span>&gt;</span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x1f&#39;</span></span>
+<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x2&#39;</span>/&gt;</span>
+<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;0&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root&#39;</span>/&gt;</span>
+<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;1&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span>&gt;</span>
+<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span>/&gt;</span>
+<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> chassis=</span><span class="st">&#39;1&#39;</span><span class="ot"> port=</span><span class="st">&#39;0x8&#39;</span>/&gt;</span>
+<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x0&#39;</span></span>
+<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a><span class="ot">multifunction=</span><span class="st">&#39;on&#39;</span>/&gt;</span>
+<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;2&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span>&gt;</span>
+<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span>/&gt;</span>
+<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> chassis=</span><span class="st">&#39;2&#39;</span><span class="ot"> port=</span><span class="st">&#39;0x9&#39;</span>/&gt;</span>
+<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
+<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x1&#39;</span>/&gt;</span>
+<span id="cb17-82"><a href="#cb17-82" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-83"><a href="#cb17-83" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;3&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span>&gt;</span>
+<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span>/&gt;</span>
+<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> chassis=</span><span class="st">&#39;3&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xa&#39;</span>/&gt;</span>
+<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
+<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x2&#39;</span>/&gt;</span>
+<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;4&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span>&gt;</span>
+<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span>/&gt;</span>
+<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> chassis=</span><span class="st">&#39;4&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xb&#39;</span>/&gt;</span>
+<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
+<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x3&#39;</span>/&gt;</span>
+<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;5&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span>&gt;</span>
+<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span>/&gt;</span>
+<span id="cb17-97"><a href="#cb17-97" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> chassis=</span><span class="st">&#39;5&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xc&#39;</span>/&gt;</span>
+<span id="cb17-98"><a href="#cb17-98" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
+<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x4&#39;</span>/&gt;</span>
+<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">controller</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> index=</span><span class="st">&#39;6&#39;</span><span class="ot"> model=</span><span class="st">&#39;pcie-root-port&#39;</span>&gt;</span>
+<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">model</span><span class="ot"> name=</span><span class="st">&#39;pcie-root-port&#39;</span>/&gt;</span>
+<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> chassis=</span><span class="st">&#39;6&#39;</span><span class="ot"> port=</span><span class="st">&#39;0xd&#39;</span>/&gt;</span>
+<span id="cb17-104"><a href="#cb17-104" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x01&#39;</span></span>
+<span id="cb17-105"><a href="#cb17-105" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x5&#39;</span>/&gt;</span>
+<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">controller</span>&gt;</span>
+<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">interface</span><span class="ot"> type=</span><span class="st">&#39;network&#39;</span>&gt;</span>
+<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">mac</span><span class="ot"> address=</span><span class="st">&#39;52:54:00:e4:b0:ef&#39;</span>/&gt;</span>
+<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">source</span><span class="ot"> network=</span><span class="st">&#39;default&#39;</span>/&gt;</span>
+<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">model</span><span class="ot"> type=</span><span class="st">&#39;e1000e&#39;</span>/&gt;</span>
+<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x01&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
+<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span>/&gt;</span>
+<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">interface</span>&gt;</span>
+<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">serial</span><span class="ot"> type=</span><span class="st">&#39;pty&#39;</span>&gt;</span>
+<span id="cb17-115"><a href="#cb17-115" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> type=</span><span class="st">&#39;isa-serial&#39;</span><span class="ot"> port=</span><span class="st">&#39;0&#39;</span>&gt;</span>
+<span id="cb17-116"><a href="#cb17-116" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">model</span><span class="ot"> name=</span><span class="st">&#39;isa-serial&#39;</span>/&gt;</span>
+<span id="cb17-117"><a href="#cb17-117" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">target</span>&gt;</span>
+<span id="cb17-118"><a href="#cb17-118" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">serial</span>&gt;</span>
+<span id="cb17-119"><a href="#cb17-119" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">console</span><span class="ot"> type=</span><span class="st">&#39;pty&#39;</span>&gt;</span>
+<span id="cb17-120"><a href="#cb17-120" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">target</span><span class="ot"> type=</span><span class="st">&#39;serial&#39;</span><span class="ot"> port=</span><span class="st">&#39;0&#39;</span>/&gt;</span>
+<span id="cb17-121"><a href="#cb17-121" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">console</span>&gt;</span>
+<span id="cb17-122"><a href="#cb17-122" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">input</span><span class="ot"> type=</span><span class="st">&#39;tablet&#39;</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span>&gt;</span>
+<span id="cb17-123"><a href="#cb17-123" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;2&#39;</span>/&gt;</span>
+<span id="cb17-124"><a href="#cb17-124" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">input</span>&gt;</span>
+<span id="cb17-125"><a href="#cb17-125" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">input</span><span class="ot"> type=</span><span class="st">&#39;mouse&#39;</span><span class="ot"> bus=</span><span class="st">&#39;ps2&#39;</span>/&gt;</span>
+<span id="cb17-126"><a href="#cb17-126" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">input</span><span class="ot"> type=</span><span class="st">&#39;keyboard&#39;</span><span class="ot"> bus=</span><span class="st">&#39;ps2&#39;</span>/&gt;</span>
+<span id="cb17-127"><a href="#cb17-127" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">sound</span><span class="ot"> model=</span><span class="st">&#39;ich9&#39;</span>&gt;</span>
+<span id="cb17-128"><a href="#cb17-128" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x1b&#39;</span></span>
+<span id="cb17-129"><a href="#cb17-129" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span>/&gt;</span>
+<span id="cb17-130"><a href="#cb17-130" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">sound</span>&gt;</span>
+<span id="cb17-131"><a href="#cb17-131" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span>&gt;</span>
+<span id="cb17-132"><a href="#cb17-132" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">source</span>&gt;</span>
+<span id="cb17-133"><a href="#cb17-133" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">address</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x1e&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x0&#39;</span>/&gt;</span>
+<span id="cb17-134"><a href="#cb17-134" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">source</span>&gt;</span>
+<span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x03&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
+<span id="cb17-136"><a href="#cb17-136" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span>/&gt;</span>
+<span id="cb17-137"><a href="#cb17-137" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">hostdev</span>&gt;</span>
+<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span>&gt;</span>
+<span id="cb17-139"><a href="#cb17-139" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">source</span>&gt;</span>
+<span id="cb17-140"><a href="#cb17-140" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">address</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x1e&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span><span class="ot"> function=</span><span class="st">&#39;0x1&#39;</span>/&gt;</span>
+<span id="cb17-141"><a href="#cb17-141" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">source</span>&gt;</span>
+<span id="cb17-142"><a href="#cb17-142" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x04&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
+<span id="cb17-143"><a href="#cb17-143" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span>/&gt;</span>
+<span id="cb17-144"><a href="#cb17-144" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">hostdev</span>&gt;</span>
+<span id="cb17-145"><a href="#cb17-145" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">hostdev</span><span class="ot"> mode=</span><span class="st">&#39;subsystem&#39;</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> managed=</span><span class="st">&#39;yes&#39;</span>&gt;</span>
+<span id="cb17-146"><a href="#cb17-146" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">source</span>&gt;</span>
+<span id="cb17-147"><a href="#cb17-147" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">vendor</span><span class="ot"> id=</span><span class="st">&#39;0x046d&#39;</span>/&gt;</span>
+<span id="cb17-148"><a href="#cb17-148" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">product</span><span class="ot"> id=</span><span class="st">&#39;0xc07e&#39;</span>/&gt;</span>
+<span id="cb17-149"><a href="#cb17-149" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">source</span>&gt;</span>
+<span id="cb17-150"><a href="#cb17-150" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;5&#39;</span>/&gt;</span>
+<span id="cb17-151"><a href="#cb17-151" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">hostdev</span>&gt;</span>
+<span id="cb17-152"><a href="#cb17-152" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">redirdev</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="ot"> type=</span><span class="st">&#39;spicevmc&#39;</span>&gt;</span>
+<span id="cb17-153"><a href="#cb17-153" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;3&#39;</span>/&gt;</span>
+<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">redirdev</span>&gt;</span>
+<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">redirdev</span><span class="ot"> bus=</span><span class="st">&#39;usb&#39;</span><span class="ot"> type=</span><span class="st">&#39;spicevmc&#39;</span>&gt;</span>
+<span id="cb17-156"><a href="#cb17-156" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;usb&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0&#39;</span><span class="ot"> port=</span><span class="st">&#39;4&#39;</span>/&gt;</span>
+<span id="cb17-157"><a href="#cb17-157" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">redirdev</span>&gt;</span>
+<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">memballoon</span><span class="ot"> model=</span><span class="st">&#39;virtio&#39;</span>&gt;</span>
+<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">address</span><span class="ot"> type=</span><span class="st">&#39;pci&#39;</span><span class="ot"> domain=</span><span class="st">&#39;0x0000&#39;</span><span class="ot"> bus=</span><span class="st">&#39;0x05&#39;</span><span class="ot"> slot=</span><span class="st">&#39;0x00&#39;</span></span>
+<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a><span class="ot">function=</span><span class="st">&#39;0x0&#39;</span>/&gt;</span>
+<span id="cb17-161"><a href="#cb17-161" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">memballoon</span>&gt;</span>
+<span id="cb17-162"><a href="#cb17-162" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">devices</span>&gt;</span>
+<span id="cb17-163"><a href="#cb17-163" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">domain</span>&gt;</span></code></pre></div>
 <p>And thats it! You are done!</p>
 <h2 id="sources">Sources</h2>
-<p>The guide that I mainly followed is this: * (http://mathiashueber.com/windows-virtual-machine-gpu-passthrough-ubuntu/)</p>
-<p>A major part pf my guide has been taken from this guide, but as you know, all systems are not the same, and so to get my setupo working , I had to follow somw other resources as well. You must watch the level1tech videos on this topic. They also got an article on this. The resources I used are:</p>
+<p>The guide that I mainly followed is this: *
+(http://mathiashueber.com/windows-virtual-machine-gpu-passthrough-ubuntu/)</p>
+<p>A major part pf my guide has been taken from this guide, but as you
+know, all systems are not the same, and so to get my setupo working , I
+had to follow somw other resources as well. You must watch the
+level1tech videos on this topic. They also got an article on this. The
+resources I used are:</p>
 <ul>
 <li>(https://level1techs.com/article/ryzen-gpu-passthrough-setup-guide-fedora-26-windows-gaming-linux)</li>
 <li>(https://heiko-sieger.info/running-windows-10-on-linux-using-kvm-with-vga-passthrough/)</li>
 <li>(https://scottlinux.com/2016/08/28/gpu-passthrough-with-kvm-and-debian-linux/)</li>
 <li>(https://www.reddit.com/r/VFIO/comments/af71pf/kernel_driver_in_use_amdgpu_instead_of_vfiopci/ee0emkf/)</li>
 </ul>
-<p>Videos to watch: <a href="http://www.youtube.com/watch?v=aLeWg11ZBn0" title="GPU Passthrough for Virtualization with Ryzen: Now Working"><img src="http://img.youtube.com/vi/aLeWg11ZBn0/0.jpg" alt="IMAGE ALTTEXT" /></a></p>
+<p>Videos to watch: <a href="http://www.youtube.com/watch?v=aLeWg11ZBn0"
+title="GPU Passthrough for Virtualization with Ryzen: Now Working"><img
+src="http://img.youtube.com/vi/aLeWg11ZBn0/0.jpg"
+alt="IMAGE ALTTEXT" /></a></p>
 </article>
 
 <footer>

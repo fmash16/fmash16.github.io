@@ -6,30 +6,33 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
-<title>Writing a simple RISC-V emulator in plain C <br> (Base integer, multiplication and csr instructions) &mdash; fmash16's blog</title>
-<meta property="og:title" content="Writing a simple RISC-V emulator in C - Part 01<br> (Base integer, multiplication and csr instructions)" />
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Writing
+a simple RISC-V emulator in plain C (Base integer, multiplication and
+csr instructions) &mdash; fmash16's blog</title>
+<meta property="og:title" content="Writing a simple RISC-V emulator in C - Part 01 (Base integer, multiplication and csr instructions)" />
       <meta property="og:description" content="Here, we write a simple c implementation of a riscv core in plain C. The implementation is dead simple and following the riscv specs and basic comuter architecture. This would help us learn about the internal workings of the computer, all thanks to this open source ISA." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/riscv.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/riscv.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,42 +42,60 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#writing-a-simple-risc-v-emulator-in-plain-c-base-integer-multiplication-and-csr-instructions">Writing a simple RISC-V emulator in plain C <br> (Base integer, multiplication and csr instructions)</a></li>
-    <li><a href="#what-is-risc-v">What is RISC-V?</a></li>
-    <li><a href="#computer-organization">Computer Organization</a></li>
-    <li><a href="#getting-started">Getting started</a>
-    <ul>
-    <li><a href="#installing-the-riscv-gnu-toolchain">Installing the riscv-gnu-toolchain</a></li>
-    <li><a href="#using-riscv-tests">Using riscv-tests</a></li>
-    </ul></li>
-    <li><a href="#writing-a-dram-struct">Writing a DRAM struct</a></li>
-    <li><a href="#dram-functions">DRAM functions</a></li>
-    <li><a href="#writing-a-bus-struct">Writing a BUS struct</a></li>
-    <li><a href="#bus-functions">BUS functions</a></li>
-    <li><a href="#writing-a-basic-cpu-struct">Writing a basic CPU struct</a></li>
-    <li><a href="#cpu-functions">CPU Functions</a>
-    <ul>
-    <li><a href="#cpu_init">cpu_init()</a></li>
-    <li><a href="#cpu_fetch">cpu_fetch()</a></li>
-    <li><a href="#private-loadstore-functions">Private load/store functions</a></li>
-    <li><a href="#instruction-decoding">Instruction decoding</a></li>
-    <li><a href="#cpu_execute">cpu_execute()</a></li>
-    </ul></li>
-    <li><a href="#the-main-file">The main file</a></li>
-    </ul>
-</nav>
-<h1 id="writing-a-simple-risc-v-emulator-in-plain-c-base-integer-multiplication-and-csr-instructions">Writing a simple RISC-V emulator in plain C <br> (Base integer, multiplication and csr instructions)</h1>
-<p>Having to study microprocssor architecture and organization, and having implemented a 4 bit CPU in verilog, I wanted to take this up as a personal project, since the open source and modular aspect of RISC-V interested me much. A huge thanks to this <a href="https://book.rvemu.app/index.html">riscv emulator in rust</a> book project which helped me tons to understand the implementation of the ISA as per the specifications found on the RISC-V website. This implementation follows the aforementioned book a lot. Here, I have tried to implement the RISC-V ISA and write a fully functional emulator in plain old C. My ultimate goal is to make it run linux for RISC-V and learn about the internal workings of a computer in the process. Until now, I have implemented the Integer, Multiplication and Zicsr modules of the riscv. My next objectives are:</p>
+<ul>
+<li><a
+href="#writing-a-simple-risc-v-emulator-in-plain-c-base-integer-multiplication-and-csr-instructions">Writing
+a simple RISC-V emulator in plain C (Base integer, multiplication and
+csr instructions)</a></li>
+<li><a href="#what-is-risc-v">What is RISC-V?</a></li>
+<li><a href="#computer-organization">Computer Organization</a></li>
+<li><a href="#getting-started">Getting started</a>
+<ul>
+<li><a href="#installing-the-riscv-gnu-toolchain">Installing the
+riscv-gnu-toolchain</a></li>
+<li><a href="#using-riscv-tests">Using riscv-tests</a></li>
+</ul></li>
+<li><a href="#writing-a-dram-struct">Writing a DRAM struct</a></li>
+<li><a href="#dram-functions">DRAM functions</a></li>
+<li><a href="#writing-a-bus-struct">Writing a BUS struct</a></li>
+<li><a href="#bus-functions">BUS functions</a></li>
+<li><a href="#writing-a-basic-cpu-struct">Writing a basic CPU
+struct</a></li>
+<li><a href="#cpu-functions">CPU Functions</a>
+<ul>
+<li><a href="#cpu_init">cpu_init()</a></li>
+<li><a href="#cpu_fetch">cpu_fetch()</a></li>
+<li><a href="#private-loadstore-functions">Private load/store
+functions</a></li>
+<li><a href="#instruction-decoding">Instruction decoding</a></li>
+<li><a href="#cpu_execute">cpu_execute()</a></li>
+</ul></li>
+<li><a href="#the-main-file">The main file</a></li>
+</ul>
+<h1
+id="writing-a-simple-risc-v-emulator-in-plain-c-base-integer-multiplication-and-csr-instructions">Writing
+a simple RISC-V emulator in plain C (Base integer, multiplication and
+csr instructions)</h1>
+<p>Having to study microprocssor architecture and organization, and
+having implemented a 4 bit CPU in verilog, I wanted to take this up as a
+personal project, since the open source and modular aspect of RISC-V
+interested me much. A huge thanks to this <a
+href="https://book.rvemu.app/index.html">riscv emulator in rust</a> book
+project which helped me tons to understand the implementation of the ISA
+as per the specifications found on the RISC-V website. This
+implementation follows the aforementioned book a lot. Here, I have tried
+to implement the RISC-V ISA and write a fully functional emulator in
+plain old C. My ultimate goal is to make it run linux for RISC-V and
+learn about the internal workings of a computer in the process. Until
+now, I have implemented the Integer, Multiplication and Zicsr modules of
+the riscv. My next objectives are:</p>
 <ul>
 <li>Privileged Architecture<br />
 </li>
 <li>Exceptions<br />
 </li>
-<li>PLIC (a platform-level interrupt controller) and CLINT (a core-local interrupter)<br />
+<li>PLIC (a platform-level interrupt controller) and CLINT (a core-local
+interrupter)<br />
 </li>
 <li>UART (a universal asynchronous receiver-transmitter)<br />
 </li>
@@ -85,10 +106,29 @@
 <li>Virtual Memory System</li>
 </ul>
 <blockquote>
-<p><strong>IMPORTANT!</strong>: <em>I wrote this emulator simply for learning purposes, and did not care much about optimization or code quality as long as it works. This blog should in <u>NO WAY be taken as a standard way of writing a riscv implementation</u> and there are many github projects that does so. This blog post was aimed at documenting my steps as I understood the concepts and implemented them, so that I might later use this for a reference, or might be of help to any other beginners. This blog might contain a lot of errors unknown to me, and any correction or modification is welcome and you can contact me by mail regarding this.</em></p>
+<p><strong>IMPORTANT!</strong>: <em>I wrote this emulator simply for
+learning purposes, and did not care much about optimization or code
+quality as long as it works. This blog should in <u>NO WAY be taken as a
+standard way of writing a riscv implementation</u> and there are many
+github projects that does so. This blog post was aimed at documenting my
+steps as I understood the concepts and implemented them, so that I might
+later use this for a reference, or might be of help to any other
+beginners. This blog might contain a lot of errors unknown to me, and
+any correction or modification is welcome and you can contact me by mail
+regarding this.</em></p>
 </blockquote>
 <h1 id="what-is-risc-v">What is RISC-V?</h1>
-<p>A reduced instruction set computer is a computer with a small, highly optimized set of instructions, rather than the more specialized set often found in other types of architecture, such as in a complex instruction set computer (CISC).The main distinguishing feature of RISC architecture is that the instruction set is optimized with a large number of registers and a highly regular instruction pipeline, allowing a low number of clock cycles per instruction (CPI). Core features of a RISC philosophy are a load/store architecture, in which memory is accessed through specific instructions rather than as a part of most instructions in the set, and requiring only single-cycle instructions.</p>
+<p>A reduced instruction set computer is a computer with a small, highly
+optimized set of instructions, rather than the more specialized set
+often found in other types of architecture, such as in a complex
+instruction set computer (CISC).The main distinguishing feature of RISC
+architecture is that the instruction set is optimized with a large
+number of registers and a highly regular instruction pipeline, allowing
+a low number of clock cycles per instruction (CPI). Core features of a
+RISC philosophy are a load/store architecture, in which memory is
+accessed through specific instructions rather than as a part of most
+instructions in the set, and requiring only single-cycle
+instructions.</p>
 <p>The features that make RISC-V so attractive:</p>
 <ul>
 <li>Fully open source<br />
@@ -100,7 +140,11 @@
 1. CPU / core<br />
 2. DRAM<br />
 3. BUS</p>
-<p>The bus is the data travel path between the cpu, dram and all other peripheral components. The cpu contains the registers, program counter and the arithmetic logic unit (ALU) that performs all the operations. The following figure depicts the overall structure with the peripheral devices.</p>
+<p>The bus is the data travel path between the cpu, dram and all other
+peripheral components. The cpu contains the registers, program counter
+and the arithmetic logic unit (ALU) that performs all the operations.
+The following figure depicts the overall structure with the peripheral
+devices.</p>
 <p><img src="/img/org.png" style="width:80.0%" /></p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>inst<span class="op">=</span> mem<span class="op">[</span>PC<span class="op">]</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>next_PC<span class="op">=</span> PC<span class="op">+</span> <span class="dv">4</span></span>
@@ -122,31 +166,70 @@
 <li>Makefile</li>
 </ul></li>
 </ul>
-<p>The “includes” folder contains all the header files used, and the “src” directory contains all the source files corresponding to the headers. And we have our main.c file that binds everything together. <br> <br></p>
-<h2 id="installing-the-riscv-gnu-toolchain">Installing the riscv-gnu-toolchain</h2>
-<p><a href="https://github.com/riscv/riscv-gnu-toolchain">riscv-gnu-toolchain</a> is the RISC-V C and C++ cross-compiler. It supports two build modes: a generic ELF/Newlib toolchain and a more sophisticated Linux-ELF/glibc toolchain.</p>
-<p>We will be using this compiler to compile programs written in C for the riscv isa, and generating the binaries for the written C programs for running on the emulator. To install the riscv gnu compiler, install the following prerequisites for your distro</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>autoconf automake curl python3 mpc mpfr gmp gawk base-devel bison flex texinfo gperf libtool patchutils bc zlib expat</span></code></pre></div>
+<p>The “includes” folder contains all the header files used, and the
+“src” directory contains all the source files corresponding to the
+headers. And we have our main.c file that binds everything together.
+<br> <br></p>
+<h2 id="installing-the-riscv-gnu-toolchain">Installing the
+riscv-gnu-toolchain</h2>
+<p><a
+href="https://github.com/riscv/riscv-gnu-toolchain">riscv-gnu-toolchain</a>
+is the RISC-V C and C++ cross-compiler. It supports two build modes: a
+generic ELF/Newlib toolchain and a more sophisticated Linux-ELF/glibc
+toolchain.</p>
+<p>We will be using this compiler to compile programs written in C for
+the riscv isa, and generating the binaries for the written C programs
+for running on the emulator. To install the riscv gnu compiler, install
+the following prerequisites for your distro</p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>autoconf automake curl python3 mpc mpfr gmp gawk base-devel bison flex texinfo gperf libtool patchutils bc zlib expat</span></code></pre></div>
 <p>And then run the following</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/riscv/riscv-gnu-toolchain</span>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/riscv/riscv-gnu-toolchain</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">./configure</span> <span class="at">--prefix</span><span class="op">=</span>/opt/riscv</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> <span class="kw">&amp;&amp;</span> <span class="fu">make</span> linux</span></code></pre></div>
-<p>Now the compilers are located at <code>/opt/riscv/bin</code>. If <code>/opt/riscv/bin/</code> is not in your environment PATH, add the directory to the PATH using <code>export PATH=$PATH:/opt/riscv/bin/</code>. Now we can compile C programs for the riscv platform using the following commands.(for the test file test.c)</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate assembly file test.s from test.c</span></span>
+<p>Now the compilers are located at <code>/opt/riscv/bin</code>. If
+<code>/opt/riscv/bin/</code> is not in your environment PATH, add the
+directory to the PATH using
+<code>export PATH=$PATH:/opt/riscv/bin/</code>. Now we can compile C
+programs for the riscv platform using the following commands.(for the
+test file test.c)</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate assembly file test.s from test.c</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">riscv64-unknown-elf-gcc</span> <span class="at">-S</span> test.c</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate ELF executable test from test.s</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="ex">riscv64-unknown-elf-gcc</span> <span class="at">-Wl,-Ttext</span><span class="op">=</span>0x0 <span class="at">-nostdlib</span> <span class="at">-march</span><span class="op">=</span>rv64i <span class="at">-mabi</span><span class="op">=</span>lp64 <span class="at">-o</span> test test.s</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate binary file test.bin from ELF file test (what will be read by emulator)</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="ex">riscv64-unknown-elf-objcopy</span> <span class="at">-O</span> binary test test.bin</span></code></pre></div>
 <h2 id="using-riscv-tests">Using riscv-tests</h2>
-<p>RISC-V has a github repository <a href="https://github.com/riscv/riscv-tests">riscv-tests</a>, which contains tests for every instruction for a riscv-core for various modules. We can check if our implementation of the riscv core works properly by running these tests. The tests for the different modules are located in the <code>isa</code> directory. Going over to the rsa directories, we can build the executables for the required modules, for example, if we want to test the <code>rv32ui</code> which stands for rv32 userspace only integer instructions, simply run</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> isa/</span>
+<p>RISC-V has a github repository <a
+href="https://github.com/riscv/riscv-tests">riscv-tests</a>, which
+contains tests for every instruction for a riscv-core for various
+modules. We can check if our implementation of the riscv core works
+properly by running these tests. The tests for the different modules are
+located in the <code>isa</code> directory. Going over to the rsa
+directories, we can build the executables for the required modules, for
+example, if we want to test the <code>rv32ui</code> which stands for
+rv32 userspace only integer instructions, simply run</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> isa/</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">make</span> rv32ui</span></code></pre></div>
-<p>We get all the riscv ELF executables and correspinding dump files containing the instructions executed. Now in our emulator, we read a binary file contents into the memory for execution. In order to convert the ELF executable to binary, we run the following</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">riscv64-unknown-elf-objcopy</span> <span class="at">-O</span> binary <span class="op">&lt;</span>filename<span class="op">&gt;</span> <span class="op">&lt;</span>filename<span class="op">&gt;</span>.bin</span></code></pre></div>
-<p>This will give us the required binary file for use with our emulator.</p>
+<p>We get all the riscv ELF executables and correspinding dump files
+containing the instructions executed. Now in our emulator, we read a
+binary file contents into the memory for execution. In order to convert
+the ELF executable to binary, we run the following</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">riscv64-unknown-elf-objcopy</span> <span class="at">-O</span> binary <span class="op">&lt;</span>filename<span class="op">&gt;</span> <span class="op">&lt;</span>filename<span class="op">&gt;</span>.bin</span></code></pre></div>
+<p>This will give us the required binary file for use with our
+emulator.</p>
 <h1 id="writing-a-dram-struct">Writing a DRAM struct</h1>
-<p>The DRAM (Dyanmic random access memory) is our memory that contains all the instructions to be executed and the data. The memory for our emulator is simply an array of 64-bit variables, to store the 64-bit values. Here, we define the size of the memory by the variable <code>DRAM_SIZE</code> and define the start address of the memory in <code>DRAM_BASE</code>. The memory has a start address higher than 0x0, because the riscv architecture has a memory mapped I/O.</p>
+<p>The DRAM (Dyanmic random access memory) is our memory that contains
+all the instructions to be executed and the data. The memory for our
+emulator is simply an array of 64-bit variables, to store the 64-bit
+values. Here, we define the size of the memory by the variable
+<code>DRAM_SIZE</code> and define the start address of the memory in
+<code>DRAM_BASE</code>. The memory has a start address higher than 0x0,
+because the riscv architecture has a memory mapped I/O.</p>
 <pre>
                                     +---------------+
                                     | Address space |
@@ -163,7 +246,13 @@
                                     +---------------+
 </pre>
 <blockquote>
-<p>In memory mapped I/O, as shown in the above figure, the same address space is shared by both the memory and the I/O devices. In a QEMU VM, the lower addresses are used for I/O ports and the DRAM memory starts from the address 0x800000000. So, we use DRAM_BASE=0x80000000. Due to memory mapped I/O, we can perform I/O operations using any instruction that can reference memory. Otherwise, we would have needed seperate instructions and read/write bus for the I/O ports.</p>
+<p>In memory mapped I/O, as shown in the above figure, the same address
+space is shared by both the memory and the I/O devices. In a QEMU VM,
+the lower addresses are used for I/O ports and the DRAM memory starts
+from the address 0x800000000. So, we use DRAM_BASE=0x80000000. Due to
+memory mapped I/O, we can perform I/O operations using any instruction
+that can reference memory. Otherwise, we would have needed seperate
+instructions and read/write bus for the I/O ports.</p>
 </blockquote>
 <p>So, we write our DRAM struct as follows.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">//  includes/dram.h</span></span>
@@ -174,19 +263,38 @@
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> DRAM <span class="op">{</span></span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint8_t</span> mem<span class="op">[</span>DRAM_SIZE<span class="op">];</span>     <span class="co">// Dram memory of DRAM_SIZE</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> DRAM<span class="op">;</span></span></code></pre></div>
-<p>The dram is the memory of the system. The cpu reads data and fetches instruction from the memory, and also stores/write data to the memory. So dram has two basic operations, reading from memory and writing from memory. These 2 functions are defined here as <code>dram_load()</code> for reading and <code>dram_store()</code> for writing to the memory.</p>
-<p>The <code>dram_load()</code> takes the pointer to the dram to be read from, the address of the data to be read, and the size of the data to be read, which might be 8, 16, 32 or 64 bits, as per the instruction (LB, LH, LW, and LD respectively).</p>
-<p>For simplicity, for each data size of read, seperate load functions are written, which will then be called from the main load function according to the given size. These are private functions and so not defined in the header, will be implemented in the src file. Thus, our load functions are:</p>
+<p>The dram is the memory of the system. The cpu reads data and fetches
+instruction from the memory, and also stores/write data to the memory.
+So dram has two basic operations, reading from memory and writing from
+memory. These 2 functions are defined here as <code>dram_load()</code>
+for reading and <code>dram_store()</code> for writing to the memory.</p>
+<p>The <code>dram_load()</code> takes the pointer to the dram to be read
+from, the address of the data to be read, and the size of the data to be
+read, which might be 8, 16, 32 or 64 bits, as per the instruction (LB,
+LH, LW, and LD respectively).</p>
+<p>For simplicity, for each data size of read, seperate load functions
+are written, which will then be called from the main load function
+according to the given size. These are private functions and so not
+defined in the header, will be implemented in the src file. Thus, our
+load functions are:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// dram.h</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="dt">uint64_t</span> dram_load<span class="op">(</span>DRAM<span class="op">*</span> dram<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> size<span class="op">);</span></span></code></pre></div>
-<p>Similar to the load functions, we also write store functions. The <code>dram_store()</code>, takes the same args as the load functions, plus the <code>value</code> arg, which contains the data to be written to the given address of the given dram. Thus, our load functions are:</p>
+<p>Similar to the load functions, we also write store functions. The
+<code>dram_store()</code>, takes the same args as the load functions,
+plus the <code>value</code> arg, which contains the data to be written
+to the given address of the given dram. Thus, our load functions
+are:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// dram.h</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> dram_store<span class="op">(</span>DRAM<span class="op">*</span> dram<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> size<span class="op">,</span> <span class="dt">uint64_t</span> value<span class="op">);</span></span></code></pre></div>
 <h1 id="dram-functions">DRAM functions</h1>
 <h4 id="dram_load-and-dram_store">dram_load() and dram_store()</h4>
-<p>This function takes a DRAM pointer, pointing to the DRAM to load data from, the address to load data from and the size of the data. Using a switch statement on the <code>size</code> of the data to be load, dram_store_8() for 8 bits, and so on. The same goes for the <code>dram_store()</code> function.</p>
+<p>This function takes a DRAM pointer, pointing to the DRAM to load data
+from, the address to load data from and the size of the data. Using a
+switch statement on the <code>size</code> of the data to be load,
+dram_store_8() for 8 bits, and so on. The same goes for the
+<code>dram_store()</code> function.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// dram.h</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="dt">uint64_t</span> dram_load<span class="op">(</span>DRAM<span class="op">*</span> dram<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> size<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">switch</span> <span class="op">(</span>size<span class="op">)</span> <span class="op">{</span></span>
@@ -207,8 +315,24 @@
 <span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">default</span><span class="op">:</span> <span class="op">;</span></span>
 <span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
 <span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>Now, we write the functions to load specified number of bits, 8, 16, 32, and 64 from the DRAM. We note here that, due to use of memory mapped I/O, the address DRAM_BASE corresponds to the memory[0]. So, in order to access data at given <code>addr</code>, we need to subtract DRAM_BASE from it. That is the start of the memory is at <code>mem[addr-DRAM_BASE]</code></p>
-<p>Also, the system we are building is a little endian system, since most systems today are little endian. Little-endian is an order in which the “little end” (least significant value in the sequence) is stored first, that is the least significant bytes are stored in the lower addresses. So while loading, we read the lower address values first into the bus by returning, and then, left shifting by 8 bits (1 byte) and AND with 0xff(8 1s) to get the lower byte only and clear all the higher bytes while ORing, load the next address into higher places, as per the required size. The implementation of <code>dram_load_32</code> and <code>dram_load_64</code> are shown below. These functions should be defined before the <code>dram_load()</code> and <code>dram_store()</code> functions.</p>
+<p>Now, we write the functions to load specified number of bits, 8, 16,
+32, and 64 from the DRAM. We note here that, due to use of memory mapped
+I/O, the address DRAM_BASE corresponds to the memory[0]. So, in order to
+access data at given <code>addr</code>, we need to subtract DRAM_BASE
+from it. That is the start of the memory is at
+<code>mem[addr-DRAM_BASE]</code></p>
+<p>Also, the system we are building is a little endian system, since
+most systems today are little endian. Little-endian is an order in which
+the “little end” (least significant value in the sequence) is stored
+first, that is the least significant bytes are stored in the lower
+addresses. So while loading, we read the lower address values first into
+the bus by returning, and then, left shifting by 8 bits (1 byte) and AND
+with 0xff(8 1s) to get the lower byte only and clear all the higher
+bytes while ORing, load the next address into higher places, as per the
+required size. The implementation of <code>dram_load_32</code> and
+<code>dram_load_64</code> are shown below. These functions should be
+defined before the <code>dram_load()</code> and
+<code>dram_store()</code> functions.</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// dram.c</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="dt">uint64_t</span> dram_load_32<span class="op">(</span>DRAM<span class="op">*</span> dram<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">){</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span><span class="dt">uint64_t</span><span class="op">)</span> dram<span class="op">-&gt;</span>mem<span class="op">[</span>addr<span class="op">-</span>DRAM_BASE<span class="op">]</span></span>
@@ -226,7 +350,11 @@
 <span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span>  <span class="op">(</span><span class="dt">uint64_t</span><span class="op">)</span> dram<span class="op">-&gt;</span>mem<span class="op">[</span>addr<span class="op">-</span>DRAM_BASE <span class="op">+</span> <span class="dv">6</span><span class="op">]</span> <span class="op">&lt;&lt;</span> <span class="dv">48</span></span>
 <span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span>  <span class="op">(</span><span class="dt">uint64_t</span><span class="op">)</span> dram<span class="op">-&gt;</span>mem<span class="op">[</span>addr<span class="op">-</span>DRAM_BASE <span class="op">+</span> <span class="dv">7</span><span class="op">]</span> <span class="op">&lt;&lt;</span> <span class="dv">56</span><span class="op">;</span></span>
 <span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>We write similar functions for the load_store functions. Since they write to the memory, they don’t return anything. And being little endian, we store the least significant byte first, then right shift by a byte to store the higher bytes. <code>dram_store_16</code> and <code>dram_store_64</code> are shown below.</p>
+<p>We write similar functions for the load_store functions. Since they
+write to the memory, they don’t return anything. And being little
+endian, we store the least significant byte first, then right shift by a
+byte to store the higher bytes. <code>dram_store_16</code> and
+<code>dram_store_64</code> are shown below.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// dram.c</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> dram_store_16<span class="op">(</span>DRAM<span class="op">*</span> dram<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> value<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    dram<span class="op">-&gt;</span>mem<span class="op">[</span>addr<span class="op">-</span>DRAM_BASE<span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="dt">uint8_t</span><span class="op">)</span> <span class="op">(</span>value <span class="op">&amp;</span> <span class="bn">0xff</span><span class="op">);</span></span>
@@ -242,21 +370,32 @@
 <span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    dram<span class="op">-&gt;</span>mem<span class="op">[</span>addr<span class="op">-</span>DRAM_BASE <span class="op">+</span> <span class="dv">6</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="dt">uint8_t</span><span class="op">)</span> <span class="op">((</span>value <span class="op">&gt;&gt;</span> <span class="dv">48</span><span class="op">)</span> <span class="op">&amp;</span> <span class="bn">0xff</span><span class="op">);</span></span>
 <span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    dram<span class="op">-&gt;</span>mem<span class="op">[</span>addr<span class="op">-</span>DRAM_BASE <span class="op">+</span> <span class="dv">7</span><span class="op">]</span> <span class="op">=</span> <span class="op">(</span><span class="dt">uint8_t</span><span class="op">)</span> <span class="op">((</span>value <span class="op">&gt;&gt;</span> <span class="dv">56</span><span class="op">)</span> <span class="op">&amp;</span> <span class="bn">0xff</span><span class="op">);</span></span>
 <span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>The full <code>dram.c</code> file can be found <a href="https://github.com/fmash16/riscv_emulator/blob/main/src/dram.c">here</a></p>
+<p>The full <code>dram.c</code> file can be found <a
+href="https://github.com/fmash16/riscv_emulator/blob/main/src/dram.c">here</a></p>
 <h1 id="writing-a-bus-struct">Writing a BUS struct</h1>
-<p>A bus simply provides a path for data transfer across the various components of a computer. For our riscv emulator, the address bus and data bus is a single 64-bit wide bus (for 64 bit implementation). The bus, in our case, connects the CPU and the DRAM. So we write a BUS struct, with a DRAM object, to which it is connected to.</p>
+<p>A bus simply provides a path for data transfer across the various
+components of a computer. For our riscv emulator, the address bus and
+data bus is a single 64-bit wide bus (for 64 bit implementation). The
+bus, in our case, connects the CPU and the DRAM. So we write a BUS
+struct, with a DRAM object, to which it is connected to.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">//  includes/bus.h</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">typedef</span> <span class="kw">struct</span> BUS <span class="op">{</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> DRAM dram<span class="op">;</span></span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> BUS<span class="op">;</span></span></code></pre></div>
-<p>We also define two functions <code>bus_load()</code> and <code>bus_store()</code> which loads and stores values respectively to or from the provided address in the DRAM connected to the bus, a pointer to which is provided as function arg.</p>
+<p>We also define two functions <code>bus_load()</code> and
+<code>bus_store()</code> which loads and stores values respectively to
+or from the provided address in the DRAM connected to the bus, a pointer
+to which is provided as function arg.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">//  includes/bus.h</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="dt">uint64_t</span> bus_load<span class="op">(</span>BUS<span class="op">*</span> bus<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> size<span class="op">);</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> bus_store<span class="op">(</span>BUS<span class="op">*</span> bus<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> size<span class="op">,</span> <span class="dt">uint64_t</span> value<span class="op">);</span></span></code></pre></div>
 <h1 id="bus-functions">BUS functions</h1>
-<p>The bus functions simply load and store data from and to the dram using the public functions <code>dram_load()</code> and <code>dram_store()</code> functions respectively. The functions are implemented as follows.</p>
+<p>The bus functions simply load and store data from and to the dram
+using the public functions <code>dram_load()</code> and
+<code>dram_store()</code> functions respectively. The functions are
+implemented as follows.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">// bus.c</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="dt">uint64_t</span> bus_load<span class="op">(</span>BUS<span class="op">*</span> bus<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> size<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> dram_load<span class="op">(&amp;(</span>bus<span class="op">-&gt;</span>dram<span class="op">),</span> addr<span class="op">,</span> size<span class="op">);</span></span>
@@ -265,15 +404,23 @@
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    dram_store<span class="op">(&amp;(</span>bus<span class="op">-&gt;</span>dram<span class="op">),</span> addr<span class="op">,</span> size<span class="op">,</span> value<span class="op">);</span></span>
 <span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h1 id="writing-a-basic-cpu-struct">Writing a basic CPU struct</h1>
-<p>Firstly, we write a cpu struct with all the components contained by the cpu,</p>
+<p>Firstly, we write a cpu struct with all the components contained by
+the cpu,</p>
 <ol type="1">
-<li>Registers: The risc-v cpu has 32 registers each 64 bit wide (since we are implementing a 64 bit core). The register x0 is hardwired to 0, and the rest are used for storing values.<br />
+<li>Registers: The risc-v cpu has 32 registers each 64 bit wide (since
+we are implementing a 64 bit core). The register x0 is hardwired to 0,
+and the rest are used for storing values.<br />
 </li>
-<li>There is another unprivileged register <code>pc</code> which is the program counter. This register holds the address of the current instruction being executed.<br />
+<li>There is another unprivileged register <code>pc</code> which is the
+program counter. This register holds the address of the current
+instruction being executed.<br />
 </li>
-<li>And we have a <code>bus</code> that connects our cpu to the system bus, for reading and writing data from and to the memory (DRAM) respectively.</li>
+<li>And we have a <code>bus</code> that connects our cpu to the system
+bus, for reading and writing data from and to the memory (DRAM)
+respectively.</li>
 </ol>
-<p>So, our cpu struct <code>CPU</code> is written as follows. We write the struct definition in the <code>includes/cpu.h</code> file.</p>
+<p>So, our cpu struct <code>CPU</code> is written as follows. We write
+the struct definition in the <code>includes/cpu.h</code> file.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">//  includes/cpu.h</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdint.h&gt;</span></span>
@@ -283,7 +430,8 @@
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint64_t</span> pc<span class="op">;</span>                <span class="co">// 64-bit program counter</span></span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> BUS bus<span class="op">;</span>             <span class="co">// CPU connected to BUS</span></span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span> CPU<span class="op">;</span></span></code></pre></div>
-<p>Having written the struct, we need to write functions for each of tasks of cpu pipeline. We define the following functions</p>
+<p>Having written the struct, we need to write functions for each of
+tasks of cpu pipeline. We define the following functions</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">//  includes/cpu.h</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> cpu_init<span class="op">(</span><span class="kw">struct</span> CPU <span class="op">*</span>cpu<span class="op">);</span></span>
@@ -291,15 +439,30 @@
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> cpu_execute<span class="op">(</span><span class="kw">struct</span> CPU <span class="op">*</span>cpu<span class="op">,</span> <span class="dt">uint32_t</span> inst<span class="op">);</span></span>
 <span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> dump_registers<span class="op">(</span><span class="kw">struct</span> CPU <span class="op">*</span>cpu<span class="op">);</span></span></code></pre></div>
 <ol type="1">
-<li><p>The <code>cpu_init</code> function initializes the provided cpu by pointer by 0 initializing all the 32 registers, and setting the program counter <code>pc</code> to the start of the memory.</p></li>
-<li><p>The <code>cpu_fetch</code> function reads instructions from the memory (DRAM) for execution, and stores it to the instruction variable <code>inst</code>.</p></li>
-<li><p><code>cpu_execute</code> is basically the ALU and the instruction decoder combined. It decodes the instruction fetched from the DRAM in the <code>inst</code> variable and executes the instruction accordingly.</p></li>
-<li><p><code>dump_register</code> is just a debug function to view the contents of the 32 registers when needed.</p></li>
+<li><p>The <code>cpu_init</code> function initializes the provided cpu
+by pointer by 0 initializing all the 32 registers, and setting the
+program counter <code>pc</code> to the start of the memory.</p></li>
+<li><p>The <code>cpu_fetch</code> function reads instructions from the
+memory (DRAM) for execution, and stores it to the instruction variable
+<code>inst</code>.</p></li>
+<li><p><code>cpu_execute</code> is basically the ALU and the instruction
+decoder combined. It decodes the instruction fetched from the DRAM in
+the <code>inst</code> variable and executes the instruction
+accordingly.</p></li>
+<li><p><code>dump_register</code> is just a debug function to view the
+contents of the 32 registers when needed.</p></li>
 </ol>
 <h1 id="cpu-functions">CPU Functions</h1>
-<p>Now, we write the cpu functions as defined in the header file in the file <code>src/cpu.c</code>.</p>
+<p>Now, we write the cpu functions as defined in the header file in the
+file <code>src/cpu.c</code>.</p>
 <h2 id="cpu_init">cpu_init()</h2>
-<p>First, we write the <code>cpu_init</code> function. This function zero initializes all the 32 64-bit registers. The register x02, contains the stack pointer SP, which should point to the top of the memory. So x02 should be equal to the the DRAM_SIZE plus the base address from which the memory starts, DRAM_BASE. So, x02=DRAM_SIZE+DRAM_BASE. And finally, the program counter should point to the start of the memory which contains the first instruction. So, pc=DRAM_BASE.</p>
+<p>First, we write the <code>cpu_init</code> function. This function
+zero initializes all the 32 64-bit registers. The register x02, contains
+the stack pointer SP, which should point to the top of the memory. So
+x02 should be equal to the the DRAM_SIZE plus the base address from
+which the memory starts, DRAM_BASE. So, x02=DRAM_SIZE+DRAM_BASE. And
+finally, the program counter should point to the start of the memory
+which contains the first instruction. So, pc=DRAM_BASE.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">// cpu.c</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a> <span class="dt">void</span> cpu_init<span class="op">(</span>CPU <span class="op">*</span>cpu<span class="op">)</span> <span class="op">{</span></span>
@@ -308,14 +471,22 @@
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>     cpu<span class="op">-&gt;</span>pc      <span class="op">=</span> DRAM_BASE<span class="op">;</span>               <span class="co">// Set program counter to the base address</span></span>
 <span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a> <span class="op">}</span></span></code></pre></div>
 <h2 id="cpu_fetch">cpu_fetch()</h2>
-<p>Now, we write the <code>cpu_fetch()</code>. This instruction fetches the instruction data at the program counter address from the dram. The data is put on the bus from the dram using the <code>dram_load()</code> function where we load the data at the address given by the <code>pc</code> which points to the instruction to be read. So our function can be written as follows.</p>
+<p>Now, we write the <code>cpu_fetch()</code>. This instruction fetches
+the instruction data at the program counter address from the dram. The
+data is put on the bus from the dram using the <code>dram_load()</code>
+function where we load the data at the address given by the
+<code>pc</code> which points to the instruction to be read. So our
+function can be written as follows.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">// cpu.c</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="dt">uint32_t</span> cpu_fetch<span class="op">(</span>CPU <span class="op">*</span>cpu<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">uint32_t</span> inst <span class="op">=</span> bus_load<span class="op">(&amp;(</span>cpu<span class="op">-&gt;</span>bus<span class="op">),</span> cpu<span class="op">-&gt;</span>pc<span class="op">,</span> <span class="dv">32</span><span class="op">);</span></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> inst<span class="op">;</span></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="private-loadstore-functions">Private load/store functions</h2>
-<p>We write two private functions <code>cpu_load()</code> and <code>cpu_store()</code> functions for loading and storing data. These functions just use the bus load/store functions to read/write data from/to the dram.</p>
+<p>We write two private functions <code>cpu_load()</code> and
+<code>cpu_store()</code> functions for loading and storing data. These
+functions just use the bus load/store functions to read/write data
+from/to the dram.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">// cpu.c</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="dt">uint64_t</span> cpu_load<span class="op">(</span>CPU<span class="op">*</span> cpu<span class="op">,</span> <span class="dt">uint64_t</span> addr<span class="op">,</span> <span class="dt">uint64_t</span> size<span class="op">)</span> <span class="op">{</span></span>
@@ -326,7 +497,12 @@
 <span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    bus_store<span class="op">(&amp;(</span>cpu<span class="op">-&gt;</span>bus<span class="op">),</span> addr<span class="op">,</span> size<span class="op">,</span> value<span class="op">);</span></span>
 <span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <h2 id="instruction-decoding">Instruction decoding</h2>
-<p>The instruction that we read from the dram for executeion is 32-bit wide. These 32 bits contain all the directives for the operation to perform, like the opcode which defines the operation to perform, the source and destination registers to read/write from/to, the immediate value and so on. The decoding will be different for different types of instructions which are categorized into the following:</p>
+<p>The instruction that we read from the dram for executeion is 32-bit
+wide. These 32 bits contain all the directives for the operation to
+perform, like the opcode which defines the operation to perform, the
+source and destination registers to read/write from/to, the immediate
+value and so on. The decoding will be different for different types of
+instructions which are categorized into the following:</p>
 <ol type="1">
 <li>R-Type: Register type instructions<br />
 </li>
@@ -340,36 +516,61 @@
 </li>
 <li>J-Type: Jump type instructions</li>
 </ol>
-<p>The following table shows the map for the registers for the different types of instructions.</p>
+<p>The following table shows the map for the registers for the different
+types of instructions.</p>
 <p><img src="/img/riscv-decode.png" /></p>
 <p>Here, the annontations are:</p>
 <dl>
 <dt><u>opcode</u></dt>
-<dd>Lower 7 bit (inst[6:0]) specifies the code for each cpu operation
+<dd>
+Lower 7 bit (inst[6:0]) specifies the code for each cpu operation
 </dd>
 <dt><u>rd</u></dt>
-<dd>A 4 bit value (inst[11:7]) which gives the address of destination register
+<dd>
+A 4 bit value (inst[11:7]) which gives the address of destination
+register
 </dd>
 <dt><u>funct3</u></dt>
-<dd>A 3 bit value (inst[14:12]). The opcode is the same for a group of similar category operations e.g. (ADD, SUB, DIV, MUL, etc.). In such cases, the group can contain upto 8 different instructions for 8 values of funct3.
+<dd>
+A 3 bit value (inst[14:12]). The opcode is the same for a group of
+similar category operations e.g. (ADD, SUB, DIV, MUL, etc.). In such
+cases, the group can contain upto 8 different instructions for 8 values
+of funct3.
 </dd>
 <dt><u>funct7</u></dt>
-<dd>A 7 bit value (inst[31:25]). Just like funct3, funct7 divides a group of same funct3 instructions into multiple instructions. For example, SR(shift right) has 2 instuctions: SRA (arithmetic shift) and SRL (logical shift) for different funct7
+<dd>
+A 7 bit value (inst[31:25]). Just like funct3, funct7 divides a group of
+same funct3 instructions into multiple instructions. For example,
+SR(shift right) has 2 instuctions: SRA (arithmetic shift) and SRL
+(logical shift) for different funct7
 </dd>
 <dt><u>rs1</u></dt>
-<dd>A 4 bit value (inst[19:15]) which gives the address of source register 1
+<dd>
+A 4 bit value (inst[19:15]) which gives the address of source register 1
 </dd>
 <dt><u>rs2</u></dt>
-<dd>A 4 bit value (inst[24:20]) which gives the address of source register 2
+<dd>
+A 4 bit value (inst[24:20]) which gives the address of source register 2
 </dd>
 <dt><u>imm</u></dt>
-<dd>A value which gives the address of destination register
+<dd>
+A value which gives the address of destination register
 </dd>
 <dt><u>shamt</u></dt>
-<dd>shamt is located in the lower bits of imm and stores the shift amount for shift instructions
+<dd>
+shamt is located in the lower bits of imm and stores the shift amount
+for shift instructions
 </dd>
 </dl>
-<p>We write functions for decoding each part of the 32 bit instruction mentioned above. The decoding structure varies according to the different types of instruction. The one that we need to take care of in such case is the <code>imm</code>, which is the immediate value. The rest of the blocks can be decoded using a common function for all the five blocks. Following the instruction map given above, we write the following functions for decoding each block. Necessary comments have been added to understand the positioning of the blocks in the instruction.</p>
+<p>We write functions for decoding each part of the 32 bit instruction
+mentioned above. The decoding structure varies according to the
+different types of instruction. The one that we need to take care of in
+such case is the <code>imm</code>, which is the immediate value. The
+rest of the blocks can be decoded using a common function for all the
+five blocks. Following the instruction map given above, we write the
+following functions for decoding each block. Necessary comments have
+been added to understand the positioning of the blocks in the
+instruction.</p>
 <div class="sourceCode" id="cb21"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">// cpu.c</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="dt">uint64_t</span> rd<span class="op">(</span><span class="dt">uint32_t</span> inst<span class="op">)</span> <span class="op">{</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="op">(</span>inst <span class="op">&gt;&gt;</span> <span class="dv">7</span><span class="op">)</span> <span class="op">&amp;</span> <span class="bn">0x1f</span><span class="op">;</span>    <span class="co">// rd in bits 11..7</span></span>
@@ -414,7 +615,12 @@
 <span id="cb21-42"><a href="#cb21-42" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <p><img src="/img/riscv-registers.png" /></p>
 <h2 id="cpu_execute">cpu_execute()</h2>
-<p>Now that we have decoded our instruction, we can execute the instructions as per the decoded data. The opcodes tell us what operation to perform with the provided data and registers. What exact operation we should perform, depends on 3 values, the opcode, funct3 and funct6. As per the map of the instruction, we decode these 3 using the following in the <code>cpu_execute</code> function.</p>
+<p>Now that we have decoded our instruction, we can execute the
+instructions as per the decoded data. The opcodes tell us what operation
+to perform with the provided data and registers. What exact operation we
+should perform, depends on 3 values, the opcode, funct3 and funct6. As
+per the map of the instruction, we decode these 3 using the following in
+the <code>cpu_execute</code> function.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">// cpu.c</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> cpu_execute<span class="op">(</span>CPU <span class="op">*</span>cpu<span class="op">,</span> <span class="dt">uint32_t</span> inst<span class="op">)</span> <span class="op">{</span></span>
@@ -424,11 +630,24 @@
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    cpu<span class="op">-&gt;</span>regs<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span>                   <span class="co">// x0 hardwired to 0 at each cycle</span></span></code></pre></div>
 <blockquote>
-<p>Here, since the register x0 is hardwired to 0, we have to manually set it to 0 at each cpu cycle, since the emualtor does not have any real 0 (GND) to tie to</p>
+<p>Here, since the register x0 is hardwired to 0, we have to manually
+set it to 0 at each cpu cycle, since the emualtor does not have any real
+0 (GND) to tie to</p>
 </blockquote>
-<p>Now, that we have our opcode, we can start executing instructions accrodingly. The instruction set table for the different modules are given in the riscv specifications book. According to the table, we check our opcodes using a switch to find which operation to perform and execute that operation on the given resiters or immediates. For example, the table for the simple arithmetic and logical oprations like ADDI, ORI, ANDI, which operates with the given immediate value is:</p>
+<p>Now, that we have our opcode, we can start executing instructions
+accrodingly. The instruction set table for the different modules are
+given in the riscv specifications book. According to the table, we check
+our opcodes using a switch to find which operation to perform and
+execute that operation on the given resiters or immediates. For example,
+the table for the simple arithmetic and logical oprations like ADDI,
+ORI, ANDI, which operates with the given immediate value is:</p>
 <p><img src="/img/riscv-i.png" /> <img src="/img/riscv-addi.png" /></p>
-<p>Here, we see, the opcode for these I-Type instructions are 0010011. Now dealing with such binaries for the case statements makes the code un-understandable. So, we define the opcodes and the respective operation names in an <code>opocodes.h</code> file in our “includes/” folder. For the I-type instructions, we can define the opcodes as follows using the hex codes of the given binaries.</p>
+<p>Here, we see, the opcode for these I-Type instructions are 0010011.
+Now dealing with such binaries for the case statements makes the code
+un-understandable. So, we define the opcodes and the respective
+operation names in an <code>opocodes.h</code> file in our “includes/”
+folder. For the I-type instructions, we can define the opcodes as
+follows using the hex codes of the given binaries.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">// opcodes.h</span></span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#define I_TYPE  0x13</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define ADDI    0x0</span></span>
@@ -441,8 +660,12 @@
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        <span class="pp">#define SRAI    0x20</span></span>
 <span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define ORI     0x6</span></span>
 <span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="pp">#define ANDI    0x7</span></span></code></pre></div>
-<p>Here, we see, for the same opcode <code>0x13</code> we have different operations based on <code>funct3</code>. Again, for the same funct3 <code>0x5</code> we have two operations as per different values of <code>funct7</code>.</p>
-<p>Now, for these I-Type instructions, we can write our switch statement as follows.</p>
+<p>Here, we see, for the same opcode <code>0x13</code> we have different
+operations based on <code>funct3</code>. Again, for the same funct3
+<code>0x5</code> we have two operations as per different values of
+<code>funct7</code>.</p>
+<p>Now, for these I-Type instructions, we can write our switch statement
+as follows.</p>
 <div class="sourceCode" id="cb24"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">// cpu.c</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="cf">switch</span> <span class="op">(</span>opcode<span class="op">)</span> <span class="op">{</span></span>
@@ -472,12 +695,22 @@
 <span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">/*exit(1);*/</span></span>
 <span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
 <blockquote>
-<p>For each of the operations, we will be writing a <code>exec_&lt;op-name&gt;</code> function which takes the cpu pointer and the instruction as args.</p>
+<p>For each of the operations, we will be writing a
+<code>exec_&lt;op-name&gt;</code> function which takes the cpu pointer
+and the instruction as args.</p>
 </blockquote>
-<p>Here, in case we have a wrong opcode, or if the operation is not implmented yet, we print to stderr with the opcode that failed as defalut.</p>
-<p>Now, we write the <code>exec</code> functions for each of the operations. What each operation does has been well explained in the RISC-V specs. The executions were written following those.</p>
+<p>Here, in case we have a wrong opcode, or if the operation is not
+implmented yet, we print to stderr with the opcode that failed as
+defalut.</p>
+<p>Now, we write the <code>exec</code> functions for each of the
+operations. What each operation does has been well explained in the
+RISC-V specs. The executions were written following those.</p>
 <blockquote>
-<p>While writing the exec functions, care should be taken regarding which parts will be sign extended or zero extended. For example, imm is often sign-extended to 64-bits before being operated on with other values in registers. We can sign extend in C by typecasting by the serial (int32_t) &gt; (int64_t) &gt; (uint_64t), when needed.</p>
+<p>While writing the exec functions, care should be taken regarding
+which parts will be sign extended or zero extended. For example, imm is
+often sign-extended to 64-bits before being operated on with other
+values in registers. We can sign extend in C by typecasting by the
+serial (int32_t) &gt; (int64_t) &gt; (uint_64t), when needed.</p>
 </blockquote>
 <div class="sourceCode" id="cb25"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">// cpu.c</span></span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> exec_ADDI<span class="op">(</span>CPU<span class="op">*</span> cpu<span class="op">,</span> <span class="dt">uint32_t</span> inst<span class="op">)</span> <span class="op">{</span></span>
@@ -495,12 +728,24 @@
 <span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    cpu<span class="op">-&gt;</span>regs<span class="op">[</span>rd<span class="op">(</span>inst<span class="op">)]</span> <span class="op">=</span> <span class="op">(</span><span class="dt">int32_t</span><span class="op">)</span>cpu<span class="op">-&gt;</span>regs<span class="op">[</span>rs1<span class="op">(</span>inst<span class="op">)]</span> <span class="op">&gt;&gt;</span> imm<span class="op">;</span></span>
 <span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>    print_op<span class="op">(</span><span class="st">&quot;srai</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
 <span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>Following the RISC-V specs book, we write down all the rest of the opcodes in the <code>opcodes.h</code> file, include their cases in the switch statement and write their execution functions. All of the operations are pretty basic and easy to get. The ones I had some difficutly understanding are:</p>
+<p>Following the RISC-V specs book, we write down all the rest of the
+opcodes in the <code>opcodes.h</code> file, include their cases in the
+switch statement and write their execution functions. All of the
+operations are pretty basic and easy to get. The ones I had some
+difficutly understanding are:</p>
 <h4 id="lui">LUI</h4>
 <h4 id="auipc">AUIPC</h4>
 <h1 id="the-main-file">The main file</h1>
-<p>Now, we connect all the structs and functions written in the <code>main.c</code> file, which will run our emulator loop, taking the binary file as the input.</p>
-<p>Firstly, we need to read the contents of the input binary file into the memory. The filename for the binary file is taken input as a command line arg. Then, in order to read the contents of the file byte by byte, we write the following <code>read_file</code> function, which takes the <code>cpu</code> and the provided binary <code>filename</code> as args. The function reads the binary contents of the file, and writes them to the DRAM memory of the provided CPU pointer.</p>
+<p>Now, we connect all the structs and functions written in the
+<code>main.c</code> file, which will run our emulator loop, taking the
+binary file as the input.</p>
+<p>Firstly, we need to read the contents of the input binary file into
+the memory. The filename for the binary file is taken input as a command
+line arg. Then, in order to read the contents of the file byte by byte,
+we write the following <code>read_file</code> function, which takes the
+<code>cpu</code> and the provided binary <code>filename</code> as args.
+The function reads the binary contents of the file, and writes them to
+the DRAM memory of the provided CPU pointer.</p>
 <div class="sourceCode" id="cb26"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">// main.c</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> read_file<span class="op">(</span>CPU<span class="op">*</span> cpu<span class="op">,</span> <span class="dt">char</span> <span class="op">*</span>filename<span class="op">)</span></span>
@@ -539,16 +784,32 @@
 <span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a>    memcpy<span class="op">(</span>cpu<span class="op">-&gt;</span>bus<span class="op">.</span>dram<span class="op">.</span>mem<span class="op">,</span> buffer<span class="op">,</span> fileLen<span class="op">*</span><span class="kw">sizeof</span><span class="op">(</span><span class="dt">uint8_t</span><span class="op">));</span></span>
 <span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a>    free<span class="op">(</span>buffer<span class="op">);</span></span>
 <span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
-<p>Now, we write the main function. First we create a new cpu of type struct <code>CPU</code>. We initialize the cpu using <code>cpu_init()</code>, then use the <code>read_file()</code> function to read the contents of the binary file to the DRAM memory.</p>
-<p>The next part performs the cpu fetch and execution loop. In this implementation, we have a 3 stage instruction pipeline to execute all the instructions. These are:</p>
+<p>Now, we write the main function. First we create a new cpu of type
+struct <code>CPU</code>. We initialize the cpu using
+<code>cpu_init()</code>, then use the <code>read_file()</code> function
+to read the contents of the binary file to the DRAM memory.</p>
+<p>The next part performs the cpu fetch and execution loop. In this
+implementation, we have a 3 stage instruction pipeline to execute all
+the instructions. These are:</p>
 <ol type="1">
-<li><strong>Stage 1 (fetch Instruction)</strong>: Here, the cpu reads the instruction from the address (stored in the program counter pc) of the DRAM.<br />
+<li><strong>Stage 1 (fetch Instruction)</strong>: Here, the cpu reads
+the instruction from the address (stored in the program counter pc) of
+the DRAM.<br />
 </li>
-<li><strong>Stage 2 (Instruction Decode)</strong>: Here, the fetched instruction is decoded to get the opcode, destination and source registers, etc.<br />
+<li><strong>Stage 2 (Instruction Decode)</strong>: Here, the fetched
+instruction is decoded to get the opcode, destination and source
+registers, etc.<br />
 </li>
-<li><strong>Stage 3 (Instruction Execute)</strong>: Here, the instruction is executed following the decoded bits, in the ALU.</li>
+<li><strong>Stage 3 (Instruction Execute)</strong>: Here, the
+instruction is executed following the decoded bits, in the ALU.</li>
 </ol>
-<p>The stage 1 is handled by the <code>cpu_fetch()</code> function and the stages 2 and 3 are handled together in the <code>cpu_execute()</code> function defined in the <code>cpu.h</code> file. The program counter, pc, is incremented by 4 bytes(32 bits, since each instruction is 32 bit wide for riscv) at each loop, to get the next instruction from the memory. Thus our cpu processing loop can be written as follows.</p>
+<p>The stage 1 is handled by the <code>cpu_fetch()</code> function and
+the stages 2 and 3 are handled together in the
+<code>cpu_execute()</code> function defined in the <code>cpu.h</code>
+file. The program counter, pc, is incremented by 4 bytes(32 bits, since
+each instruction is 32 bit wide for riscv) at each loop, to get the next
+instruction from the memory. Thus our cpu processing loop can be written
+as follows.</p>
 <div class="sourceCode" id="cb27"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">// main.c</span></span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">// Initialize cpu, registers and program counter</span></span>

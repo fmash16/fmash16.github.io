@@ -6,30 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>Initial Foothold &mdash; fmash16's blog</title>
 <meta property="og:title" content="TryHackMe - UltraTech Writeup" />
       <meta property="og:description" content="php, command injection, gtfobins, docker" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/tryhackme_ultratech/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/tryhackme_ultratech/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,37 +40,44 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#initial-foothold">Initial Foothold</a>
-    <ul>
-    <li><a href="#nmap-scan">Nmap scan</a></li>
-    <li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
-    <li><a href="#auth-page-found">/auth page found</a></li>
-    <li><a href="#user-ssh">User ssh</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation-root">Privilege escalation : Root</a>
-    <ul>
-    <li><a href="#gtfobins">GTFObins</a></li>
-    </ul></li>
-    </ul>
-</nav>
+<ul>
+<li><a href="#initial-foothold">Initial Foothold</a>
+<ul>
+<li><a href="#nmap-scan">Nmap scan</a></li>
+<li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
+<li><a href="#auth-page-found">/auth page found</a></li>
+<li><a href="#user-ssh">User ssh</a></li>
+</ul></li>
+<li><a href="#privilege-escalation-root">Privilege escalation : Root</a>
+<ul>
+<li><a href="#gtfobins">GTFObins</a></li>
+</ul></li>
+</ul>
 <p>#TryHackMe - UltraTech Writeup</p>
 <h1 id="initial-foothold">Initial Foothold</h1>
 <h2 id="nmap-scan">Nmap scan</h2>
 <p>nmap -sC -sV -sS -oN nmap.out 10.10.138.104</p>
 <blockquote>
-<p>21/tcp open ftp vsftpd 3.0.3 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048 dc:66:89:85:e7:05:c2:a5:da:7f:01:20:3a:13:fc:27 (RSA) | 256 c3:67:dd:26:fa:0c:56:92:f3:5b:a0:b3:8d:6d:20:ab (ECDSA) |_ 256 11:9b:5a:d6:ff:2f:e4:49:d2:b5:17:36:0e:2f:1d:2f (ED25519) 8081/tcp open http Node.js Express framework |_http-cors: HEAD GET POST PUT DELETE PATCH |_http-title: Site doesn’t have a title (text/html; charset=utf-8). Service Info: OSs: Unix, Linux; CPE: cpe:/o:linux:linux_kernel 2002/tcp filtered globe</p>
+<p>21/tcp open ftp vsftpd 3.0.3 22/tcp open ssh OpenSSH 7.6p1 Ubuntu
+4ubuntu0.3 (Ubuntu Linux; protocol 2.0) | ssh-hostkey: | 2048
+dc:66:89:85:e7:05:c2:a5:da:7f:01:20:3a:13:fc:27 (RSA) | 256
+c3:67:dd:26:fa:0c:56:92:f3:5b:a0:b3:8d:6d:20:ab (ECDSA) |_ 256
+11:9b:5a:d6:ff:2f:e4:49:d2:b5:17:36:0e:2f:1d:2f (ED25519) 8081/tcp open
+http Node.js Express framework |_http-cors: HEAD GET POST PUT DELETE
+PATCH |_http-title: Site doesn’t have a title (text/html;
+charset=utf-8). Service Info: OSs: Unix, Linux; CPE:
+cpe:/o:linux:linux_kernel 2002/tcp filtered globe</p>
 </blockquote>
 <h2 id="gobuster-fuzzing">Gobuster fuzzing</h2>
-<p>gobuster shows us a directory /auth in the site that contains a login with password script but doesn’t have any inputs in the page.</p>
+<p>gobuster shows us a directory /auth in the site that contains a login
+with password script but doesn’t have any inputs in the page.</p>
 <p><img src="/img/tryhackme_ultratech/1.png" /></p>
 <p><img src="/img/tryhackme_ultratech/2.png" /></p>
 <h2 id="auth-page-found">/auth page found</h2>
-<p>We try logging in providing the creds in the params login and passwords as follows</p>
-<pre class="http://10.10.138.104:8081/auth?login=admin&amp;password=admin```"><code>
+<p>We try logging in providing the creds in the params login and
+passwords as follows</p>
+<pre
+class="http://10.10.138.104:8081/auth?login=admin&amp;password=admin```"><code>
 ![](/img/tryhackme_ultratech/3.png)
 
 And, we get the invalid credentials on the page
@@ -187,17 +195,26 @@ hashcat -m 0 -o r00t.pass r00t.hash /usr/share/wordlists/rockyou.txt</code></pre
 <p><img src="/img/tryhackme_ultratech/18.png" /></p>
 <p>Obtained creds: * r00t : n100906</p>
 <h2 id="user-ssh">User ssh</h2>
-<p>Having the password for r00t, we try ssh ing into the target and succeed</p>
+<p>Having the password for r00t, we try ssh ing into the target and
+succeed</p>
 <p><img src="/img/tryhackme_ultratech/19.png" /></p>
 <h1 id="privilege-escalation-root">Privilege escalation : Root</h1>
 <h2 id="gtfobins">GTFObins</h2>
-<p>Right away on the <code>id</code> command, we see that our user r00t is a member of the group docker. Being a member of group docker lets us easily escalate our privilege to root. Thats why in docker, it says only to include trusted members to the group.</p>
+<p>Right away on the <code>id</code> command, we see that our user r00t
+is a member of the group docker. Being a member of group docker lets us
+easily escalate our privilege to root. Thats why in docker, it says only
+to include trusted members to the group.</p>
 <p><img src="/img/tryhackme_ultratech/20.png" /></p>
-<p>Going over to <a href="https://gtfobins.github.io/gtfobins/docker/#shell">gtfobins</a>, we find the command for privesc.</p>
-<p>We list the docker images and find that we have one name bash. We craft our command accordingly to get a root shell</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> <span class="ex">docker</span> run <span class="at">-v</span> /:/mnt <span class="at">--rm</span> <span class="at">-it</span> bash chroot /mnt sh</span></code></pre></div>
+<p>Going over to <a
+href="https://gtfobins.github.io/gtfobins/docker/#shell">gtfobins</a>,
+we find the command for privesc.</p>
+<p>We list the docker images and find that we have one name bash. We
+craft our command accordingly to get a root shell</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a> <span class="ex">docker</span> run <span class="at">-v</span> /:/mnt <span class="at">--rm</span> <span class="at">-it</span> bash chroot /mnt sh</span></code></pre></div>
 <p><img src="/img/tryhackme_ultratech/21.png" /></p>
-<p>Now we can read our required private rsa key from the /root/.ssh/ directory</p>
+<p>Now we can read our required private rsa key from the /root/.ssh/
+directory</p>
 <p><img src="/img/tryhackme_ultratech/22.png" /></p>
 </article>
 

