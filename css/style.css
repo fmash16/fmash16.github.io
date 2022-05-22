@@ -478,10 +478,6 @@ label {
     border: 1px solid var(--accent-color);
 }
 
-#toggle:checked ~ .toc {
-    display: none;
-}
-
 .toc {
     display: block;
     position: fixed;
