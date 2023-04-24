@@ -6,30 +6,30 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com"> 
-  <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
-  rel="stylesheet"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
 <title>Hackthebox - Montevarde
-Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Montevarde Writeup" />
       <meta property="og:description" content="A medium difficulty windows box exploited through ldap and azure." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io//img/htb_montevarde/card.png" />
+      <meta property="og:image" content="www.fmash16.github.io/img/htb_montevarde/card.png" />
 
+Writeup &mdash; fmash16's blog</title>
 </head>
 
-<!--<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> -->
+<body>
+<div class="Head">
+ <!--<h1 class=blogtitle>fmash16</h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
 |_| |_|_|_|__,|___|_|_|_____|___|
-                 ./fmash16's blog</pre>
+                 u/fmash16's page</pre>
 <nav>
    <a href="/index.html">home</a>
    <a href="/archive.html">archive</a>
@@ -39,36 +39,37 @@ Writeup &mdash; fmash16's blog</title>
    <a href="https://reddit.com/user/fmash16">reddit</a>
    <a href="/about.html">whoami</a>
 </nav>
+</div>
 
 <article>
 <input id="toggle" type="checkbox" checked>
 <label for="toggle">TOC</label>
 <nav class='toc'>
-<ul>
-<li><a href="#hackthebox---montevarde-writeup">Hackthebox - Montevarde
-Writeup</a>
-<ul>
-<li><a href="#nmap-scan">## Nmap Scan</a></li>
-<li><a href="#enum4linux">enum4linux:</a></li>
-<li><a href="#ldapsearch">ldapsearch</a></li>
-<li><a href="#rpcclient">rpcclient</a></li>
-</ul></li>
-<li><a href="#privilege-escalation---user">Privilege Escalation -
-User</a>
-<ul>
-<li><a href="#smbclient-bruteforce">smbclient bruteforce</a></li>
-<li><a href="#azure.xml">azure.xml</a></li>
-<li><a href="#evil-winrm-shell">Evil-winrm shell</a></li>
-</ul></li>
-<li><a href="#privilege-escalation---administrator">Privilege Escalation
-- Administrator</a>
-<ul>
-<li><a href="#azure-ad-connect-exploit">Azure AD Connect
-Exploit</a></li>
-<li><a href="#administrator-shell">Administrator shell</a></li>
-</ul></li>
-<li><a href="#resources">Resources:</a></li>
-</ul>
+    <ul>
+    <li><a href="#hackthebox---montevarde-writeup">Hackthebox -
+    Montevarde Writeup</a>
+    <ul>
+    <li><a href="#nmap-scan">## Nmap Scan</a></li>
+    <li><a href="#enum4linux">enum4linux:</a></li>
+    <li><a href="#ldapsearch">ldapsearch</a></li>
+    <li><a href="#rpcclient">rpcclient</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation -
+    User</a>
+    <ul>
+    <li><a href="#smbclient-bruteforce">smbclient bruteforce</a></li>
+    <li><a href="#azure.xml">azure.xml</a></li>
+    <li><a href="#evil-winrm-shell">Evil-winrm shell</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---administrator">Privilege
+    Escalation - Administrator</a>
+    <ul>
+    <li><a href="#azure-ad-connect-exploit">Azure AD Connect
+    Exploit</a></li>
+    <li><a href="#administrator-shell">Administrator shell</a></li>
+    </ul></li>
+    <li><a href="#resources">Resources:</a></li>
+    </ul>
 </nav>
 <h1 id="hackthebox---montevarde-writeup">Hackthebox - Montevarde
 Writeup</h1>
@@ -313,6 +314,6 @@ compile it to use it.</p>
   <hr>
   <p> Generated with a modified version of <a
       href="https://github.com/fmash16/ssg5">ssg5</a> By u/fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2022 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>

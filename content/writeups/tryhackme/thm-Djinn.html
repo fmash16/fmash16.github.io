@@ -6,29 +6,29 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com"> 
-  <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
-  rel="stylesheet"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
 <title>TryHackMe - Djinn writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="TryHackMe - Djinn Writeup" />
       <meta property="og:description" content="An intermediate level box having an implentation of flask. Needs some python scripting and port knocking to get user. Root privilege escalation using lxc container for user with lxd group membership." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io//img/tryhackme_djinn/card.png" />
+      <meta property="og:image" content="www.fmash16.github.io/img/tryhackme_djinn/card.png" />
 
 </head>
 
-<!--<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> -->
+<body>
+<div class="Head">
+ <!--<h1 class=blogtitle>fmash16</h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
 |_| |_|_|_|__,|___|_|_|_____|___|
-                 ./fmash16's blog</pre>
+                 u/fmash16's page</pre>
 <nav>
    <a href="/index.html">home</a>
    <a href="/archive.html">archive</a>
@@ -38,41 +38,44 @@
    <a href="https://reddit.com/user/fmash16">reddit</a>
    <a href="/about.html">whoami</a>
 </nav>
+</div>
 
 <article>
 <input id="toggle" type="checkbox" checked>
 <label for="toggle">TOC</label>
 <nav class='toc'>
-<ul>
-<li><a href="#tryhackme---djinn-writeup">TryHackMe - Djinn
-writeup</a></li>
-<li><a href="#nmap-scan">Nmap Scan</a></li>
-<li><a href="#enumeration">Enumeration</a>
-<ul>
-<li><a href="#ftp--port-21">ftp -port 21</a></li>
-<li><a href="#port-1337">Port 1337</a></li>
-</ul></li>
-<li><a href="#winning-the-game">Winning the game</a></li>
-<li><a href="#port-knock">Port knock</a></li>
-<li><a href="#port-7331-enum">Port 7331 enum</a>
-<ul>
-<li><a href="#ffuf-fuzzing">ffuf fuzzing</a></li>
-<li><a href="#remote-code-executeion">Remote Code Executeion</a></li>
-<li><a href="#reverse-shell-www-data">Reverse shell (www-data)</a></li>
-</ul></li>
-<li><a href="#privilege-escalation-user-nitish">Privilege escalation :
-User nitish</a></li>
-<li><a href="#privilege-escalation-user-sam">Privilege Escalation : User
-sam</a></li>
-<li><a href="#privilege-escalation---root">Privilege Escalation -
-Root</a>
-<ul>
-<li><a href="#first-way---sudo-permissions">First way - sudo
-permissions</a></li>
-<li><a href="#second-cooler-way-lxc-container">Second (Cooler) way : lxc
-container</a></li>
-</ul></li>
-</ul>
+    <ul>
+    <li><a href="#tryhackme---djinn-writeup">TryHackMe - Djinn
+    writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#ftp--port-21">ftp -port 21</a></li>
+    <li><a href="#port-1337">Port 1337</a></li>
+    </ul></li>
+    <li><a href="#winning-the-game">Winning the game</a></li>
+    <li><a href="#port-knock">Port knock</a></li>
+    <li><a href="#port-7331-enum">Port 7331 enum</a>
+    <ul>
+    <li><a href="#ffuf-fuzzing">ffuf fuzzing</a></li>
+    <li><a href="#remote-code-executeion">Remote Code
+    Executeion</a></li>
+    <li><a href="#reverse-shell-www-data">Reverse shell
+    (www-data)</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation-user-nitish">Privilege escalation
+    : User nitish</a></li>
+    <li><a href="#privilege-escalation-user-sam">Privilege Escalation :
+    User sam</a></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation -
+    Root</a>
+    <ul>
+    <li><a href="#first-way---sudo-permissions">First way - sudo
+    permissions</a></li>
+    <li><a href="#second-cooler-way-lxc-container">Second (Cooler) way :
+    lxc container</a></li>
+    </ul></li>
+    </ul>
 </nav>
 <h1 id="tryhackme---djinn-writeup">TryHackMe - Djinn writeup</h1>
 <p>We add the machine IP to out /etc/hosts file</p>
@@ -439,6 +442,6 @@ and find an executable proof.sh, we run it to get our flag.</p>
   <hr>
   <p> Generated with a modified version of <a
       href="https://github.com/fmash16/ssg5">ssg5</a> By u/fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2022 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>

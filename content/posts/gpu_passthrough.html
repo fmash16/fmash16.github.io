@@ -6,29 +6,29 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com"> 
-  <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
-  rel="stylesheet"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
 <title>fmash16's blog</title>
 <meta property="og:title" content="Ryzen Gpu passthrough guide on debian" />
       <meta property="og:description" content="A guide to passthrough your gpu to a QEMU/KVM virtual machine running Windows 10" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io/" />
+      <meta property="og:image" content="www.fmash16.github.io" />
 
 </head>
 
-<!--<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> -->
+<body>
+<div class="Head">
+ <!--<h1 class=blogtitle>fmash16</h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
 |_| |_|_|_|__,|___|_|_|_____|___|
-                 ./fmash16's blog</pre>
+                 u/fmash16's page</pre>
 <nav>
    <a href="/index.html">home</a>
    <a href="/archive.html">archive</a>
@@ -38,36 +38,38 @@
    <a href="https://reddit.com/user/fmash16">reddit</a>
    <a href="/about.html">whoami</a>
 </nav>
+</div>
 
 <article>
 <input id="toggle" type="checkbox" checked>
 <label for="toggle">TOC</label>
 <nav class='toc'>
-<ul>
-<li><a href="#preamble">Preamble</a></li>
-<li><a href="#introduction-to-vfio-and-pci-passthrough">Introduction to
-VFIO and PCI passthrough:</a></li>
-<li><a href="#requirements">Requirements:</a></li>
-<li><a href="#hardware">Hardware:</a></li>
-<li><a href="#software">Software:</a></li>
-<li><a href="#setting-up-the-vfio-ryzen-passthrough">Setting up the vfio
-ryzen passthrough:</a></li>
-<li><a href="#enabling-the-iommu-feature">Enabling the IOMMU
-feature:</a></li>
-<li><a
-href="#finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding the
-iommu group of the guest gpu to isolate:</a></li>
-<li><a href="#isolation-of-guest-gpu">Isolation of guest gpu</a></li>
-<li><a href="#verify-the-isolation">Verify the isolation</a></li>
-<li><a href="#creating-the-windows-virtual-machine">Creating the windows
-virtual machine</a></li>
-<li><a href="#install-windows">Install windows:</a></li>
-<li><a href="#install-necessary-drivers">Install necessary
-drivers</a></li>
-<li><a href="#editing-configurations-using-virsh">Editing configurations
-using virsh</a></li>
-<li><a href="#sources">Sources</a></li>
-</ul>
+    <ul>
+    <li><a href="#preamble">Preamble</a></li>
+    <li><a href="#introduction-to-vfio-and-pci-passthrough">Introduction
+    to VFIO and PCI passthrough:</a></li>
+    <li><a href="#requirements">Requirements:</a></li>
+    <li><a href="#hardware">Hardware:</a></li>
+    <li><a href="#software">Software:</a></li>
+    <li><a href="#setting-up-the-vfio-ryzen-passthrough">Setting up the
+    vfio ryzen passthrough:</a></li>
+    <li><a href="#enabling-the-iommu-feature">Enabling the IOMMU
+    feature:</a></li>
+    <li><a
+    href="#finding-the-iommu-group-of-the-guest-gpu-to-isolate">Finding
+    the iommu group of the guest gpu to isolate:</a></li>
+    <li><a href="#isolation-of-guest-gpu">Isolation of guest
+    gpu</a></li>
+    <li><a href="#verify-the-isolation">Verify the isolation</a></li>
+    <li><a href="#creating-the-windows-virtual-machine">Creating the
+    windows virtual machine</a></li>
+    <li><a href="#install-windows">Install windows:</a></li>
+    <li><a href="#install-necessary-drivers">Install necessary
+    drivers</a></li>
+    <li><a href="#editing-configurations-using-virsh">Editing
+    configurations using virsh</a></li>
+    <li><a href="#sources">Sources</a></li>
+    </ul>
 </nav>
 <h2 id="preamble">Preamble</h2>
 <p>This guide shows how to passthrough a gpu to a vm running on QEMU/KVM
@@ -630,6 +632,6 @@ alt="IMAGE ALTTEXT" /></a></p>
   <hr>
   <p> Generated with a modified version of <a
       href="https://github.com/fmash16/ssg5">ssg5</a> By u/fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2022 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>

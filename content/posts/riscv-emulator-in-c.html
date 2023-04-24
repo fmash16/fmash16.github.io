@@ -6,31 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com"> 
-  <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
-  rel="stylesheet"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
 <title>Writing
-a simple RISC-V emulator in plain C (Base integer, multiplication and
-csr instructions) &mdash; fmash16's blog</title>
-<meta property="og:title" content="Writing a simple RISC-V emulator in C - Part 01 (Base integer, multiplication and csr instructions)" />
+<meta property="og:title" content="Writing a simple RISC-V emulator in C - Part 01<br> (Base integer, multiplication and csr instructions)" />
       <meta property="og:description" content="Here, we write a simple c implementation of a riscv core in plain C. The implementation is dead simple and following the riscv specs and basic comuter architecture. This would help us learn about the internal workings of the computer, all thanks to this open source ISA." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io//img/riscv.png" />
+      <meta property="og:image" content="www.fmash16.github.io/img/riscv.png" />
 
+a simple RISC-V emulator in plain C <br> (Base integer, multiplication
+and csr instructions) &mdash; fmash16's blog</title>
 </head>
 
-<!--<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> -->
+<body>
+<div class="Head">
+ <!--<h1 class=blogtitle>fmash16</h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
 |_| |_|_|_|__,|___|_|_|_____|___|
-                 ./fmash16's blog</pre>
+                 u/fmash16's page</pre>
 <nav>
    <a href="/index.html">home</a>
    <a href="/archive.html">archive</a>
@@ -40,46 +40,47 @@ csr instructions) &mdash; fmash16's blog</title>
    <a href="https://reddit.com/user/fmash16">reddit</a>
    <a href="/about.html">whoami</a>
 </nav>
+</div>
 
 <article>
 <input id="toggle" type="checkbox" checked>
 <label for="toggle">TOC</label>
 <nav class='toc'>
-<ul>
-<li><a
-href="#writing-a-simple-risc-v-emulator-in-plain-c-base-integer-multiplication-and-csr-instructions">Writing
-a simple RISC-V emulator in plain C (Base integer, multiplication and
-csr instructions)</a></li>
-<li><a href="#what-is-risc-v">What is RISC-V?</a></li>
-<li><a href="#computer-organization">Computer Organization</a></li>
-<li><a href="#getting-started">Getting started</a>
-<ul>
-<li><a href="#installing-the-riscv-gnu-toolchain">Installing the
-riscv-gnu-toolchain</a></li>
-<li><a href="#using-riscv-tests">Using riscv-tests</a></li>
-</ul></li>
-<li><a href="#writing-a-dram-struct">Writing a DRAM struct</a></li>
-<li><a href="#dram-functions">DRAM functions</a></li>
-<li><a href="#writing-a-bus-struct">Writing a BUS struct</a></li>
-<li><a href="#bus-functions">BUS functions</a></li>
-<li><a href="#writing-a-basic-cpu-struct">Writing a basic CPU
-struct</a></li>
-<li><a href="#cpu-functions">CPU Functions</a>
-<ul>
-<li><a href="#cpu_init">cpu_init()</a></li>
-<li><a href="#cpu_fetch">cpu_fetch()</a></li>
-<li><a href="#private-loadstore-functions">Private load/store
-functions</a></li>
-<li><a href="#instruction-decoding">Instruction decoding</a></li>
-<li><a href="#cpu_execute">cpu_execute()</a></li>
-</ul></li>
-<li><a href="#the-main-file">The main file</a></li>
-</ul>
+    <ul>
+    <li><a
+    href="#writing-a-simple-risc-v-emulator-in-plain-c-base-integer-multiplication-and-csr-instructions">Writing
+    a simple RISC-V emulator in plain C <br> (Base integer,
+    multiplication and csr instructions)</a></li>
+    <li><a href="#what-is-risc-v">What is RISC-V?</a></li>
+    <li><a href="#computer-organization">Computer Organization</a></li>
+    <li><a href="#getting-started">Getting started</a>
+    <ul>
+    <li><a href="#installing-the-riscv-gnu-toolchain">Installing the
+    riscv-gnu-toolchain</a></li>
+    <li><a href="#using-riscv-tests">Using riscv-tests</a></li>
+    </ul></li>
+    <li><a href="#writing-a-dram-struct">Writing a DRAM struct</a></li>
+    <li><a href="#dram-functions">DRAM functions</a></li>
+    <li><a href="#writing-a-bus-struct">Writing a BUS struct</a></li>
+    <li><a href="#bus-functions">BUS functions</a></li>
+    <li><a href="#writing-a-basic-cpu-struct">Writing a basic CPU
+    struct</a></li>
+    <li><a href="#cpu-functions">CPU Functions</a>
+    <ul>
+    <li><a href="#cpu_init">cpu_init()</a></li>
+    <li><a href="#cpu_fetch">cpu_fetch()</a></li>
+    <li><a href="#private-loadstore-functions">Private load/store
+    functions</a></li>
+    <li><a href="#instruction-decoding">Instruction decoding</a></li>
+    <li><a href="#cpu_execute">cpu_execute()</a></li>
+    </ul></li>
+    <li><a href="#the-main-file">The main file</a></li>
+    </ul>
 </nav>
 <h1
 id="writing-a-simple-risc-v-emulator-in-plain-c-base-integer-multiplication-and-csr-instructions">Writing
-a simple RISC-V emulator in plain C (Base integer, multiplication and
-csr instructions)</h1>
+a simple RISC-V emulator in plain C <br> (Base integer, multiplication
+and csr instructions)</h1>
 <p>Having to study microprocssor architecture and organization, and
 having implemented a 4 bit CPU in verilog, I wanted to take this up as a
 personal project, since the open source and modular aspect of RISC-V
@@ -843,6 +844,6 @@ as follows.</p>
   <hr>
   <p> Generated with a modified version of <a
       href="https://github.com/fmash16/ssg5">ssg5</a> By u/fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2022 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>

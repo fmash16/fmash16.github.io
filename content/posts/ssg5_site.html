@@ -6,31 +6,31 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com"> 
-  <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
-  rel="stylesheet"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
 <title>Generate
-a static site with posix compliable shell script, using find, grep, sed,
-pandoc and vim &mdash; fmash16's blog</title>
 <meta property="og:title" content="Generate a static site with posix compliable shell script, using find, grep, sed, pandoc and vim" />
       <meta property="og:description" content="Create your personal blogsite using a posix compliable shell script that uses pandoc to convert your markdown files to html. This generates a very minimal static site with just what you need." />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io//img/site.png" />
+      <meta property="og:image" content="www.fmash16.github.io/img/site.png" />
 
+a static site with posix compliable shell script, using find, grep, sed,
+pandoc and vim &mdash; fmash16's blog</title>
 </head>
 
-<!--<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> -->
+<body>
+<div class="Head">
+ <!--<h1 class=blogtitle>fmash16</h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
 |_| |_|_|_|__,|___|_|_|_____|___|
-                 ./fmash16's blog</pre>
+                 u/fmash16's page</pre>
 <nav>
    <a href="/index.html">home</a>
    <a href="/archive.html">archive</a>
@@ -40,37 +40,40 @@ pandoc and vim &mdash; fmash16's blog</title>
    <a href="https://reddit.com/user/fmash16">reddit</a>
    <a href="/about.html">whoami</a>
 </nav>
+</div>
 
 <article>
 <input id="toggle" type="checkbox" checked>
 <label for="toggle">TOC</label>
 <nav class='toc'>
-<ul>
-<li><a
-href="#generate-a-static-site-with-posix-compliable-shell-script-using-find-grep-sed-pandoc-and-vim">Generate
-a static site with posix compliable shell script, using find, grep, sed,
-pandoc and vim</a></li>
-<li><a href="#ssg5---the-minimal-cooler-site-generator">SSG5 - the
-minimal “cooler” site generator</a>
-<ul>
-<li><a href="#installation">Installation</a></li>
-<li><a href="#usage">Usage</a></li>
-<li><a href="#styling">Styling</a></li>
-</ul></li>
-<li><a href="#my-customizations">My customizations</a>
-<ul>
-<li><a href="#pandoc">Pandoc</a></li>
-<li><a href="#reducing-build-time-using-bash-multithreading">Reducing
-build time using bash multithreading</a></li>
-<li><a
-href="#generate-a-home-page-with-post-list-sorted-by-date">Generate a
-home page with post list sorted by date</a></li>
-<li><a href="#generate-a-post-archive">Generate a post archive</a></li>
-<li><a href="#pagination">Pagination</a></li>
-<li><a href="#my-modified-version-of-ssg5">My modified version of
-ssg5</a></li>
-</ul></li>
-</ul>
+    <ul>
+    <li><a
+    href="#generate-a-static-site-with-posix-compliable-shell-script-using-find-grep-sed-pandoc-and-vim">Generate
+    a static site with posix compliable shell script, using find, grep,
+    sed, pandoc and vim</a></li>
+    <li><a href="#ssg5---the-minimal-cooler-site-generator">SSG5 - the
+    minimal “cooler” site generator</a>
+    <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage">Usage</a></li>
+    <li><a href="#styling">Styling</a></li>
+    </ul></li>
+    <li><a href="#my-customizations">My customizations</a>
+    <ul>
+    <li><a href="#pandoc">Pandoc</a></li>
+    <li><a
+    href="#reducing-build-time-using-bash-multithreading">Reducing build
+    time using bash multithreading</a></li>
+    <li><a
+    href="#generate-a-home-page-with-post-list-sorted-by-date">Generate
+    a home page with post list sorted by date</a></li>
+    <li><a href="#generate-a-post-archive">Generate a post
+    archive</a></li>
+    <li><a href="#pagination">Pagination</a></li>
+    <li><a href="#my-modified-version-of-ssg5">My modified version of
+    ssg5</a></li>
+    </ul></li>
+    </ul>
 </nav>
 <h1
 id="generate-a-static-site-with-posix-compliable-shell-script-using-find-grep-sed-pandoc-and-vim">Generate
@@ -281,6 +284,6 @@ href="https://github.com/fmash16/ssg5">github</a>.</p>
   <hr>
   <p> Generated with a modified version of <a
       href="https://github.com/fmash16/ssg5">ssg5</a> By u/fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2022 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>

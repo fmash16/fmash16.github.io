@@ -6,29 +6,29 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com"> 
-  <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
-  rel="stylesheet"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
 <title>Hackthebox - Book Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Book Writeup" />
       <meta property="og:description" content="A medium difficulty linux machine having real world like vulnerability" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io//img/htb_book/card.png" />
+      <meta property="og:image" content="www.fmash16.github.io/img/htb_book/card.png" />
 
 </head>
 
-<!--<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> -->
+<body>
+<div class="Head">
+ <!--<h1 class=blogtitle>fmash16</h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
 |_| |_|_|_|__,|___|_|_|_____|___|
-                 ./fmash16's blog</pre>
+                 u/fmash16's page</pre>
 <nav>
    <a href="/index.html">home</a>
    <a href="/archive.html">archive</a>
@@ -38,41 +38,43 @@
    <a href="https://reddit.com/user/fmash16">reddit</a>
    <a href="/about.html">whoami</a>
 </nav>
+</div>
 
 <article>
 <input id="toggle" type="checkbox" checked>
 <label for="toggle">TOC</label>
 <nav class='toc'>
-<ul>
-<li><a href="#hackthebox---book-writeup">Hackthebox - Book
-Writeup</a></li>
-<li><a href="#nmap-scan">Nmap Scan</a></li>
-<li><a href="#enumeration">Enumeration</a>
-<ul>
-<li><a href="#web">Web</a></li>
-<li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
-<li><a href="#doc">/doc</a></li>
-<li><a href="#admin-login">/admin login</a></li>
-<li><a href="#admin-account---sql-truncation-attack">admin account - SQL
-truncation attack</a></li>
-<li><a href="#file-upload">File upload</a></li>
-</ul></li>
-<li><a href="#privilege-escalation---user">Privilege Escalation -
-User</a>
-<ul>
-<li><a href="#getting-id_rsa-of-user">Getting id_rsa of user</a></li>
-<li><a href="#pdf2txt-conversion">pdf2txt conversion</a></li>
-<li><a href="#ssh-login-with-id_rsa">SSH login with id_rsa</a></li>
-</ul></li>
-<li><a href="#privilege-escalation---root">Privilege Escalation -
-root</a>
-<ul>
-<li><a href="#enumeration-1">Enumeration</a></li>
-<li><a href="#logrotate-race-condition-exploit">logrotate race condition
-exploit</a></li>
-</ul></li>
-<li><a href="#resources">Resources</a></li>
-</ul>
+    <ul>
+    <li><a href="#hackthebox---book-writeup">Hackthebox - Book
+    Writeup</a></li>
+    <li><a href="#nmap-scan">Nmap Scan</a></li>
+    <li><a href="#enumeration">Enumeration</a>
+    <ul>
+    <li><a href="#web">Web</a></li>
+    <li><a href="#gobuster-fuzzing">Gobuster fuzzing</a></li>
+    <li><a href="#doc">/doc</a></li>
+    <li><a href="#admin-login">/admin login</a></li>
+    <li><a href="#admin-account---sql-truncation-attack">admin account -
+    SQL truncation attack</a></li>
+    <li><a href="#file-upload">File upload</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---user">Privilege Escalation -
+    User</a>
+    <ul>
+    <li><a href="#getting-id_rsa-of-user">Getting id_rsa of
+    user</a></li>
+    <li><a href="#pdf2txt-conversion">pdf2txt conversion</a></li>
+    <li><a href="#ssh-login-with-id_rsa">SSH login with id_rsa</a></li>
+    </ul></li>
+    <li><a href="#privilege-escalation---root">Privilege Escalation -
+    root</a>
+    <ul>
+    <li><a href="#enumeration-1">Enumeration</a></li>
+    <li><a href="#logrotate-race-condition-exploit">logrotate race
+    condition exploit</a></li>
+    </ul></li>
+    <li><a href="#resources">Resources</a></li>
+    </ul>
 </nav>
 <h1 id="hackthebox---book-writeup">Hackthebox - Book Writeup</h1>
 <p><img src="/img/htb_book/card.png" /></p>
@@ -297,6 +299,6 @@ zombie shell.</p>
   <hr>
   <p> Generated with a modified version of <a
       href="https://github.com/fmash16/ssg5">ssg5</a> By u/fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2022 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>

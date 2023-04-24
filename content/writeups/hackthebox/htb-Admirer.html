@@ -6,29 +6,29 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" type="image/png" href="/favicon.png">
   <link rel="stylesheet" type="text/css" href="/css/style.css">
-  <link rel="preconnect" href="https://fonts.gstatic.com"> 
-  <link
-  href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@500&family=Kanit:wght@600&family=Roboto&family=Electrolize&display=swap&family=Fira+Mono&family=Cousine&display=swapdisplay=swap&family=IBM+Plex+Mono&display=swap&family=Courier+Prime:wght@700&display=swap"
-  rel="stylesheet"> 
-  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:wght@700&family=Inconsolata&family=Source+Code+Pro&display=swap" rel="stylesheet">
   <script src="https://kit.fontawesome.com/65ad30df58.js" crossorigin="anonymous"></script>
-  <script src="/dist/mark.min.js" charset="UTF-8"></script>
+  <!--<script src="/dist/mark.min.js" charset="UTF-8"></script>-->
 <title>Hackthebox - Admirer Writeup &mdash; fmash16's blog</title>
 <meta property="og:title" content="Hackthebox - Admirer Writeup" />
       <meta property="og:description" content="" />
       <meta property="og:type" content="article" />
       <meta property="og:url" content="github" />
-      <meta property="og:image" content="https://fmash16.github.io//img/htb_admirer/card.png" />
+      <meta property="og:image" content="www.fmash16.github.io/img/htb_admirer/card.png" />
 
 </head>
 
-<!--<div class=blogtitle><a href="/index.html">fmash16's blog</a></div> -->
+<body>
+<div class="Head">
+ <!--<h1 class=blogtitle>fmash16</h1> -->
 <pre style="font-family:'Courier Prime';color:var(--accent-color);text-align:center;font-weight:1000">
  ___               _   ___   ___ 
 |  _|_____ ___ ___| |_|_  | |  _|
 |  _|     | .'|_ -|   |_| |_| . |
 |_| |_|_|_|__,|___|_|_|_____|___|
-                 ./fmash16's blog</pre>
+                 u/fmash16's page</pre>
 <nav>
    <a href="/index.html">home</a>
    <a href="/archive.html">archive</a>
@@ -38,30 +38,31 @@
    <a href="https://reddit.com/user/fmash16">reddit</a>
    <a href="/about.html">whoami</a>
 </nav>
+</div>
 
 <article>
 <input id="toggle" type="checkbox" checked>
 <label for="toggle">TOC</label>
 <nav class='toc'>
-<ul>
-<li><a href="#hackthebox---admirer-writeup">Hackthebox - Admirer
-Writeup</a>
-<ul>
-<li><a href="#initial-foothold">## Initial Foothold</a></li>
-<li><a href="#nmap">### Nmap</a></li>
-<li><a href="#directory-busting">### Directory Busting</a></li>
-<li><a href="#ftp-login">### ftp login</a></li>
-<li><a href="#privilege-escalation-user">## Privilege escalation :
-User</a></li>
-<li><a href="#database-management-tool-adminer">### Database management
-tool: Adminer</a></li>
-<li><a href="#adminer-exploit">### Adminer Exploit</a></li>
-<li><a href="#privilege-escalation-root">## Privilege escalation :
-root</a></li>
-<li><a href="#enumeration">### Enumeration</a></li>
-<li><a href="#python-path-hijack">### Python path hijack</a></li>
-</ul></li>
-</ul>
+    <ul>
+    <li><a href="#hackthebox---admirer-writeup">Hackthebox - Admirer
+    Writeup</a>
+    <ul>
+    <li><a href="#initial-foothold">## Initial Foothold</a></li>
+    <li><a href="#nmap">### Nmap</a></li>
+    <li><a href="#directory-busting">### Directory Busting</a></li>
+    <li><a href="#ftp-login">### ftp login</a></li>
+    <li><a href="#privilege-escalation-user">## Privilege escalation :
+    User</a></li>
+    <li><a href="#database-management-tool-adminer">### Database
+    management tool: Adminer</a></li>
+    <li><a href="#adminer-exploit">### Adminer Exploit</a></li>
+    <li><a href="#privilege-escalation-root">## Privilege escalation :
+    root</a></li>
+    <li><a href="#enumeration">### Enumeration</a></li>
+    <li><a href="#python-path-hijack">### Python path hijack</a></li>
+    </ul></li>
+    </ul>
 </nav>
 <h1 id="hackthebox---admirer-writeup">Hackthebox - Admirer Writeup</h1>
 <p><img src="/img/htb_admirer/card.png" /></p>
@@ -315,6 +316,6 @@ href="https://www.google.com/url?sa=t&amp;rct=j&amp;q=&amp;esrc=s&amp;source=web
   <hr>
   <p> Generated with a modified version of <a
       href="https://github.com/fmash16/ssg5">ssg5</a> By u/fmash16 <br /> 
-  <i class="far fa-copyright"></i> 2020-2022 </p>
+  <i class="far fa-copyright"></i> 2020-2021 </p>
 </footer>
 </body>

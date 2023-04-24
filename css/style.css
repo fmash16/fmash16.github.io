@@ -1,30 +1,44 @@
+@font-face { 
+    font-family: 'Minecrafter';
+    src: url('Minecrafter.woff') format('woff'),
+         url('Minecrafter.Reg.ttf') format('truetype');
+}
+
 :root {
-    --accent-color: #f66;
-    --background:   #191a1a;
-    --foreground:   #e5d09a;
+    /*--accent-color: #f66;*/
+    /*--background:   #191a1a;*/
+    /*--foreground:   #e5d09a;*/
+    --accent-color: aquamarine;
+    --background:   #001a1a;
+    --foreground:   #e6ffcc;
 }
 
 html {
   font-size: 100%;
   overflow-y: scroll;
   color: var(--foreground);
-  background-color: var(--background);
+  background-color: #001515;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
 }
 
 body {
   font-family: 'Inconsolata', monospace;
-  line-height: 1.5em;
-  padding: 1em;
+  line-height: 1.25em;
+  padding-top: 2em;
+  padding-bottom: 2em;
+  padding-left: 3em;
+  padding-right: 4em;
   margin-left: auto;
   margin-right: auto;
   max-width: 800px;
   align: center;
+  border: 2px solid aquamarine;
+  background-color: var(--background);
 }
 
 a {
-  color:var(--accent-color);
+  color:gold;
 }
 
 /* a:visited { */
@@ -71,11 +85,8 @@ a::selection {
 }
 
 p {
-  font-size: 1.1em;
   letter-spacing: 0.01em;
-  word-spacing: -0.2em;
-  margin: 1em 0;
-  text-align: left;
+  word-spacing: -0.25em;
 }
 
 
@@ -98,8 +109,9 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: 'Courier Prime', monospace, sans-serif;
-  color: var(--accent-color);
+  font-family: 'Source Code Pro', 'Inconsolata', 'Courier Prime', monospace, sans-serif;
+  /*color: var(--accent-color);*/
+  color: deeppink;
   line-height: 1em;
 }
 
@@ -127,26 +139,26 @@ h6 {
 }
 
 h1 {
-    font-size: 1.5em;
+    font-size: 1.3em;
     padding-top: 1.5em;
     padding-bottom: 0.5em;
     border-bottom: 1px solid #282828;
 }
 
 h2 {
-  font-size: 1.4em;
+  font-size: 1.2em;
 	padding-top: 1em;
 	padding-bottom: 0.3em;
 	border-bottom: 1px solid #282828;
 }
 
 h3 {
-    font-size: 1.3em;
+    font-size: 1.1em;
 	padding-top: 1em;
 }
 
 h4 {
-  font-size: 1.2em;
+  font-size: 1em;
 }
 
 h5 {
@@ -186,11 +198,11 @@ samp {
 
 .sourceCode {
     font-family: 'Source Code Pro', monospace;
-    font-size: 0.99em;
+    font-size: 0.95em;
     margin-top: 2em;
     margin-bottom: 2em;
-    background: #202222;
-    color: var(--foreground);
+    background: #001010;
+    color: #0f0;
 }
 
 .sourceCode > code {
@@ -199,48 +211,41 @@ samp {
 
 .sourceCode pre {
     padding: 20px 20px 20px 20px;
+    border: 2px solid #555555;
+    border-radius: 10px;
+    overflow-x: auto;
 }
 
-/*code.sourceCode span.kw { color: #b18a97; } [> Keyword red <]*/
-/*code.sourceCode span.dt { color: #88b482; } [> Datatype yellow <]*/
-/*code.sourceCode span.dv { color: #d3869b; } [> DecVal purple <]*/
-/*code.sourceCode span.bn { color: #d3869b; } [> BaseN purple <]*/
-/*code.sourceCode span.fl { color: #d3869b; } [> Float purple <]*/
-/*code.sourceCode span.ch { color: #d3869b; } [> Char purple <]*/
-/*code.sourceCode span.st { color: #ACB765; } [> String green <]*/
-/*code.sourceCode span.co { color: #928374; font-style: italic; } [> Comment medium <]*/
-/*code.sourceCode span.ot { color: #427b56; } [> OtherToken aqua <]*/
-/*code.sourceCode span.fu { color: #ACB765; } [> Function green <]*/
-/*code.sourceCode span.re { color: #83a598; } [> Region marker orange <]*/
-/*code.sourceCode span.er { color: #fb4934; font-weight: bold; } [> Error red <]*/
-/*code.sourceCode span.al { color: #fb4934; font-weight: bold; } [> Alert red <]*/
-code span.al { color: #fb4934; } /* Alert */
-code span.an { color: #928374; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { } /* Attribute */
-code span.bn { color: #44aa43; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #d3869b; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #83a598; } /* Char */
-code span.cn { } /* Constant */
-code span.co { color: #928374; font-weight: bold; font-style: italic; } /* Comment */
-code span.do { color: #928374; font-style: italic; } /* Documentation */
-code span.dt { text-decoration: underline; } /* DataType */
-code span.dv { color: #44aa43; } /* DecVal */
-code span.er { color: #fb4934; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #44aa43; } /* Float */
-code span.fu { color: #ff9358; font-weight: bold; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #928374; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #d3869b; font-weight: bold; } /* Keyword */
-code span.op { } /* Operator */
-code span.pp { font-weight: bold; } /* Preprocessor */
-code span.sc { color: #83a598; } /* SpecialChar */
-code span.ss { color: #83a598; } /* SpecialString */
-code span.st { color: #83a598; } /* String */
-code span.va { } /* Variable */
-code span.vs { color: #83a598; } /* VerbatimString */
-code span.wa { color: #fb4934; font-weight: bold; } /* Warning */
+code.sourceCode span.dt { color: cyan; } /* Datatype */
+code.sourceCode span.st { color: yellow; } /* string */
+code.sourceCode span.co { color: #928374; font-style: italic; } [> Comment medium <]
+/*code span.al { color: #fb4934; } [> Alert <]*/
+/*code span.an { color: #928374; font-weight: bold; font-style: italic; } [> Annotation <]*/
+/*code span.at { } [> Attribute <]*/
+/*code span.bn { color: #44aa43; } [> BaseN <]*/
+/*code span.bu { } [> BuiltIn <]*/
+/*code span.cf { color: #d3869b; font-weight: bold; } [> ControlFlow <]*/
+/*code span.ch { color: #83a598; } [> Char <]*/
+/*code span.cn { } [> Constant <]*/
+/*code span.co { color: #928374; font-weight: bold; font-style: italic; } [> Comment <]*/
+/*code span.do { color: #928374; font-style: italic; } [> Documentation <]*/
+/*code span.dt { text-decoration: underline; } [> DataType <]*/
+/*code span.dv { color: #44aa43; } [> DecVal <]*/
+/*code span.er { color: #fb4934; font-weight: bold; } [> Error <]*/
+/*code span.ex { } [> Extension <]*/
+/*code span.fl { color: #44aa43; } [> Float <]*/
+/*code span.fu { color: #ff9358; font-weight: bold; } [> Function <]*/
+/*code span.im { } [> Import <]*/
+/*code span.in { color: #928374; font-weight: bold; font-style: italic; } [> Information <]*/
+/*code span.kw { color: #d3869b; font-weight: bold; } [> Keyword <]*/
+/*code span.op { } [> Operator <]*/
+/*code span.pp { font-weight: bold; } [> Preprocessor <]*/
+/*code span.sc { color: #83a598; } [> SpecialChar <]*/
+/*code span.ss { color: #83a598; } [> SpecialString <]*/
+/*code span.st { color: #83a598; } [> String <]*/
+/*code span.va { } [> Variable <]*/
+/*code span.vs { color: #83a598; } [> VerbatimString <]*/
+/*code span.wa { color: #fb4934; font-weight: bold; } [> Warning <]*/
 
 pre {
     word-wrap: break-word;
@@ -418,15 +423,15 @@ nav {
     top: 0;
     background-color: var(--background);
     text-align: center;
-    color: var(--foreground);
+    color: gold;
     border-bottom: 1px dashed #666;
     padding-bottom: 1em;
-    font-size: 0.95em;
+    font-size: 0.9em;
+    font-weight: 1000;
 }
 
 nav > a {
     all: unset;
-    color: var(--foreground);
     text-decoration: underline;
 }
 
@@ -486,6 +491,7 @@ label {
     ::-webkit-scrollbar { display: none; }
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+    border: 2px solid aquamarine;
 
 
     ul {
@@ -507,52 +513,20 @@ label {
 }
   
 .blogtitle {
-    max-width: 70%;
+    font-family: 'Minecrafter';
+    font-size: 5em;
+    color: var(--accent-color);
 	text-align: center;
 	margin-left: auto;
 	margin-right: auto;
-    font-size: 1.5em;
-    padding-top: 0em;
-    padding-bottom: 0.3em;
-	border-bottom: 2px solid;
+    padding: unset;
+    border: unset;
 }
 
 .blogtitle::before{
     content: none;
 }
 
-.blogtitle:after {
-  content: '';
-  width: 0.4em;
-  height: 0.7em;
-  background: var(--accent-color);
-  opacity: 0;
-  display: inline-block;
-  animation: blink 1s infinite step-end;
-}
-
-@keyframes blink {
-  from,to {
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-}
-
-.logo {
-    max-height: 100px;
-    border: None;
-    box-shadow: None;
-    /* border-radius:50px; */
-    -webkit-transition: -webkit-transform .5s ease-in-out;
-    transition:         transform .5s ease-in-out;
-}
-
-.logo:hover {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-}
 p.date {
     font-size: 13px;
     color: #666;
@@ -565,9 +539,9 @@ ul.articles {
     margin-top: 2em;
 }
 footer {
-    font-size: 0.85em;
     text-align: center;
 	padding-top: 1.5em;
+    color: gold;
 }
 
 mark{
@@ -576,5 +550,5 @@ mark{
 }
 
 hr {
-    border: 1px solid #333;
+    border: 1px solid aquamarine;
 }
