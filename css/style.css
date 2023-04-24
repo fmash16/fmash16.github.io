@@ -1,9 +1,3 @@
-@font-face { 
-    font-family: 'Minecrafter';
-    src: url('Minecrafter.woff') format('woff'),
-         url('Minecrafter.Reg.ttf') format('truetype');
-}
-
 :root {
     /*--accent-color: #f66;*/
     /*--background:   #191a1a;*/
@@ -20,6 +14,7 @@ html {
   background-color: #001515;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
+  cursor: url('data:image/x-icon;base64,AAACAAEAICAQAAAAAADoAgAAFgAAACgAAAAgAAAAQAAAAAEABAAAAAAAAAIAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAD/AKPu9wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAARAAAAAAAAAAAAAAAAAAAAEQAAAAAAAAAAAAARAAAAESIAAAAAAAAAAAAAEQAAABEiAAAAAAAAAAAAABEAABEiAAAAAAAAAAAAAAARAAARIgAAAAAAAAAAAAAREQARIgAAAAAAAAAAAAAAEREAESIAAAAAAAAAAAAAABERESIAAAAAAAAAAAAAAAAREREiAAAAAAAAAAAAAAARERERERERAAAAAAAAAAAAEREREREREQAAAAAAAAAAABERERERIiIAAAAAAAAAAAARERERESIiAAAAAAAAAAARERERIiIAAAAAAAAAAAAAERERESIiAAAAAAAAAAAAABERIiIAAAAAAAAAAAAAAAARESIiAAAAAAAAAAAAAAARIiIAAAAAAAAAAAAAAAAAESIiAAAAAAAAAAAAAAAAESIAAAAAAAAAAAAAAAAAABEiAAAAAAAAAAAAAAAAAAD////////////////////////////////////////////////////////D////w///DwP//w8D//8MD///DA///AA///wAP//8AP///AD///AAD//wAA//8AAP//AAD//AAP//wAD//8AP///AD///AP///wD///8P////D////w=='), auto;
 }
 
 body {
@@ -48,7 +43,7 @@ a {
 a:hover {
     color: var(--background);
     background-color:var(--accent-color);
-    cursor:pointer;
+    /*cursor:pointer;*/
 }
 
 a:active {
@@ -65,22 +60,22 @@ a:active {
 }
 
 ::-moz-selection {
-  background: #ffa86a;
+  background: deeppink;
   color: #000;
 }
 
 ::selection {
-  background: #ffa86a;
+  background: deeppink;
   color: #000;
 }
 
 a::-moz-selection {
-  background: #ffa86a;
+  background: deeppink;
   color: #0645ad;
 }
 
 a::selection {
-  background: #ffa86a;
+  background: deeppink;
   color: #0645ad;
 }
 
