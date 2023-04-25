@@ -20,16 +20,22 @@ html {
 body {
   font-family: 'Inconsolata', monospace;
   line-height: 1.25em;
-  padding-top: 2em;
-  padding-bottom: 2em;
-  padding-left: 3em;
-  padding-right: 4em;
-  margin-left: auto;
-  margin-right: auto;
+  /*padding-top: 2em;*/
+  /*padding-bottom: 2em;*/
+  /*padding-left: 3em;*/
+  /*padding-right: 4em;*/
+  /*margin-left: auto;*/
+  /*margin-right: auto;*/
   max-width: 800px;
   align: center;
   border: 2px solid aquamarine;
   background-color: var(--background);
+  	padding-top: 20px;
+    padding-left: 40px;
+    padding-right: 40px;
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 150px;
 }
 
 a {
@@ -315,9 +321,10 @@ td {
 
 @media only screen and (max-width: 768px) {
   body {
-    font-size: 15px;
+    /*font-size: 15px;*/
     margin-left: 0%;
-    max-width: 100%;
+    /*max-width: 100%;*/
+    padding: 1em;
   }
 
   label {
@@ -472,8 +479,9 @@ label {
     display: block;
     position: fixed;
     font-size: 0.95em;
-    left: 81%;
-    top: 4em;
+    font-weight: normal;
+    left: 80.5%;
+    top: 3.5em;
     padding: 1em;
     width: 15%;
     line-height: 1.4;
